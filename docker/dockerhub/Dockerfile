@@ -1,7 +1,7 @@
 # Use the official Ubuntu image as the base image
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     git \
     cmake \
     ninja-build \
