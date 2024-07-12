@@ -1,5 +1,6 @@
 # Unreleased
-        * Add header var "Enable-data-integrity-check : true" to toggle sha256sum payload verification.
+* remove space from status_id and status_message response json to avoid future bugs.
+e3c7a7e * Add header var "Enable-data-integrity-check : true" to toggle sha256sum payload verification.
 e1d3295 * Add changelog.txt.
 495ebb2 * Tweak Database container healthcheck for speed.
 86bcdc3 * Disable building of tools and examples of dependencies to speed build from source.

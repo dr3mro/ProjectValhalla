@@ -36,8 +36,8 @@ bool RestHelper::check_affected_rows(const json& response)
 
 void RestHelper::format_response(json& response_json, const short status, const std::string& status_message, const json& response)
 {
-    response_json["status id"] = status;
-    response_json["status message"] = status_message;
+    response_json["status_id"] = status;
+    response_json["status_message"] = status_message;
     response_json["payload"] = response;
 }
 

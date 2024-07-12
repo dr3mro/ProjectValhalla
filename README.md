@@ -99,8 +99,8 @@ Connection: Keep-Alive
             "affected rows": 1
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 
 ```
@@ -119,8 +119,8 @@ Connection: Keep-Alive
 
 {
     "payload": "User already exists",
-    "status id": -1,
-    "status message": "Failed to create a new user, user exists"
+    "status_id": -1,
+    "status_message": "Failed to create a new user, user exists"
 }%
 ```
 - the "payload" value is verified on the server against SHA256SUM that should be generated and added to the JSON in sha256sum key.
@@ -162,8 +162,8 @@ Connection: Keep-Alive
         "user_id": 1002,
         "username": "amr_nasr"
     },
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 ```
 - The returned token is valid only for 60 minutes and should be send in header with every subsequent request and after it is expired any request will fail until the user relogin and get a new token.
@@ -182,8 +182,8 @@ Connection: Keep-Alive
 
 {
     "payload": "User 'amr_nasr' not found or wrong password",
-    "status id": -1,
-    "status message": "Login Failure"
+    "status_id": -1,
+    "status_message": "Login Failure"
 }%
 ```
 ### example of header Authorization
@@ -272,8 +272,8 @@ Connection: Keep-Alive
             "id": 100034
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 
 ```
@@ -287,8 +287,8 @@ Connection: Keep-Alive
 
 {
     "payload": "authentication token invalidated",
-    "status id": -1,
-    "status message": "failed to create a new patient"
+    "status_id": -1,
+    "status_message": "failed to create a new patient"
 }%
 ```
 
@@ -340,8 +340,8 @@ Connection: Keep-Alive
             "health_data": {}
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 ```
 - A failed request due to for example expired access token looks something like this:
@@ -354,8 +354,8 @@ Connection: Keep-Alive
 
 {
     "payload": "token is invalidated",
-    "status id": -1,
-    "status message": "failed to retrieve patient"
+    "status_id": -1,
+    "status_message": "failed to retrieve patient"
 }%
 ```
 - the "schems" is an array of items you want to retrieve
@@ -410,8 +410,8 @@ Connection: Keep-Alive
             "affected rows": 1
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 ```
 - a failed request might be for example due to patient not found would look like this
@@ -428,8 +428,8 @@ Connection: Keep-Alive
             "affected rows": 0
         }
     ],
-    "status id": -1,
-    "status message": "failure"
+    "status_id": -1,
+    "status_message": "failure"
 }%
 ```
 - Notice that it returns 200 OK but affected records 0 that means every step was successful except the query to the database.
@@ -469,8 +469,8 @@ Connection: Keep-Alive
             "affected rows": 1
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 ```
 - a failed delete request will reply with
@@ -487,8 +487,8 @@ Connection: Keep-Alive
             "affected rows": 0
         }
     ],
-    "status id": -1,
-    "status message": "failure"
+    "status_id": -1,
+    "status_message": "failure"
 }%
 ```
 - notice that the http return code is `200` indicating it did reach the database but found no identical entry. it the data cannot get to the database due any other error the return code would be `400` like for example token invalidation or expiration.
@@ -502,8 +502,8 @@ Connection: Keep-Alive
 
 {
     "payload": "authentication token invalid or expired",
-    "status id": -1,
-    "status message": "failed to delete patient"
+    "status_id": -1,
+    "status_message": "failed to delete patient"
 }%
 ```
 
@@ -604,8 +604,8 @@ Connection: Keep-Alive
             }
         }
     ],
-    "status id": 0,
-    "status message": "success"
+    "status_id": 0,
+    "status_message": "success"
 }%
 ```
 
