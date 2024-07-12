@@ -14,7 +14,10 @@ struct DataIntegrity : crow::ILocalMiddleware {
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
         (void)ctx;
-        return;
+
+        if (!(req.headers.contains("Enable-data-integrity-check") && req.get_header_value("Enable-data-integrity-check") == "true"))
+            return;
+
         try {
 
             jsoncons::json json = jsoncons::json::parse(req.body);

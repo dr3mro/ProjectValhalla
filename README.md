@@ -39,7 +39,8 @@ that means the server is up and running
 ```
 jq -Sjc '.payload' patient.json | sha256sum
 ```
-
+- DataIntegrity protection is disabled by default and can be enabled anytime to verify payload by setting header value:
+- `"Enable-data-integrity-check : true"`
 ### 📦 Test GZIP
 ```
 curl -X GET -H "Accept-Encoding:gzip" -d "$(bash ./gen_random_get_patient.sh)" http://172.20.0.3:8080/v1/patient --compressed --include  --output -
