@@ -3,14 +3,20 @@ cmake_minimum_required(VERSION 3.15)
 set(Target "server")
 project(${Target})
 
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
+# Set C++ flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+
+# Set the CMake module path
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(CPM)
 
+# Add CPM packages
 CPMAddPackage(
   NAME fmt
   VERSION 11.0.1
@@ -44,6 +50,7 @@ CPMAddPackage(
   VERSION 7.9.1
   URL https://github.com/jtv/libpqxx/archive/refs/tags/7.9.1.zip
   URL_HASH MD5=766ff83c2d478a03b527aad1e97a32d6
+  OPTIONS "SKIP_BUILD_TEST ON" "BUILD_SHARED_LIBS OFF"
 )
 
 CPMAddPackage(
@@ -54,18 +61,22 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME jsoncons
-  VERSION 0.176.0
-  URL https://github.com/danielaparker/jsoncons/archive/refs/tags/v0.176.0.zip
-  URL_HASH MD5=5d0343fe48cbc640bdb42d89a5b87182
+  NAME jwt-cpp
+  VERSION 0.7.0
+  URL https://github.com/Thalhammer/jwt-cpp/archive/refs/tags/v0.7.0.tar.gz
+  URL_HASH MD5=7d4b1e54daf431970f1c02d44ae17ff7
+  OPTIONS "JWT_CPP_BUILD_EXAMPLES OFF" "JWT_CPP_BUILD_TESTS OFF"
 )
 
 CPMAddPackage(
-  NAME jwt-cpp
-  VERSION 0.7.0
-  URL https://github.com/Thalhammer/jwt-cpp/archive/refs/tags/v0.7.0.zip
-  URL_HASH MD5=73d0d1de86a269ebd3e5fca4651d6b4f
+  NAME jsoncons
+  VERSION 0.176.0
+  URL https://github.com/danielaparker/jsoncons/archive/refs/tags/v0.176.0.tar.gz
+  URL_HASH MD5=3737f302fd6c9814d8e2741007d3bfdd
+  OPTIONS "JSONCONS_BUILD_EXAMPLES OFF" "JSONCONS_BUILD_TESTS OFF"
 )
+
+
 
 CPMAddPackage(
   NAME PicoSHA2
@@ -74,39 +85,44 @@ CPMAddPackage(
   URL_HASH MD5=45e593dd312e567c5b7327cbe114f9c9
 )
 
-#CPMAddPackage("gh:fmtlib/fmt#10.2.1")
-#CPMAddPackage("gh:chriskohlhoff/asio#asio-1-30-2")
-#CPMAddPackage("gh:madler/zlib#v1.3.1")
-#CPMAddPackage("gh:CrowCpp/crow#v1.2.0")
-#CPMAddPackage("gh:jtv/libpqxx#7.9.1")
-#CPMAddPackage("gh:jbeder/yaml-cpp#0.8.0")
-#CPMAddPackage("gh:danielaparker/jsoncons#v0.176.0")
-#CPMAddPackage("gh:Thalhammer/jwt-cpp#v0.7.0")
-#CPMAddPackage("gh:okdshin/PicoSHA2#v1.0.0")
-
+# Suppress developer warnings and deprecated warnings
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 set(CMAKE_WARN_DEPRECATED OFF)
 
-file (GLOB_RECURSE SRC "src/*.cpp" )
+# Find all source files
+file(GLOB_RECURSE SRC "src/*.cpp")
 
+# Find OpenSSL package
 find_package(OpenSSL REQUIRED)
 
+# Add the executable
 add_executable(${Target} ${SRC})
 
+# Include directories
 target_include_directories(${Target}
-                        PRIVATE
-                        "${fmt_SOURCE_DIR}/include"
-                        "${zlib_SOURCE_DIR}/"
-                        "${crow_SOURCE_DIR}/include"
-                        "${asio_SOURCE_DIR}/asio/include"
-                        "${libpqxx_SOURCE_DIR}/include"
-                        "${yaml-cpp_SOURCE_DIR}/src"
-                        "${jsoncons_SOURCE_DIR}/include"
-                        "${jwt-cpp_SOURCE_DIR}/include"
-                        "${PicoSHA2_SOURCE_DIR}"
-                        "${OPENSSL_INCLUDE_DIR}"
-                        )
+    PRIVATE
+    ${fmt_SOURCE_DIR}/include
+    ${zlib_SOURCE_DIR}
+    ${crow_SOURCE_DIR}/include
+    ${asio_SOURCE_DIR}/asio/include
+    ${libpqxx_SOURCE_DIR}/include
+    ${yaml-cpp_SOURCE_DIR}/include
+    ${jsoncons_SOURCE_DIR}/include
+    ${jwt-cpp_SOURCE_DIR}/include
+    ${PicoSHA2_SOURCE_DIR}
+    ${OPENSSL_INCLUDE_DIR}
+)
 
-target_compile_definitions(${Target}  PUBLIC CROW_ENABLE_COMPRESSION)
+# Compile definitions
+target_compile_definitions(${Target} PUBLIC CROW_ENABLE_COMPRESSION)
 
-target_link_libraries(${Target}  PRIVATE  fmt zlib pqxx yaml-cpp jwt-cpp ${PostgreSQL_LIBRARIES})
+# Link libraries
+target_link_libraries(${Target}
+    PRIVATE
+    fmt
+    zlib
+    pqxx
+    yaml-cpp
+    jwt-cpp
+    ${OPENSSL_LIBRARIES}
+)
