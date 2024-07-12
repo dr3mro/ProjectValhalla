@@ -36,6 +36,7 @@ CPMAddPackage(
   VERSION 1.3.1
   URL https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
   URL_HASH MD5=9855b6d802d7fe5b7bd5b196a2271655
+  OPTIONS "ZLIB_BUILD_EXAMPLES OFF"
 )
 
 CPMAddPackage(
@@ -58,6 +59,7 @@ CPMAddPackage(
   VERSION 0.8.0
   URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.zip
   URL_HASH MD5=6eff843c5a75afc88f979eb42c2ecd70
+  OPTIONS "YAML_CPP_BUILD_TOOLS OFF"
 )
 
 CPMAddPackage(
@@ -65,7 +67,7 @@ CPMAddPackage(
   VERSION 0.7.0
   URL https://github.com/Thalhammer/jwt-cpp/archive/refs/tags/v0.7.0.tar.gz
   URL_HASH MD5=7d4b1e54daf431970f1c02d44ae17ff7
-  OPTIONS "JWT_CPP_BUILD_EXAMPLES OFF" "JWT_CPP_BUILD_TESTS OFF"
+  OPTIONS "JWT_BUILD_EXAMPLES OFF" "JWT_BUILD_TESTS OFF"
 )
 
 CPMAddPackage(
