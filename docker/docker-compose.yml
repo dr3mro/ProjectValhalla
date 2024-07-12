@@ -1,0 +1,62 @@
+services:
+  db:
+    profiles: ["default", "dev"]
+    build:
+      context: .
+      dockerfile: dockerfile.pq
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    profiles: ["default"]
+    build:
+      context: .
+      dockerfile: dockerfile.api
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.3
+    depends_on:
+      db:
+        condition: service_healthy  # Wait for db service to be healthy
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
+
+  api_dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: dockerfile.api_dev
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.4
+    volumes:
+      - src_data:/usr/src/
+    depends_on:
+      db:
+        condition: service_healthy  # Wait for db service to be healthy
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
+
+networks:
+  docker_valhalla_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  db_data:
+  src_data:
