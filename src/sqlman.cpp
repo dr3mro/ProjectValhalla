@@ -1,6 +1,5 @@
 #include "sqlman.hpp"
-#include <fmt/core.h>
-#include <fmt/format.h>
+#include <fmt/ranges.h>
 #include <jsoncons/json.hpp>
 #include <vector>
 
