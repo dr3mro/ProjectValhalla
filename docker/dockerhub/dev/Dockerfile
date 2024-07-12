@@ -1,6 +1,7 @@
 # Use the official Ubuntu image as the base image
 FROM ubuntu:latest
 
+# Install necessary packages and clean up
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     git \
     cmake \
@@ -13,21 +14,17 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 # Set working directory
 WORKDIR /usr/src/
 
+# Clone the repository
 RUN git clone https://github.com/dr3mro/ProjectValhalla.git /usr/src/ProjectValhalla/
 
+# Make the entrypoint script executable
 RUN chmod +x /usr/src/ProjectValhalla/docker/entrypoint.sh
 
-# Use the entrypoint script as the default command
-ENTRYPOINT ["/usr/src/ProjectValhalla/docker/entrypoint.sh"]
-
-# persistent data
+# Define the volume for persistent data
 VOLUME ["/usr/src"]
 
 # Expose port 8080
 EXPOSE 8080
-# Copy local files to the container (if needed)
-# COPY . /app
 
-# Specify a default command to run when the container starts (if needed)
-# CMD ["bash"]
-
+# Use the entrypoint script as the default command
+ENTRYPOINT ["/usr/src/ProjectValhalla/docker/entrypoint.sh"]
