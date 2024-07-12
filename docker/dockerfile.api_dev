@@ -1,0 +1,25 @@
+# Use a specific version of Ubuntu for consistency
+FROM ubuntu:latest
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    ninja-build \
+    g++ \
+    python3 \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /usr/src/ProjectValhalla
+
+# Copy entrypoint script into the image
+RUN git clone https://github.com/dr3mro/ProjectValhalla.git /usr/src/ProjectValhalla/
+RUN chmod +x /usr/src/ProjectValhalla/docker/entrypoint.sh
+
+# Use the entrypoint script as the default command
+ENTRYPOINT ["/usr/src/ProjectValhalla/docker/entrypoint.sh"]
+
+# Expose port 8080
+EXPOSE 8080

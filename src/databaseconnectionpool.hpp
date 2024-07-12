@@ -1,0 +1,19 @@
+#pragma once
+#include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <queue>
+
+#include "database.hpp"
+
+class DatabaseConnectionPool {
+public:
+    DatabaseConnectionPool(size_t pool_size);
+    std::shared_ptr<Database> get_connection();
+    void return_connection(std::shared_ptr<Database> db);
+
+private:
+    std::queue<std::shared_ptr<Database>> databaseConnections;
+    std::mutex mutex;
+    std::condition_variable cv;
+};

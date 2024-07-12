@@ -1,0 +1,66 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https gnupg
+          wget https://github.com/Kitware/CMake/releases/download/v3.28.0/cmake-3.28.0-linux-x86_64.sh
+          sudo mkdir /opt/cmake
+          sudo sh cmake-3.28.0-linux-x86_64.sh --prefix=/opt/cmake --skip-license
+          sudo rm /usr/local/bin/cmake
+          sudo ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
+          sudo apt-get install -y ninja-build g++ python3 libpq-dev
+
+      - name: Verify CMake Version
+        run: cmake --version
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build ${{ github.workspace }}/build
+
+      - name: Get Commit Message
+        id: get_commit_msg
+        run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the provided GITHUB_TOKEN or PAT if necessary
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            - ${{ env.COMMIT_MESSAGE }}
+          draft: false
+          prerelease: true
+
+      - name: Compress release
+        run: |
+          tar -cavf ${{ github.workspace }}/server-x86_64.tar.gz -C ${{ github.workspace }}/build/ server
+
+      - name: Upload to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use the provided GITHUB_TOKEN or PAT if necessary
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/server-x86_64.tar.gz
+          asset_name: server-x86_64.tar.gz
+          asset_content_type: application/gzip

@@ -1,0 +1,12 @@
+{
+  "payload": {
+    "basic_data": {
+      "id": 269071,
+      "firstname": "John",
+      "lastname": "Doe",
+      "date_of_birth": "1990-01-01",
+      "gender": "Male"
+    }
+  },
+  "sha256sum": "21b6a36971958cfb4c7dd987357a8f4914340c7b812dda75d82ad22e58f9ad77"
+}
