@@ -14,7 +14,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
 # Set the CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(CPM)
+include(get_cpm)
 
 # Add CPM packages
 CPMAddPackage(
