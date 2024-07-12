@@ -141,50 +141,47 @@ curl -X GET -H "Authentication:ewogICAgInVzZXJuYW1lIiA6ICJhbXJfbmFzciIsCiAgICAic
     "password" : "123Mm@p0"
 }
 ```
-- the username should be in lowecase and/or numbers and never contains spaces or symbols.
+- the username should be in lowercase and/or numbers and never contains spaces or symbols.
 - the password should be uppercase and lowercase and characters and symbols.
 - A successful login looks like this
 ```
 HTTP/1.1 200 OK
-Access-Control-Max-Age: 240
-Access-Control-Allow-Headers: Content-Type, Authentication, Accept-Encoding
-Access-Control-Allow-Methods: GET, POST
+Access-Control-Max-Age: 7200
+Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authentication
+Access-Control-Allow-Methods: GET, POST, OPTIONS
 Access-Control-Allow-Credentials: true
 Access-Control-Allow-Origin: *
 Content-Length: 343
 Server: ProjectValhalla
-Date: Wed, 10 Jul 2024 00:36:12 GMT
+Date: Fri, 12 Jul 2024 19:28:40 GMT
 Connection: Keep-Alive
 
 {
     "payload": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNjM3NzIsImlhdCI6MTcyMDU3MTc3MiwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.sxwWc_CrMJ_GkYbXT9AAGyKNfD-vpUdvkzYUw5VpXtI",
-        "user_id": 1002,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDQ1MjAsImlhdCI6MTcyMDgxMjUyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.ocAJcFExlNEHSj608C3etgOeeTdBJxhDODaszwPMsV0",
+        "user_id": 1000,
         "username": "amr_nasr"
     },
-    "status_id": 0,
-    "status_message": "success"
+    "status id": 0,
+    "status message": "success"
 }%
+
 ```
 - The returned token is valid only for 60 minutes and should be send in header with every subsequent request and after it is expired any request will fail until the user relogin and get a new token.
 - a failed login looks like this
 ```
-HTTP/1.1 400 Bad Request
-Access-Control-Max-Age: 240
-Access-Control-Allow-Headers: Content-Type, Authentication, Accept-Encoding
-Access-Control-Allow-Methods: GET, POST
+HTTP/1.1 500 Internal Server Error
+Access-Control-Max-Age: 7200
+Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authentication
+Access-Control-Allow-Methods: GET, POST, OPTIONS
 Access-Control-Allow-Credentials: true
 Access-Control-Allow-Origin: *
-Content-Length: 126
+Content-Length: 21
 Server: ProjectValhalla
-Date: Wed, 10 Jul 2024 00:35:15 GMT
+Date: Fri, 12 Jul 2024 19:29:51 GMT
 Connection: Keep-Alive
 
-{
-    "payload": "User 'amr_nasr' not found or wrong password",
-    "status_id": -1,
-    "status_message": "Login Failure"
-}%
+Authentication Denied%
 ```
 ### example of header Authorization
 ```

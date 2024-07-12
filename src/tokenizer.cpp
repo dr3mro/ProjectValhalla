@@ -5,7 +5,7 @@
 #define VALIDITY 43200
 #define SECRET "01234567890123456789012345678901"
 // Function to generate JWT token
-std::string Tokenizer::generate_token(const std::string& username)
+std::string Tokenizer::generate_token(const std::string& username, const std::string& user_id)
 {
     try {
         // Create JWT token with payload
@@ -13,6 +13,7 @@ std::string Tokenizer::generate_token(const std::string& username)
                          .set_issuer(ISSUER)
                          .set_type(TYPE)
                          .set_subject(username)
+                         .set_id(user_id)
                          .set_issued_at(std::chrono::system_clock::now())
                          .set_expires_at(std::chrono::system_clock::now() + std::chrono::minutes { VALIDITY })
                          .sign(jwt::algorithm::hs256 { SECRET });
@@ -24,7 +25,7 @@ std::string Tokenizer::generate_token(const std::string& username)
     }
 }
 
-bool Tokenizer::token_validator(const std::string& token)
+bool Tokenizer::token_validator(LoggedUserInfo& userinfo)
 {
     try {
         auto verifier = jwt::verify()
@@ -32,7 +33,7 @@ bool Tokenizer::token_validator(const std::string& token)
                             .with_type(TYPE)
                             .allow_algorithm(jwt::algorithm::hs256 { SECRET });
 
-        auto decoded_token = jwt::decode(token);
+        auto decoded_token = jwt::decode(userinfo.token.value());
 
         verifier.verify(decoded_token);
 
@@ -41,6 +42,9 @@ bool Tokenizer::token_validator(const std::string& token)
         auto exp_time = decoded_token.get_payload_claim("exp").as_date().time_since_epoch();
         auto issuer = decoded_token.get_payload_claim("iss").as_string();
         auto now = std::chrono::system_clock::now().time_since_epoch();
+
+        userinfo.user_id = std::stoull(decoded_token.get_id());
+        userinfo.username = decoded_token.get_subject();
 
         if (now < exp_time && issuer == ISSUER)
             return true;

@@ -14,9 +14,9 @@ struct Authentication : crow::ILocalMiddleware {
     {
         try {
             std::string decoded;
-            if (req.headers.contains("Authorization")) {
+            if (!req.headers.contains("Authentication")) {
                 res.code = 403;
-                res.end("Authorization Header not found");
+                res.end("Authentication Header not provided");
                 return;
             }
 
@@ -24,7 +24,7 @@ struct Authentication : crow::ILocalMiddleware {
 
             if (!encoded) {
                 res.code = 403;
-                res.end("Authorization data not found");
+                res.end("Authentication data not provided");
                 return;
             }
 

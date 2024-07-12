@@ -211,7 +211,7 @@ void UserController::login_user(const crow::request& req, crow::response& res, c
 
         json token_object;
 
-        token_object["token"] = pImpl->tokenizer->generate_token(username);
+        token_object["token"] = pImpl->tokenizer->generate_token(username, std::to_string(user_id));
         token_object["username"] = username;
         token_object["user_id"] = user_id;
 

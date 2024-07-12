@@ -1,5 +1,7 @@
 # Unreleased
-* remove space from status_id and status_message response json to avoid future bugs.
+1d966aa * Bug Fixes and typo fix and add user_id into token.
+f552357 * Fix User Authentication Error handling.
+f552357 * remove space from status_id and status_message response json to avoid future bugs.
 e3c7a7e * Add header var "Enable-data-integrity-check : true" to toggle sha256sum payload verification.
 e1d3295 * Add changelog.txt.
 495ebb2 * Tweak Database container healthcheck for speed.

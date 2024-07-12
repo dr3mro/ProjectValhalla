@@ -91,15 +91,15 @@ uint64_t DatabaseController::findIfUserID(const std::string& username)
     std::shared_ptr<Database> db = nullptr;
     try {
         db = databaseConnectionPool->get_connection();
-        uint64_t passwordHash = db->doSimpleQuery<uint64_t>(fmt::format("SELECT user_id FROM users WHERE username = '{}' LIMIT 1;", username));
+        uint64_t user_id = db->doSimpleQuery<uint64_t>(fmt::format("SELECT user_id FROM users WHERE username = '{}' LIMIT 1;", username));
         databaseConnectionPool->return_connection(db);
-        return passwordHash;
+        return user_id;
     } catch (const std::exception& e) {
-        std::cerr << "Exception occurred duringexecuteReadQuery: " << e.what() << std::endl;
+        std::cerr << "findIfUserID: Exception." << e.what() << std::endl;
         // Optionally handle or log the exception here
         throw; // Rethrow the exception to indicate failure
     } catch (...) {
-        std::cerr << "Unknown exception occurred during executeReadQuery." << std::endl;
+        std::cerr << "Unknown exception occurred (findIfUserID)." << std::endl;
         // Optionally handle or log the exception here
         throw; // Rethrow the exception to indicate failure
     }

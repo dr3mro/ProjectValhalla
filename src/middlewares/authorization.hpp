@@ -6,7 +6,7 @@
 struct Authorization : crow::ILocalMiddleware {
 
     struct context {
-        std::optional<std::string> token;
+        Tokenizer::LoggedUserInfo userinfo;
     };
     Authorization(std::shared_ptr<Tokenizer> tokenizer)
         : tokenizer(tokenizer)
@@ -28,17 +28,17 @@ struct Authorization : crow::ILocalMiddleware {
             }
 
             if (authorization.value().substr(0, 7) == "Bearer ") {
-                ctx.token = authorization.value().substr(7);
+                ctx.userinfo.token = authorization.value().substr(7);
             }
 
-            if (!ctx.token) {
+            if (!ctx.userinfo.token) {
                 // Respond with a 400 Bad Request if shasum parsing failed
                 res.code = 403;
                 res.end("Authorization Token not found");
                 return;
             }
 
-            if (!tokenizer->token_validator(ctx.token.value())) {
+            if (!tokenizer->token_validator(ctx.userinfo)) {
                 res.code = 403;
                 res.end("Authorization denied");
                 return;
