@@ -1,7 +1,6 @@
 # Use a specific version of Ubuntu for consistency
 FROM ubuntu:latest
 
-
 # update and install some packages
 RUN apt-get update && apt-get install -y wget libpq5
 
@@ -22,3 +21,6 @@ RUN chmod +x server
 
 # run it as an entry point
 ENTRYPOINT ["/home/ubuntu/ProjectValhalla/server"]
+
+# Expose port 8080
+EXPOSE 8080

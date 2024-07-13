@@ -1,2 +1,1 @@
-# Use a specific version of Ubuntu for consistency
 FROM dr3mro/valhalla-dev:latest
