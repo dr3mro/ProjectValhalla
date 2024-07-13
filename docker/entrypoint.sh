@@ -10,4 +10,4 @@ cmake -S . -Bbuild -GNinja
 cmake --build build -j
 
 # Execute the server
-exec ./server
+exec .build/server
