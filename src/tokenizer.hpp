@@ -1,6 +1,6 @@
 #pragma once
-
 #include <jwt-cpp/jwt.h>
+#include <optional>
 
 class Tokenizer {
 public:
