@@ -1,5 +1,5 @@
 # Unreleased
- * Switch Get patient to Header with json encoded as BASE64
+ * Switch Get patient data from body to Header as a json encoded as BASE64
  * Bug fixes and optimizations
  * optimize performance of docker dev build speed and create container on dockerhub
  * Bug Fixes and typo fix and add user_id into token.
@@ -11,6 +11,6 @@
  * Disable building of tools and examples of dependencies to speed build from source.
  * Update CMakefile.txt.
  * Adjust includes with recent upstream changes to fmt lib.
- * switch cpm package from git based to pkg based to improve buid speed and save bandwidth.
+ * switch cpm package from git based to pkg based to improve build speed and save bandwidth.
 
 # Version 0.1
