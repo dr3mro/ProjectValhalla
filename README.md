@@ -3,15 +3,15 @@
  - Before testing make sure you clean all the old containers.
  - cd into $PROJECT_DIR/docker and run those commands if you have used it before
 ```
-docker-compose down --rmi all --volumes
-docker-compose down --remove-orphans --volumes
+docker compose down --rmi all --volumes
+docker compose down --remove-orphans --volumes
 ```
 
 ### 🐳 Run docker
 ```
 git clone git@github.com:dr3mro/ProjectValhalla.git
 cd ProjectValhalla/docker
-docker-compose --profile default up
+docker compose --profile default up
 ```
 
 ### 🧪 Verify the server is running
