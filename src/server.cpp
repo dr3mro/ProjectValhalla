@@ -17,7 +17,7 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
     , dataIntegrity(std::make_shared<DataIntegrity>())
     , search(std::make_shared<Search>())
     , xrequest(std::make_shared<XRequest>())
-    , app(std::make_shared<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, XRequest>>(*elapsedTime, *authentication, *authorization, *search, *dataIntegrity, *xrequest))
+    , app(std::make_shared<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>>(*elapsedTime, *authentication, *authorization, *xrequest, *search, *dataIntegrity))
     , routes(std::make_shared<API_V1_Routes>(app, userController, patientController))
     , srv_threads(srv_threads)
 {

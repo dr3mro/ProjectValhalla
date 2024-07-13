@@ -38,7 +38,7 @@ private:
     std::shared_ptr<DataIntegrity> dataIntegrity;
     std::shared_ptr<Search> search;
     std::shared_ptr<XRequest> xrequest;
-    std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, XRequest>> app;
+    std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>> app;
     std::shared_ptr<API_V1_Routes> routes;
     uint16_t srv_threads;
 };

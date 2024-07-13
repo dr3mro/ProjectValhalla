@@ -1,9 +1,9 @@
 #pragma once
 
+#include "xrequest.hpp"
 #include <crow.h>
 #include <fmt/core.h>
 #include <jsoncons/json.hpp>
-
 struct Search : crow::ILocalMiddleware {
 
     struct context {
@@ -11,12 +11,13 @@ struct Search : crow::ILocalMiddleware {
     };
     Search() = default;
     ~Search() = default;
-
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
+    template <typename XRequestContext>
+    void before_handle(crow::request& req, crow::response& res, context& ctx, XRequestContext& xrequest_ctx)
     {
-        try {
-            ctx.search_json = jsoncons::json::parse(req.body);
+        (void)req;
+        ctx.search_json = xrequest_ctx.template get<XRequest>().criteria;
 
+        try {
             std::vector<std::string> keys = {
                 "keyword",
                 "order_by",

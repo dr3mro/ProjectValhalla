@@ -1,6 +1,6 @@
 #include "api_v1_routes.hpp"
 
-API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, XRequest>> app, std::shared_ptr<UserController> userController, std::shared_ptr<PatientController> patientController)
+API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>> app, std::shared_ptr<UserController> userController, std::shared_ptr<PatientController> patientController)
 {
     ////////////////   ROUTES   ////////////////////
     CROW_ROUTE((*app), "/v1/user")
@@ -40,7 +40,7 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, Elapse
         });
 
     CROW_ROUTE((*app), "/v1/patient")
-        .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, Search)
+        .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, XRequest, Search)
         .methods(crow::HTTPMethod::SEARCH)([patientController, app](const crow::request& req, crow::response& res) {
             patientController->search_patient(std::ref(req), std::ref(res), app->get_context<Search>(req).search_json);
         });

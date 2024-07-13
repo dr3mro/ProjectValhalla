@@ -18,7 +18,7 @@ public:
 
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
-        if (!(req.headers.contains(xRequestHeader) || req.get_header_value(xRequestHeader).empty())) {
+        if (!(req.headers.contains(xRequestHeader) && !req.get_header_value(xRequestHeader).empty())) {
             res.code = 400;
             res.end();
             return;
