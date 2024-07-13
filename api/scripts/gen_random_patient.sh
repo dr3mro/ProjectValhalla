@@ -8,7 +8,7 @@ generate_random_string() {
 
 # Function to generate a random name
 generate_random_name() {
-    shuf -n1 /usr/share/dict/propernames
+    shuf -n1 /usr/share/dict/propernames | sed 's/\r//g'
 }
 
 # Function to generate a random integer between a range
@@ -39,7 +39,7 @@ generate_random_dob() {
 }
 
 # Generate random data
-id=$(generate_random_int 1 1000)
+id=0
 firstname=$(generate_random_name)
 lastname=$(generate_random_name)
 dob=$(generate_random_dob)
@@ -49,11 +49,9 @@ address=$(generate_random_string 10)" St, Anytown, USA"
 occupation=$(generate_random_name)
 email=$(generate_random_email)
 phone=$(generate_random_phone)
-username=amr_nasr
-token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjI1NTM0MDksImlhdCI6MTcxOTk2MTQwOSwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.3-nMSSw2K_LVI--w9c_HYyVnrJMxb89u6vhLllxA9N8"
 
 # Create JSON
-json=$(jq -n \
+json=$(jq -r -n \
     --argjson id "$id" \
     --arg firstname "$firstname" \
     --arg lastname "$lastname" \
@@ -85,9 +83,7 @@ json=$(jq -n \
             health_data: {},
             appointments_data: {}
         },
-        sha256sum: "",
-        username: $username,
-        token: $token
+        sha256sum: ""
     }')
 
 # Calculate SHA-256 checksum of the payload
