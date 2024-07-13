@@ -11,7 +11,7 @@ RUN mkdir /home/ubuntu/ProjectValhalla && cd /home/ubuntu/ProjectValhalla
 WORKDIR /home/ubuntu/ProjectValhalla
 
 # Download latest release from github
-RUN wget https://github.com/dr3mro/ProjectValhalla/releases/download/0.1/server-x86_64.tar.gz
+RUN wget https://github.com/dr3mro/ProjectValhalla/releases/download/0.2/server-x86_64.tar.gz
 
 # extract and delete the archive
 RUN tar -xvf server-x86_64.tar.gz && rm server-x86_64.tar.gz

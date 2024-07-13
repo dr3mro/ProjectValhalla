@@ -1,4 +1,5 @@
-# Unreleased
+
+# Version 0.2
  * Switch Search for patient data from body to Header as a json encoded as BASE64
  * Fix remnant check for checksum that causes the registeration of a new user always require sha256sum validation even if not enabled.
  * Switch Get patient data from body to Header as a json encoded as BASE64
