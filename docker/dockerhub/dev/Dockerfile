@@ -11,11 +11,11 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /usr/src/
-
 # Clone the repository
 RUN git clone https://github.com/dr3mro/ProjectValhalla.git /usr/src/ProjectValhalla/
+
+# Set working directory
+WORKDIR /usr/src/ProjectValhalla/
 
 # Make the entrypoint script executable
 RUN chmod +x /usr/src/ProjectValhalla/docker/entrypoint.sh

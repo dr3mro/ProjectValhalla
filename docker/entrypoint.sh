@@ -1,7 +1,4 @@
 #!/bin/bash
-set -e
-
-cd /usr/src/ProjectValhalla/
 
 git pull
 
