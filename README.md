@@ -291,12 +291,12 @@ Connection: Keep-Alive
 
 ### 🤓 Get a patient
 ```
-curl -X GET -H "Authorization: Bearer amr_nasr:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc" -d @get_patient.json http://172.20.0.3:8080/v1/patient -i
+curl -X GET -H "X-Request:ewogICJpZCI6IDEwMDAwNCwKICAic2NoZW1hIjpbCiAgICAiYmFzaWNfZGF0YSIsCiAgICAiaGVhbHRoX2RhdGEiLAogICAgImFwcG9pbnRtZW50c19kYXRhIgogIF0KfQoK" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDkxODgsImlhdCI6MTcyMDgxNzE4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.lKjlzKtTd19DjpO4sBjDs-Z7JuDUha4p8OOzziJcgPo" http://172.20.0.3:8080/v1/patient -i
 ```
-- do a GET request on `/v1/patient` with a body contains a JSON with following data
+- do a GET request on `/v1/patient` with a header `X-Request` contains a `BASE64` encoded `JSON` with following data
 ```
 {
-  "id": 100015,
+  "id": 100004,
   "schema":[
     "basic_data",
     "health_data",
@@ -307,9 +307,14 @@ curl -X GET -H "Authorization: Bearer amr_nasr:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXU
 - A successful request looks like this:
 ```
 HTTP/1.1 200 OK
-Content-Length: 784
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authorization
+Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 7200
+Access-Control-Allow-Methods: GET, POST, DELETE, PATCH, SEARCH, OPTIONS
+Content-Length: 788
 Server: ProjectValhalla
-Date: Sat, 29 Jun 2024 13:53:05 GMT
+Date: Sat, 13 Jul 2024 14:37:06 GMT
 Connection: Keep-Alive
 
 {
@@ -329,7 +334,7 @@ Connection: Keep-Alive
                 "date_of_birth": "1990-01-01",
                 "firstname": "John",
                 "gender": "Male",
-                "id": 0,
+                "id": 100004,
                 "lastname": "Doe",
                 "occupation": "Engineer",
                 "place_of_birth": "New York"

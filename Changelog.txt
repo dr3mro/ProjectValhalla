@@ -1,4 +1,5 @@
 # Unreleased
+ * Switch Get patient to Header with json encoded as BASE64
  * Bug fixes and optimizations
  * optimize performance of docker dev build speed and create container on dockerhub
  * Bug Fixes and typo fix and add user_id into token.

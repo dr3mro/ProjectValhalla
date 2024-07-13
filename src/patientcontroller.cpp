@@ -28,9 +28,9 @@ void PatientController::create_patient(const crow::request& req, crow::response&
     crud_common(res, w, dbexec);
 }
 
-void PatientController::read_patient(const crow::request& req, crow::response& res)
+void PatientController::read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria)
 {
-    auto w = [this, &req, &res]() { return this->sqlman->get_read_patient_sql(req, res); };
+    auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::ref(req), std::ref(res), std::ref(criteria)); };
     crud_common(res, w, dbrexec);
 }
 

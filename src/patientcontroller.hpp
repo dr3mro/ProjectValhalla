@@ -14,7 +14,7 @@ public:
 
     // CRUDS
     void create_patient(const crow::request& req, crow::response& res);
-    void read_patient(const crow::request& req, crow::response& res);
+    void read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria);
     void update_patient(const crow::request& req, crow::response& res);
     void delete_patient(const crow::request& req, crow::response& res);
     void search_patient(const crow::request& req, crow::response& res, const jsoncons::json& search_json);

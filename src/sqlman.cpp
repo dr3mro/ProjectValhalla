@@ -36,13 +36,14 @@ std::optional<std::string> SqlMan::get_create_patient_sql(const crow::request& r
     }
     return query;
 }
-std::optional<std::string> SqlMan::get_read_patient_sql(const crow::request& req, const crow::response& res)
+std::optional<std::string> SqlMan::get_read_patient_sql(const crow::request& req, const crow::response& res, const jsoncons::json& criteria)
 {
     (void)res;
+    (void)req;
     std::optional<std::string> query;
     PatientData patientData;
     try {
-        jsoncons::json json = jsoncons::json::parse(req.body);
+        jsoncons::json json = criteria;
         patientData.fill(json);
 
         std::string columns = fmt::format("{}", fmt::join(patientData.schema, ", "));
