@@ -3,8 +3,8 @@
 #include "middlewares/authorization.hpp"
 #include "middlewares/dataintegrity.hpp"
 #include "middlewares/elapsedtime.hpp"
-#include "middlewares/getpatientverifier.hpp"
 #include "middlewares/search.hpp"
+#include "middlewares/xrequest.hpp"
 #include "patientcontroller.hpp"
 #include "usercontroller.hpp"
 #include <crow.h>
@@ -13,7 +13,7 @@
 class API_V1_Routes {
 
 public:
-    API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, GetPatientVerifier>> app, std::shared_ptr<UserController> userController, std::shared_ptr<PatientController> patientController);
+    API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, XRequest>> app, std::shared_ptr<UserController> userController, std::shared_ptr<PatientController> patientController);
 
 private:
 };

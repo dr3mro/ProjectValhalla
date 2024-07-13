@@ -7,8 +7,8 @@
 #include "middlewares/authorization.hpp"
 #include "middlewares/dataintegrity.hpp"
 #include "middlewares/elapsedtime.hpp"
-#include "middlewares/getpatientverifier.hpp"
 #include "middlewares/search.hpp"
+#include "middlewares/xrequest.hpp"
 #include "patientcontroller.hpp"
 #include "resthelper.hpp"
 #include "sqlman.hpp"
@@ -37,8 +37,8 @@ private:
     std::shared_ptr<Authorization> authorization;
     std::shared_ptr<DataIntegrity> dataIntegrity;
     std::shared_ptr<Search> search;
-    std::shared_ptr<GetPatientVerifier> getpatientverifier;
-    std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, GetPatientVerifier>> app;
+    std::shared_ptr<XRequest> xrequest;
+    std::shared_ptr<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, Search, DataIntegrity, XRequest>> app;
     std::shared_ptr<API_V1_Routes> routes;
     uint16_t srv_threads;
 };

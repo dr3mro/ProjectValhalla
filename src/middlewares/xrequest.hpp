@@ -3,7 +3,7 @@
 #include <crow.h>
 #include <jsoncons/json.hpp>
 
-struct GetPatientVerifier : crow::ILocalMiddleware {
+struct XRequest : crow::ILocalMiddleware {
 
 private:
     const std::string xRequestHeader = "X-Request";
@@ -13,8 +13,8 @@ public:
         jsoncons::json criteria;
     };
 
-    GetPatientVerifier() = default;
-    ~GetPatientVerifier() = default;
+    XRequest() = default;
+    ~XRequest() = default;
 
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
