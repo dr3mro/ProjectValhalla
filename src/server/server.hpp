@@ -41,4 +41,5 @@ private:
     std::shared_ptr<API_V1_Routes> routes;
     uint16_t srv_threads;
     uint16_t db_connections;
+    void print_banner();
 };

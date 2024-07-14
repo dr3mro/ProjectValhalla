@@ -1,4 +1,6 @@
 #include "server.hpp"
+#include "banner.hpp"
+#include <fmt/color.h>
 #include <fmt/core.h>
 
 #define PORT 8080
@@ -50,41 +52,8 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
 
 int Server::run()
 {
+    print_banner();
     try {
-        // Clean screen
-        std::cout << "\033[2J\033[1;1H" << std::endl;
-        // Show ASCII Art
-        std::cout << R"(
-
-______________________________________________________________________________________
-
-
-                          ,--,     ,---,                 ,--,    ,--,
-       ,---.            ,--.'|   ,--.' |               ,--.'|  ,--.'|
-      /__./|            |  | :   |  |  :               |  | :  |  | :
- ,---.;  ; |            :  : '   :  :  :               :  : '  :  : '
-/___/ \  | |   ,--.--.  |  ' |   :  |  |,--.  ,--.--.  |  ' |  |  ' |     ,--.--.
-\   ;  \ ' |  /       \ '  | |   |  :  '   | /       \ '  | |  '  | |    /       \
- \   \  \: | .--.  .-. ||  | :   |  |   /' :.--.  .-. ||  | :  |  | :   .--.  .-. |
-  ;   \  ' .  \__\/: . .'  : |__ '  :  | | | \__\/: . .'  : |__'  : |__  \__\/: . .
-   \   \   '  ," .--.; ||  | '.'||  |  ' | : ," .--.; ||  | '.'|  | '.'| ," .--.; |
-    \   `  ; /  /  ,.  |;  :    ;|  :  :_:,'/  /  ,.  |;  :    ;  :    ;/  /  ,.  |
-     :   \ |;  :   .'   \  ,   / |  | ,'   ;  :   .'   \  ,   /|  ,   /;  :   .'   \
-      '---" |  ,     .-./---`-'  `--''     |  ,     .-./---`-'  ---`-' |  ,     .-./
-             `--`---'                       `--`---'                    `--`---'
-
-
-        )" << '\n';
-
-        std::cout << "______________________________________________________________________________________" << "\n\n";
-        // Start the server on port %PORT%
-        std::cout << fmt::format(" - Version     : {}", GIT_TAG) << '\n';
-        std::cout << fmt::format(" - Port        : {}", PORT) << '\n';
-        std::cout << fmt::format(" - Threads     : {}", srv_threads) << '\n';
-        std::cout << fmt::format(" - Database    : {} connections", db_connections) << '\n';
-        std::cout << "______________________________________________________________________________________" << '\n'
-                  << std::endl;
-
         app->loglevel(crow::LogLevel::INFO)
             .use_compression(crow::compression::algorithm::GZIP)
             .port(PORT)
@@ -100,4 +69,21 @@ ________________________________________________________________________________
     }
 
     return 0;
+}
+
+void Server::print_banner()
+{
+
+    // Clean screen
+    std::cout << "\033[2J\033[1;1H" << std::endl;
+
+    // Show ASCII Art
+    PRINTLINE()
+    PRINT_LOGO()
+    PRINTLINE()
+    PRINT(" - Version", GIT_TAG, light_green, yellow)
+    PRINT(" - Port", PORT, light_green, yellow)
+    PRINT(" - Threads", srv_threads, light_green, yellow)
+    PRINT(" - Database", fmt::format("{} {}", db_connections, "connections"), light_green, yellow)
+    PRINTLINE()
 }
