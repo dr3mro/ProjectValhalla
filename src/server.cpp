@@ -52,7 +52,7 @@ int Server::run()
 {
     try {
         // Clean screen
-        std::cout << "\033[2J\033[1;1H";
+        std::cout << "\033[2J\033[1;1H" << std::endl;
         // Show ASCII Art
         std::cout << R"(
 
@@ -82,7 +82,8 @@ ________________________________________________________________________________
         std::cout << fmt::format(" - Port        : {}", PORT) << '\n';
         std::cout << fmt::format(" - Threads     : {}", srv_threads) << '\n';
         std::cout << fmt::format(" - Database    : {} connections", db_connections) << '\n';
-        std::cout << "______________________________________________________________________________________" << "\n\n";
+        std::cout << "______________________________________________________________________________________" << '\n'
+                  << std::endl;
 
         app->loglevel(crow::LogLevel::INFO)
             .use_compression(crow::compression::algorithm::GZIP)
