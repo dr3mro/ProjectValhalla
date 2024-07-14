@@ -123,7 +123,7 @@ Connection: Keep-Alive
     "status_message": "Failed to create a new user, user exists"
 }%
 ```
-- the "payload" value is verified on the server against SHA256SUM that should be generated and added to the JSON in sha256sum key.
+- the "payload" value is optionally verified on the server against SHA256SUM that might be generated and added to the JSON in sha256sum key.
 - in the "payload" the username should only composed of lower case characters and numbers and not start with number and does not contains white spaces.
 - the password should contains upper and lower case characters, symbols, numbers and at lest 8 characters long.
 - the email should be in a valid format user@domain.ext
@@ -231,7 +231,7 @@ curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJl
 - The basic_data should contains {"id" = 0}.
 - Providing empty value '{}' will clear the corresponding field in the database.
 - Not providing a key for example "health_data" has no effect as only the provided data is processed.
-- The payload should be verified with sha256sum and the hash should be provided in the JSON as "sha256sum" value.
+- The payload might be verified with sha256sum and the hash can be provided in the JSON as "sha256sum" value.
 - A successful request will return the user_id and it looks like this.
 ```
 HTTP/1.1 200 OK
@@ -361,7 +361,7 @@ Connection: Keep-Alive
 }%
 ```
 - the "schems" is an array of items you want to retrieve
-- you can request 1 or more or even 0 but I did not test this case yet.
+- you can request 1 or more or even 0.
 - the 'id' is the patient_id and should exists
 
 ### 👍🏻 Update a patient
@@ -438,9 +438,9 @@ Connection: Keep-Alive
 
 ### ❌ Delete a patient
   ```
-  curl -X DELETE -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc" -d @del_patient.json http://172.20.0.3:8080/v1/patient -i
+curl -X DELETE -H "X-Request: $(cat del_patient.json | base64)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM1NDY3ODgsImlhdCI6MTcyMDk1NDc4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMSIsInN1YiI6ImFtcl9uYXNyIn0.iw9Sql6TDnVUmwXEfaFW9tmFqAeHeSZzD-54iReiZNo"  http://172.20.0.3:8080/v1/patient -i
   ```
-  - In order to delete a patient do a DELETE request in `/v1/patient` with a body contains JSON like this.
+  - In order to delete a patient do a DELETE request in `/v1/patient` with a header contains JSON under key `X-Request` like this.
   ```
   {
   "payload": {
@@ -456,7 +456,7 @@ Connection: Keep-Alive
 }
 ```
 - data should be correct as any wrong info will invalidate the request.
-- sha256sum is needed to prevent malicious mass deletion of data.
+- sha256sum is optional prevent malicious mass deletion of data.
 - a successful delete reply with a json like this
 ```
 HTTP/1.1 200 OK

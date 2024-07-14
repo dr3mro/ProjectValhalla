@@ -34,9 +34,9 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, Elapse
         });
 
     CROW_ROUTE((*app), "/v1/patient")
-        .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, DataIntegrity)
-        .methods(crow::HTTPMethod::DELETE)([patientController](const crow::request& req, crow::response& res) {
-            patientController->delete_patient(std::ref(req), std::ref(res));
+        .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, XRequest, DataIntegrity)
+        .methods(crow::HTTPMethod::DELETE)([patientController, app](const crow::request& req, crow::response& res) {
+            patientController->delete_patient(std::ref(req), std::ref(res), app->get_context<XRequest>(req).criteria);
         });
 
     CROW_ROUTE((*app), "/v1/patient")

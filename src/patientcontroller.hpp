@@ -16,7 +16,7 @@ public:
     void create_patient(const crow::request& req, crow::response& res);
     void read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria);
     void update_patient(const crow::request& req, crow::response& res);
-    void delete_patient(const crow::request& req, crow::response& res);
+    void delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json);
     void search_patient(const crow::request& req, crow::response& res, const jsoncons::json& search_json);
 
 private:
@@ -31,7 +31,7 @@ private:
     bool get_sql_statement(json& response_json, crow::response& res, std::optional<std::string>& query, T w)
     {
         query = w();
-
+        std::cout << query.value() << std::endl;
         if (query->empty()) {
             rHelper->format_response(response_json, -1, "failure", "failed to synthesize query");
             rHelper->finish_response(res, 400, response_json);

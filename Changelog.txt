@@ -1,3 +1,5 @@
+# Unreleased
+ * Switch Delete patient data from body to Header as a json encoded as BASE64
 
 # Version 0.2
  * Switch Search for patient data from body to Header as a json encoded as BASE64

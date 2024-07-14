@@ -83,16 +83,16 @@ std::optional<std::string> SqlMan::get_update_patient_sql(const crow::request& r
     }
     return query;
 }
-std::optional<std::string> SqlMan::get_delete_patient_sql(const crow::request& req, const crow::response& res)
+std::optional<std::string> SqlMan::get_delete_patient_sql(const crow::request& req, const crow::response& res, const jsoncons::json& delete_json)
 {
     (void)res;
+    (void)req;
     std::optional<std::string> query;
     uint64_t id;
     std::string basic_data_str;
 
     try {
-        jsoncons::json json = jsoncons::json::parse(req.body);
-        jsoncons::json payload = json.at("payload");
+        jsoncons::json payload = delete_json.at("payload");
         jsoncons::json basic_data = payload.at("basic_data");
         id = basic_data.at("id").as<uint64_t>();
         basic_data_str = basic_data.as<std::string>();

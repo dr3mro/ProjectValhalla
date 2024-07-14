@@ -26,7 +26,7 @@ public:
     std::optional<std::string> get_create_patient_sql(const crow::request& req, const crow::response& res, uint64_t nextid) const;
     std::optional<std::string> get_read_patient_sql(const crow::request& req, const crow::response& res, const jsoncons::json& criteria);
     std::optional<std::string> get_update_patient_sql(const crow::request& req, const crow::response& res);
-    std::optional<std::string> get_delete_patient_sql(const crow::request& req, const crow::response& res);
+    std::optional<std::string> get_delete_patient_sql(const crow::request& req, const crow::response& res, const jsoncons::json& delete_json);
     std::optional<std::string> get_search_patient_sql(SqlMan::SearchData& searchData);
 
     SqlMan() = default;

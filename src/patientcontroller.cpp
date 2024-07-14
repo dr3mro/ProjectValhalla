@@ -39,9 +39,9 @@ void PatientController::update_patient(const crow::request& req, crow::response&
     auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(req, res); };
     crud_common(res, w, dbexec);
 }
-void PatientController::delete_patient(const crow::request& req, crow::response& res)
+void PatientController::delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json)
 {
-    auto w = [this, &req, &res]() { return this->sqlman->get_delete_patient_sql(req, res); };
+    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(req, res, delete_json); };
     crud_common(res, w, dbexec);
 }
 
