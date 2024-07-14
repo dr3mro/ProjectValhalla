@@ -23,6 +23,7 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
     , app(std::make_shared<crow::App<crow::CORSHandler, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>>(*elapsedTime, *authentication, *authorization, *xrequest, *search, *dataIntegrity))
     , routes(std::make_shared<API_V1_Routes>(app, userController, patientController))
     , srv_threads(srv_threads)
+    , db_connections(db_connections)
 {
     auto& cors = app->get_middleware<crow::CORSHandler>();
 
@@ -77,8 +78,10 @@ ________________________________________________________________________________
 
         std::cout << "______________________________________________________________________________________" << "\n\n";
         // Start the server on port %PORT%
-        std::cout << fmt::format("Valhalla server version : {}", GIT_TAG) << '\n';
-        std::cout << fmt::format("Valhalla server port    : {}", PORT) << '\n';
+        std::cout << fmt::format(" - Version     : {}", GIT_TAG) << '\n';
+        std::cout << fmt::format(" - Port        : {}", PORT) << '\n';
+        std::cout << fmt::format(" - Threads     : {}", srv_threads) << '\n';
+        std::cout << fmt::format(" - Database    : {} connections", db_connections) << '\n';
         std::cout << "______________________________________________________________________________________" << "\n\n";
 
         app->loglevel(crow::LogLevel::INFO)
