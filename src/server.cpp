@@ -2,6 +2,9 @@
 #include <fmt/core.h>
 
 #define PORT 8080
+#ifndef GIT_TAG
+#define GIT_TAG "unknown"
+#endif
 
 Server::Server(uint16_t srv_threads, uint16_t db_connections)
     : dbConnPool(std::make_shared<DatabaseConnectionPool>(db_connections))
@@ -48,7 +51,7 @@ int Server::run()
 {
     try {
         // Start the server on port %PORT%
-        std::cout << fmt::format("database server is started on port {}.\n", PORT);
+        std::cout << fmt::format("Valhalla server version : {}  is started on port {}.\n", GIT_TAG, PORT);
 
         app->loglevel(crow::LogLevel::INFO)
             .use_compression(crow::compression::algorithm::GZIP)

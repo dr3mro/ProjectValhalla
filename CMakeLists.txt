@@ -93,6 +93,15 @@ CPMAddPackage(
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 set(CMAKE_WARN_DEPRECATED OFF)
 
+# Get the current Git tag using the script
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/get_tag.sh OUTPUT_VARIABLE GIT_TAG_MACRO OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Ensure the output variable is trimmed
+string(STRIP "${GIT_TAG_MACRO}" GIT_TAG_MACRO)
+
+# Add the Git tag macro to the compile definitions
+add_compile_definitions(${GIT_TAG_MACRO})
+
 # Find all source files
 file(GLOB_RECURSE SRC "src/*.cpp")
 
