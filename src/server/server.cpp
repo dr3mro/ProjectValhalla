@@ -73,13 +73,17 @@ int Server::run()
 
 void Server::print_banner()
 {
+    std::srand(std::time(0));
+    // Select a random color
+    int num_colors = sizeof(colors) / sizeof(colors[0]);
+    fmt::color random_color = colors[std::rand() % num_colors];
 
     // Clean screen
     std::cout << "\033[2J\033[1;1H" << std::endl;
 
     // Show ASCII Art
     PRINTLINE()
-    PRINT_LOGO()
+    PRINT_LOGO(random_color)
     PRINTLINE()
     PRINT(" - Version", GIT_TAG, light_green, yellow)
     PRINT(" - Port", PORT, light_green, yellow)
