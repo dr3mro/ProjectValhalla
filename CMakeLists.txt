@@ -16,6 +16,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CPM_SOURCE_CACHE "${CMAKE_CURRENT_SOURCE_DIR}/.cpm_cache")
 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 include(get_cpm)
 
 # Add CPM packages

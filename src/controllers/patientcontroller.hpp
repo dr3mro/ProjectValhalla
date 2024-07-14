@@ -1,8 +1,8 @@
 #pragma once
 #include "databasecontroller.hpp"
-#include "resthelper.hpp"
-#include "sqlman.hpp"
-#include "tokenizer.hpp"
+#include "utils/resthelper.hpp"
+#include "utils/sqlman.hpp"
+#include "utils/tokenizer.hpp"
 #include <crow.h>
 #include <fmt/format.h>
 #include <jsoncons/json.hpp>

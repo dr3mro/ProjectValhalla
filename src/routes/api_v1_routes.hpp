@@ -1,12 +1,12 @@
 #pragma once
+#include "controllers/patientcontroller.hpp"
+#include "controllers/usercontroller.hpp"
 #include "middlewares/authentication.hpp"
 #include "middlewares/authorization.hpp"
 #include "middlewares/dataintegrity.hpp"
 #include "middlewares/elapsedtime.hpp"
 #include "middlewares/search.hpp"
 #include "middlewares/xrequest.hpp"
-#include "patientcontroller.hpp"
-#include "usercontroller.hpp"
 #include <crow.h>
 #include <crow/middlewares/cors.h>
 #include <memory>

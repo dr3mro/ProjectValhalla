@@ -1,7 +1,7 @@
 #pragma once
 
-#include "database.hpp"
-#include "databaseconnectionpool.hpp"
+#include "database/database.hpp"
+#include "database/databaseconnectionpool.hpp"
 #include <jsoncons/json.hpp>
 
 using json = jsoncons::json;

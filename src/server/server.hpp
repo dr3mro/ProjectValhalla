@@ -1,7 +1,8 @@
 #pragma once
-#include "api_v1_routes.hpp"
-#include "databaseconnectionpool.hpp"
-#include "databasecontroller.hpp"
+#include "controllers/databasecontroller.hpp"
+#include "controllers/patientcontroller.hpp"
+#include "controllers/usercontroller.hpp"
+#include "database/databaseconnectionpool.hpp"
 #include "memory"
 #include "middlewares/authentication.hpp"
 #include "middlewares/authorization.hpp"
@@ -9,13 +10,11 @@
 #include "middlewares/elapsedtime.hpp"
 #include "middlewares/search.hpp"
 #include "middlewares/xrequest.hpp"
-#include "patientcontroller.hpp"
-#include "resthelper.hpp"
-#include "sqlman.hpp"
-#include "tokenizer.hpp"
-#include "usercontroller.hpp"
+#include "routes/api_v1_routes.hpp"
+#include "utils/resthelper.hpp"
+#include "utils/sqlman.hpp"
+#include "utils/tokenizer.hpp"
 #include <crow.h>
-#include <crow/middlewares/cors.h>
 
 class Server {
 public:
