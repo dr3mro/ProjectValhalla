@@ -90,4 +90,5 @@ void Server::print_banner()
     PRINT(" - Threads", srv_threads, light_green, yellow)
     PRINT(" - Database", fmt::format("{} {}", db_connections, "connections"), light_green, yellow)
     PRINTLINE()
+    std::cout << std::endl;
 }
