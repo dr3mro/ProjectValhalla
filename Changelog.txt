@@ -1,4 +1,5 @@
 # Unreleased
+ * Add ASCII Art to Server welcome screen.
  * Add version string to server welcome message.
  * Switch Delete patient data from body to Header as a json encoded as BASE64.
 
