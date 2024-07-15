@@ -195,8 +195,7 @@ Authentication Denied%
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc
 ```
-* Authorization: Bearer
-* username:token
+* Authorization: Bearer ${token}
 
 ### 👨🏻‍🦳 Add a patient
 ```
