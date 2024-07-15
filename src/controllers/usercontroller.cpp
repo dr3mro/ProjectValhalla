@@ -63,55 +63,52 @@ bool UserController::Impl::is_email_pattern_valid(const std::string& email)
 
 bool UserController::Impl::extract_and_sanity_check_user_registration_data(UserRegistrationData& userRegistrationData, json& userdata_json, json& response_json, crow::response& res)
 {
-    {
-        try {
-            // Extract the username from the JSON
-            json payload = userdata_json["payload"];
+    try {
+        // Extract the username from the JSON
+        json payload = userdata_json["payload"];
 
-            userRegistrationData.username = payload["username"].as<std::string>();
-            std::string password = payload["password"].as<std::string>();
+        userRegistrationData.username = payload["username"].as<std::string>();
+        std::string password = payload["password"].as<std::string>();
 
-            // Check username pattern
-            if (!is_username_pattern_valid(userRegistrationData.username)) {
-                rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "Username contains invalid characters", -1, 400);
-                return false;
-            }
-            if (!is_password_pattern_valid(password)) {
-                rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "Password needs to be more secure", -1, 400);
-                return false;
-            }
-
-            payload.erase("password");
-
-            userRegistrationData.password_hash = picosha2::hash256_hex_string(password);
-            userRegistrationData.role = payload["role"].as<std::string>();
-            userRegistrationData.user_data = payload["user_data"].as<std::string>();
-
-            std::string email = payload["user_data"]["contact"]["email"].as<std::string>();
-
-            // Check if user exists
-            if (dbController->checkItemExists("users", "username", userRegistrationData.username)) {
-                rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "User already exists", -1, 400);
-                return false;
-            }
-
-            // Check if username, password, or email are empty
-            if (userRegistrationData.username.empty() || password.empty() || userRegistrationData.password_hash.empty()) {
-                rHelper->respond_with_error(res, response_json, "Failed to create a new user, invalid data", "Empty username or password", -1, 400);
-                return false;
-            }
-
-            // Check if the email matches the pattern
-            if (!is_email_pattern_valid(email)) {
-                rHelper->respond_with_error(res, response_json, "Failed to create a new user, invalid data", "Invalid email format", -1, 400);
-                return false;
-            }
-        } catch (const std::exception& e) {
-            rHelper->respond_with_error(res, response_json, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        // Check username pattern
+        if (!is_username_pattern_valid(userRegistrationData.username)) {
+            rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "Username contains invalid characters", -1, 400);
             return false;
         }
-    }
+        if (!is_password_pattern_valid(password)) {
+            rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "Password needs to be more secure", -1, 400);
+            return false;
+        }
 
+        payload.erase("password");
+
+        userRegistrationData.password_hash = picosha2::hash256_hex_string(password);
+        userRegistrationData.role = payload["role"].as<std::string>();
+        userRegistrationData.user_data = payload["user_data"].as<std::string>();
+
+        std::string email = payload["user_data"]["contact"]["email"].as<std::string>();
+
+        // Check if user exists
+        if (dbController->checkItemExists("users", "username", userRegistrationData.username)) {
+            rHelper->respond_with_error(res, response_json, "Failed to create a new user: ", "User already exists", -1, 400);
+            return false;
+        }
+
+        // Check if username, password, or email are empty
+        if (userRegistrationData.username.empty() || password.empty() || userRegistrationData.password_hash.empty()) {
+            rHelper->respond_with_error(res, response_json, "Failed to create a new user, invalid data", "Empty username or password", -1, 400);
+            return false;
+        }
+
+        // Check if the email matches the pattern
+        if (!is_email_pattern_valid(email)) {
+            rHelper->respond_with_error(res, response_json, "Failed to create a new user, invalid data", "Invalid email format", -1, 400);
+            return false;
+        }
+    } catch (const std::exception& e) {
+        rHelper->respond_with_error(res, response_json, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        return false;
+    }
     return true;
 }
 
