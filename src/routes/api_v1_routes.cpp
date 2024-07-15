@@ -12,7 +12,7 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, Elapse
     CROW_ROUTE((*app), "/v1/user")
         .CROW_MIDDLEWARES(*app, ElapsedTime, Authentication)
         .methods(crow::HTTPMethod::GET)([userController, app](const crow::request& req, crow::response& res) {
-            userController->login_user(std::ref(req), std::ref(res), app->get_context<Authentication>(req).credentials);
+            userController->login_user(std::ref(req), std::ref(res), std::ref(app->get_context<Authentication>(req).credentials));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
@@ -24,7 +24,7 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, Elapse
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, XRequest)
         .methods(crow::HTTPMethod::GET)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->read_patient(std::ref(req), std::ref(res), app->get_context<XRequest>(req).criteria);
+            patientController->read_patient(std::ref(req), std::ref(res), std::ref(app->get_context<XRequest>(req).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
@@ -36,13 +36,13 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<crow::App<crow::CORSHandler, Elapse
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, XRequest, DataIntegrity)
         .methods(crow::HTTPMethod::DELETE)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->delete_patient(std::ref(req), std::ref(res), app->get_context<XRequest>(req).criteria);
+            patientController->delete_patient(std::ref(req), std::ref(res), std::ref(app->get_context<XRequest>(req).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, ElapsedTime, Authorization, XRequest, Search)
         .methods(crow::HTTPMethod::SEARCH)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->search_patient(std::ref(req), std::ref(res), app->get_context<Search>(req).search_json);
+            patientController->search_patient(std::ref(req), std::ref(res), std::ref(app->get_context<Search>(req).search_json));
         });
 
     CROW_ROUTE((*app), "/v1/hello")

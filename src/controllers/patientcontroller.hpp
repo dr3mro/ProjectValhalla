@@ -34,8 +34,8 @@ private:
         query = w();
 
         if (query->empty()) {
-            rHelper->format_response(response_json, -1, "failure", "failed to synthesize query");
-            rHelper->finish_response(res, 400, response_json);
+            rHelper->format_response(std::ref(response_json), -1, "failure", "failed to synthesize query");
+            rHelper->finish_response(std::ref(res), 400, std::ref(response_json));
             return false;
         }
         return true;

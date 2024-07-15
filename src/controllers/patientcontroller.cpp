@@ -22,27 +22,27 @@ void PatientController::create_patient(const crow::request& req, crow::response&
         if (!this->rHelper->get_nextid(nextid, res)) {
             return std::optional<std::string>();
         }
-        return this->sqlman->get_create_patient_sql(req, res, nextid);
+        return this->sqlman->get_create_patient_sql(std::ref(req), std::ref(res), nextid);
     };
 
-    crud_common(res, w, dbexec);
+    crud_common(std::ref(res), w, dbexec);
 }
 
 void PatientController::read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria)
 {
     auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::ref(req), std::ref(res), std::ref(criteria)); };
-    crud_common(res, w, dbrexec);
+    crud_common(std::ref(res), w, dbrexec);
 }
 
 void PatientController::update_patient(const crow::request& req, crow::response& res)
 {
-    auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(req, res); };
-    crud_common(res, w, dbexec);
+    auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(std::ref(req), std::ref(res)); };
+    crud_common(std::ref(res), w, dbexec);
 }
 void PatientController::delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json)
 {
-    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(req, res, delete_json); };
-    crud_common(res, w, dbexec);
+    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(std::ref(req), std::ref(res), std::ref(delete_json)); };
+    crud_common(std::ref(res), w, dbexec);
 }
 
 void PatientController::search_patient(const crow::request& req, crow::response& res, const jsoncons::json& search_json)
@@ -56,7 +56,7 @@ void PatientController::search_patient(const crow::request& req, crow::response&
         SqlMan::SearchData searchData(search_json);
         query = sqlman->get_search_patient_sql(searchData);
         if (query) {
-            query_results_json = dbController->executeReadQuery(query.value());
+            query_results_json = dbController->executeReadQuery(std::ref(query.value()));
             size_t results_count = query_results_json.size();
 
             if (results_count > searchData.limit) {
@@ -71,13 +71,13 @@ void PatientController::search_patient(const crow::request& req, crow::response&
         }
 
         if (query_results_json.empty()) {
-            rHelper->respond_with_error(res, response_json, "failure: ", "not found", -1, 400);
+            rHelper->respond_with_error(res, std::ref(response_json), "failure: ", "not found", -1, 400);
         } else {
             rHelper->format_response(response_json, 0, "success", query_results_json);
             rHelper->finish_response(res, 200, response_json);
         }
     } catch (const std::exception& e) {
         // Handle exception (log, etc.)
-        rHelper->respond_with_error(res, response_json, "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
+        rHelper->respond_with_error(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
     }
 }

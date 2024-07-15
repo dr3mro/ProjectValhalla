@@ -60,7 +60,7 @@ int Server::run()
             .multithreaded()
             .concurrency(srv_threads)
             .bindaddr("0.0.0.0")
-            .server_name("ProjectValhalla")
+            .server_name("Valhalla")
             .run();
 
     } catch (const std::exception& e) {

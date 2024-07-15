@@ -12,7 +12,7 @@ json DatabaseController::executeQuery(const std::string& query)
     std::shared_ptr<Database> db = nullptr;
     try {
         db = databaseConnectionPool->get_connection();
-        json results = db->executeQuery(query);
+        json results = db->executeQuery(std::ref(query));
         databaseConnectionPool->return_connection(db);
         return results;
     } catch (const std::exception& e) {
@@ -32,7 +32,7 @@ json DatabaseController::executeReadQuery(const std::string& query)
     std::shared_ptr<Database> db = nullptr;
     try {
         db = databaseConnectionPool->get_connection();
-        json results = db->executeReadQuery(query);
+        json results = db->executeReadQuery(std::ref(query));
         databaseConnectionPool->return_connection(db);
         return results;
     } catch (const std::exception& e) {
