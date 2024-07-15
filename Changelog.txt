@@ -1,5 +1,5 @@
 # Unreleased
-
+ * Code clean and changelog update.
 
 # Version 0.2.1
  * Add ASCII Art to Server welcome screen.
