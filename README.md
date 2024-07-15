@@ -1,13 +1,20 @@
 # 🚀 PROJECT VALHALLA
 ![alt text](https://github.com/dr3mro/ProjectValhalla/blob/a4162ecba8c1b9684f540fe0ef75a554b1308bb3/Screenshot.png?raw=true)
 
- - Before testing make sure you clean all the old containers.
+ - If you get any issues while testing make sure you clean all the old containers.
  - cd into $PROJECT_DIR/docker and run those commands if you have used it before
 ```
 docker compose down --rmi all --volumes
 docker compose down --remove-orphans --volumes
 ```
-
+- To get the latest version 
+```
+docker compose --profile default up --build
+```
+or use the dev version 
+```
+docker compose --profile dev up --build
+```
 ### 🐳 Run docker
 ```
 git clone git@github.com:dr3mro/ProjectValhalla.git
