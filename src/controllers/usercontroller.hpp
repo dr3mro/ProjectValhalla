@@ -2,7 +2,6 @@
 
 #include "controllers/databasecontroller.hpp"
 #include "utils/resthelper.hpp"
-#include "utils/sqlman.hpp"
 #include "utils/tokenizer.hpp"
 #include <crow.h>
 #include <memory>
@@ -13,8 +12,7 @@ class UserController {
 public:
     UserController(std::shared_ptr<DatabaseController> dbController,
         std::shared_ptr<RestHelper> rHelper,
-        std::shared_ptr<Tokenizer> tokenizer,
-        std::shared_ptr<SqlMan> sqlman);
+        std::shared_ptr<Tokenizer> tokenizer);
     UserController();
     ~UserController();
 

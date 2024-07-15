@@ -8,11 +8,10 @@
 // Definition of the implementation class
 class UserController::Impl {
 public:
-    Impl(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer, std::shared_ptr<SqlMan> sqlman)
+    Impl(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer)
         : dbController(dbController)
         , rHelper(rHelper)
         , tokenizer(tokenizer)
-        , sqlman(sqlman)
     {
     }
 
@@ -33,7 +32,6 @@ public:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> rHelper;
     std::shared_ptr<Tokenizer> tokenizer;
-    std::shared_ptr<SqlMan> sqlman;
 };
 
 bool UserController::Impl::is_username_pattern_valid(const std::string& username)
@@ -124,8 +122,8 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
     return 0;
 }
 
-UserController::UserController(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer, std::shared_ptr<SqlMan> sqlman)
-    : pImpl(std::make_unique<Impl>(dbController, rHelper, tokenizer, sqlman))
+UserController::UserController(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer)
+    : pImpl(std::make_unique<Impl>(dbController, rHelper, tokenizer))
 {
 }
 
