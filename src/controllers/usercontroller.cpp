@@ -24,7 +24,6 @@ public:
     } UserRegistrationData;
 
     bool is_username_pattern_valid(const std::string& username);
-    bool is_string_contains_spaces(const std::string& string);
     bool is_password_pattern_valid(const std::string& password);
     bool is_email_pattern_valid(const std::string& email);
     bool extract_and_sanity_check_user_registration_data(UserRegistrationData& userRegistrationData, json& userdata_json, json& response_json, crow::response& res);
@@ -41,12 +40,6 @@ bool UserController::Impl::is_username_pattern_valid(const std::string& username
 {
     const std::regex pattern("^[a-z][a-z0-9_]*$");
     return std::regex_match(username, pattern);
-}
-
-bool UserController::Impl::is_string_contains_spaces(const std::string& string)
-{
-    std::regex pattern("\\s");
-    return std::regex_search(string, pattern);
 }
 
 bool UserController::Impl::is_password_pattern_valid(const std::string& password)
