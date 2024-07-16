@@ -1,8 +1,8 @@
 import http from 'k6/http';
 
 export let options = {
-    vus: 1000,
-    iterations: 100000,
+    vus: 100,
+    iterations: 10000,
 };
 
 const BASE_URL = 'http://172.20.0.4:8080/v1/patient';
