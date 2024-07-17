@@ -1,16 +1,20 @@
 #include "resthelper.hpp"
 #include "fmt/core.h"
-#include <jwt-cpp/jwt.h>
-#include <picosha2.h>
 
 RestHelper::RestHelper(std::shared_ptr<DatabaseController> dbController)
     : dbController(dbController)
 {
 }
 
-uint64_t RestHelper::get_next_patient_id()
+// Use a more descriptive name for the function
+uint64_t RestHelper::getNextPatientId()
 {
     json json_nextval = dbController->executeQuery("SELECT NEXTVAL('patient_id_seq');");
+
+    // Handle the case where the query returns an empty result
+    if (json_nextval.empty()) {
+        return 0; // Or throw an exception if you prefer
+    }
 
     // Iterate through each object in the JSON array
     for (const auto& obj : json_nextval.array_range()) {
@@ -18,13 +22,15 @@ uint64_t RestHelper::get_next_patient_id()
             return obj["nextval"].as<uint64_t>();
         }
     }
-    return 0;
+    return 0; // Or throw an exception if you prefer
 }
 
-bool RestHelper::check_affected_rows(const json& response)
+// Use a more descriptive name for the function
+bool RestHelper::isQuerySuccessful(const json& response)
 {
-    if (response.empty())
+    if (response.empty()) {
         return false;
+    }
 
     for (const auto& obj : response.array_range()) {
         if (obj.contains("affected rows")) {
@@ -34,14 +40,16 @@ bool RestHelper::check_affected_rows(const json& response)
     return true;
 }
 
-void RestHelper::format_response(json& response_json, const short status, const std::string& status_message, const json& response)
+// Use a more descriptive name for the function
+void RestHelper::buildResponse(json& response_json, const short status, const std::string& status_message, const json& response)
 {
     response_json["status_id"] = status;
     response_json["status_message"] = status_message;
     response_json["payload"] = response;
 }
 
-void RestHelper::finish_response(crow::response& res, const int& code, const json& response_json)
+// Use a more descriptive name for the function
+void RestHelper::sendResponse(crow::response& res, const int& code, const json& response_json)
 {
     std::string body;
     response_json.dump(body, jsoncons::indenting::indent);
@@ -50,35 +58,40 @@ void RestHelper::finish_response(crow::response& res, const int& code, const jso
     res.end();
 }
 
-void RestHelper::respond_with_error(crow::response& res, json& response_json, const std::string& status_message, const std::string& response, const short status, const short code)
+// Use a more descriptive name for the function
+void RestHelper::sendErrorResponse(crow::response& res, json& response_json, const std::string& status_message, const std::string& response, const short status, const short code)
 {
-    format_response(response_json, status, status_message, response);
-    finish_response(res, code, response_json);
+    buildResponse(response_json, status, status_message, response);
+    sendResponse(res, code, response_json);
 }
 
-bool RestHelper::get_nextid(uint64_t& nextid, crow::response& res)
+// Use a more descriptive name for the function
+bool RestHelper::getNextId(uint64_t& nextid, crow::response& res)
 {
     json response_json;
-    nextid = get_next_patient_id();
+    nextid = getNextPatientId();
 
     if (nextid == 0) {
-        format_response(response_json, -1, "failed to create a new patient", "failed to get nextval");
-        finish_response(res, 400, response_json);
+        buildResponse(response_json, -1, "failed to create a new patient", "failed to get nextval");
+        sendResponse(res, 400, response_json);
         return false;
     }
     return true;
 }
 
-int RestHelper::evaluate_response(json& response_json, const json& query_results_json)
+// Use a more descriptive name for the function
+int RestHelper::evaluateQueryResult(json& response_json, const json& query_results_json)
 {
-    if (check_affected_rows(query_results_json)) {
-        format_response(response_json, 0, "success", query_results_json);
+    if (isQuerySuccessful(query_results_json)) {
+        buildResponse(response_json, 0, "success", query_results_json);
         return 200;
     }
-    format_response(response_json, -1, "failure", query_results_json);
+    buildResponse(response_json, -1, "failure", query_results_json);
     return 400;
 }
-void RestHelper::evaluate_and_finish(json& response_json, const json& query_results_json, crow::response& res)
+
+// Use a more descriptive name for the function
+void RestHelper::sendQueryResult(json& response_json, const json& query_results_json, crow::response& res)
 {
-    finish_response(res, evaluate_response(response_json, query_results_json), response_json);
+    sendResponse(res, evaluateQueryResult(response_json, query_results_json), response_json);
 }

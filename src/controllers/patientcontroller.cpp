@@ -19,7 +19,7 @@ void PatientController::create_patient(const crow::request& req, crow::response&
 
     auto w = [this, &req, &res]() {
         uint64_t nextid;
-        if (!this->rHelper->get_nextid(nextid, res)) {
+        if (!this->rHelper->getNextId(nextid, res)) {
             return std::optional<std::string>();
         }
         return this->sqlman->get_create_patient_sql(std::ref(req), std::ref(res), nextid);
@@ -71,13 +71,13 @@ void PatientController::search_patient(const crow::request& req, crow::response&
         }
 
         if (query_results_json.empty()) {
-            rHelper->respond_with_error(res, std::ref(response_json), "failure: ", "not found", -1, 400);
+            rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", "not found", -1, 400);
         } else {
-            rHelper->format_response(response_json, 0, "success", query_results_json);
-            rHelper->finish_response(res, 200, response_json);
+            rHelper->buildResponse(response_json, 0, "success", query_results_json);
+            rHelper->sendResponse(res, 200, response_json);
         }
     } catch (const std::exception& e) {
         // Handle exception (log, etc.)
-        rHelper->respond_with_error(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
+        rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
     }
 }

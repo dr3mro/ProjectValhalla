@@ -34,8 +34,8 @@ private:
         query = w();
 
         if (query->empty()) {
-            rHelper->format_response(std::ref(response_json), -1, "failure", "failed to synthesize query");
-            rHelper->finish_response(std::ref(res), 400, std::ref(response_json));
+            rHelper->buildResponse(std::ref(response_json), -1, "failure", "failed to synthesize query");
+            rHelper->sendResponse(std::ref(res), 400, std::ref(response_json));
             return false;
         }
         return true;
@@ -51,11 +51,11 @@ private:
             if (get_sql_statement(response_json, res, query, w) && query.has_value()) {
                 query_results_json = (*dbController.*f)(query.value());
             }
-            rHelper->evaluate_and_finish(response_json, query_results_json, res);
+            rHelper->sendQueryResult(response_json, query_results_json, res);
         } catch (const std::exception& e) {
             // Handle exception (log, etc.)
-            rHelper->format_response(response_json, -2, "failure", fmt::format("failed: {}", e.what()));
-            rHelper->finish_response(res, 500, response_json);
+            rHelper->buildResponse(response_json, -2, "failure", fmt::format("failed: {}", e.what()));
+            rHelper->sendResponse(res, 500, response_json);
         }
     }
 };
