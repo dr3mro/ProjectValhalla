@@ -52,7 +52,7 @@ void DOSDetector::cleanUpTask()
 {
     while (running_.load()) {
         auto now = std::chrono::steady_clock::now();
-        auto next = now + std::chrono::seconds(10);
+        auto next = now + std::chrono::seconds(600);
 
         {
             std::lock_guard<std::mutex> lock(m_);
