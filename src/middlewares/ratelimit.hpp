@@ -16,7 +16,7 @@ public:
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
         (void)ctx;
-        if (dos_detector->id_dos_attack(std::ref(req), std::ref(res))) {
+        if (dos_detector->is_dos_attack(std::ref(req), std::ref(res))) {
             res.code = 429;
             res.end("Too many requests.");
         }
