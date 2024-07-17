@@ -1,4 +1,5 @@
 # Unreleased
+ * Implement basic Denial of service protection.
  * Code clean and changelog update.
 
 # Version 0.2.1
