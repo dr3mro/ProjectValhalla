@@ -6,7 +6,7 @@
 
 class SqlMan {
 public:
-    typedef struct SearchData {
+    using SearchData = struct SearchData {
         std::string keyword;
         std::string order_by;
         std::string direction;
@@ -21,7 +21,7 @@ public:
             limit = search_json.at("limit").as<size_t>();
             offset = search_json.at("offset").as<size_t>();
         }
-    } SearchData;
+    };
 
     std::optional<std::string> get_create_patient_sql(const crow::request& req, const crow::response& res, uint64_t nextid) const;
     std::optional<std::string> get_read_patient_sql(const crow::request& req, const crow::response& res, const jsoncons::json& criteria);

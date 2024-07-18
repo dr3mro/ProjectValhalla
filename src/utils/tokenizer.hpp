@@ -4,11 +4,11 @@
 
 class Tokenizer {
 public:
-    typedef struct LoggedUserInfo {
+    using LoggedUserInfo = struct LoggedUserInfo {
         std::optional<std::string> token;
         std::optional<std::string> username;
         std::optional<uint64_t> user_id;
-    } LoggedUserInfo;
+    };
 
     Tokenizer() = default;
     ~Tokenizer() = default;
