@@ -59,7 +59,7 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME yaml-cpp
+  NAME yamlcpp
   VERSION 0.8.0
   URL https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.zip
   URL_HASH MD5=6eff843c5a75afc88f979eb42c2ecd70
@@ -67,7 +67,7 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME jwt-cpp
+  NAME jwtcpp
   VERSION 0.7.0
   URL https://github.com/Thalhammer/jwt-cpp/archive/refs/tags/v0.7.0.tar.gz
   URL_HASH MD5=7d4b1e54daf431970f1c02d44ae17ff7
@@ -121,18 +121,18 @@ add_executable(${Target} ${SRC})
 
 # Include directories
 target_include_directories(${Target}
-    PRIVATE
-    ${fmt_SOURCE_DIR}/include
-    ${zlib_SOURCE_DIR}
-    ${crow_SOURCE_DIR}/include
-    ${asio_SOURCE_DIR}/asio/include
-    ${libpqxx_SOURCE_DIR}/include
-    ${yaml-cpp_SOURCE_DIR}/include
-    ${jsoncons_SOURCE_DIR}/include
-    ${jwt-cpp_SOURCE_DIR}/include
-    ${PicoSHA2_SOURCE_DIR}
-    ${Catch2_SOURCE_DIR}/src
-    ${OPENSSL_INCLUDE_DIR}
+  PRIVATE
+  ${fmt_SOURCE_DIR}/include
+  ${zlib_SOURCE_DIR}
+  ${crow_SOURCE_DIR}/include
+  ${asio_SOURCE_DIR}/asio/include
+  ${libpqxx_SOURCE_DIR}/include
+  ${yamlcpp_SOURCE_DIR}/include
+  ${jsoncons_SOURCE_DIR}/include
+  ${jwtcpp_SOURCE_DIR}/include
+  ${PicoSHA2_SOURCE_DIR}
+  ${Catch2_SOURCE_DIR}/src
+  ${OPENSSL_INCLUDE_DIR}
 )
 
 # Compile definitions
@@ -140,11 +140,13 @@ target_compile_definitions(${Target} PUBLIC CROW_ENABLE_COMPRESSION)
 
 # Link libraries
 target_link_libraries(${Target}
-    PRIVATE
-    fmt
-    zlib
-    pqxx
-    yaml-cpp
-    jwt-cpp
-    ${OPENSSL_LIBRARIES}
+  PRIVATE
+  fmt
+  zlib
+  pqxx
+  yaml-cpp
+  jwt-cpp
+  ${OPENSSL_LIBRARIES}
 )
+
+add_subdirectory(tests)
