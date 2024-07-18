@@ -1,26 +1,26 @@
 #include "usercontroller.hpp"
-#include "middlewares/authentication.hpp"
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <jsoncons/json.hpp> // Include jsoncons library for JSON handling
 #include <picosha2.h>
 #include <regex>
+#include <utility>
 
 // Definition of the implementation class
 class UserController::Impl {
 public:
     Impl(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer)
-        : dbController(dbController)
-        , rHelper(rHelper)
-        , tokenizer(tokenizer)
+        : dbController(std::move(dbController))
+        , rHelper(std::move(rHelper))
+        , tokenizer(std::move(tokenizer))
     {
     }
 
-    typedef struct {
+    using UserRegistrationData = struct {
         std::string username;
         std::string password_hash;
         std::string role;
         std::string user_data;
-    } UserRegistrationData;
+    };
 
     bool is_username_pattern_valid(const std::string& username);
     bool is_password_pattern_valid(const std::string& password);
@@ -123,7 +123,7 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
 }
 
 UserController::UserController(std::shared_ptr<DatabaseController> dbController, std::shared_ptr<RestHelper> rHelper, std::shared_ptr<Tokenizer> tokenizer)
-    : pImpl(std::make_unique<Impl>(dbController, rHelper, tokenizer))
+    : pImpl(std::make_unique<Impl>(std::move(dbController), std::move(rHelper), std::move(tokenizer)))
 {
 }
 

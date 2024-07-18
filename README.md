@@ -7,11 +7,11 @@
 docker compose down --rmi all --volumes
 docker compose down --remove-orphans --volumes
 ```
-- To get the latest version 
+- To get the latest version
 ```
 docker compose --profile default up --build
 ```
-or use the dev version 
+or use the dev version
 ```
 docker compose --profile dev up --build
 ```
@@ -623,3 +623,7 @@ Connection: Keep-Alive
 
 🥳🥳🥳🥳🎉🎉🎉🎉
 
+### Test memory leaks
+```
+ASAN_OPTIONS=detect_leaks=1 ./server
+```

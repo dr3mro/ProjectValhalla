@@ -149,4 +149,12 @@ target_link_libraries(${Target}
   ${OPENSSL_LIBRARIES}
 )
 
+# Enable AddressSanitizer only for Debug build type
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+  message("Enabling AddressSanitizer for Debug build")
+  target_compile_options(${Target} PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+  target_link_options(${Target} PRIVATE -fsanitize=address)
+  target_compile_options(${Target} PRIVATE -g)
+endif()
+
 add_subdirectory(tests)

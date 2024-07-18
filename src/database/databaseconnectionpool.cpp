@@ -45,7 +45,7 @@ std::shared_ptr<Database> DatabaseConnectionPool::get_connection()
 void DatabaseConnectionPool::return_connection(std::shared_ptr<Database> db)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    databaseConnections.push(db);
+    databaseConnections.push(std::move(db));
     cv.notify_one();
     // std::cout << "Database connection returned to pool. Connections available: " << databaseConnections.size() << std::endl;
 }

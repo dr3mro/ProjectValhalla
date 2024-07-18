@@ -2,7 +2,6 @@
 #include <ctime>
 #include <fmt/color.h>
 #include <fmt/format.h>
-#include <random>
 #include <string>
 
 // Define an array of colors from fmt::color

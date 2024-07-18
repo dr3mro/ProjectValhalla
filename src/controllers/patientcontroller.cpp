@@ -3,14 +3,15 @@
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <fmt/ranges.h>
 #include <optional>
+#include <utility>
 #include <vector>
 
 PatientController::PatientController(std::shared_ptr<DatabaseController> dbController,
     std::shared_ptr<RestHelper> rHelper,
     std::shared_ptr<SqlMan> sqlman)
-    : dbController(dbController)
-    , rHelper(rHelper)
-    , sqlman(sqlman)
+    : dbController(std::move(dbController))
+    , rHelper(std::move(rHelper))
+    , sqlman(std::move(sqlman))
 {
 }
 
