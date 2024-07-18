@@ -2,6 +2,7 @@
 #include <atomic>
 #include <chrono>
 #include <crow.h>
+#include <deque>
 #include <future>
 #include <mutex>
 #include <unordered_map>
@@ -15,7 +16,7 @@ public:
 private:
     size_t max_requests_;
     std::chrono::seconds period_;
-    std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::chrono::steady_clock::time_point>>> requests_;
+    std::unordered_map<std::string, std::deque<std::chrono::steady_clock::time_point>> requests_;
     std::mutex m_;
     std::future<void> async_task_;
     std::atomic<bool> running_ { true };
