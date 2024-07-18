@@ -82,13 +82,19 @@ CPMAddPackage(
   OPTIONS "JSONCONS_BUILD_EXAMPLES OFF" "JSONCONS_BUILD_TESTS OFF"
 )
 
-
-
 CPMAddPackage(
   NAME PicoSHA2
   VERSION 1.0.0
   URL https://github.com/okdshin/PicoSHA2/archive/refs/tags/v1.0.0.zip
   URL_HASH MD5=45e593dd312e567c5b7327cbe114f9c9
+)
+
+CPMAddPackage(
+  NAME Catch2
+  VERSION 3.6.0
+  URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.6.0.tar.gz
+  URL_HASH MD5=86a9fec7afecaec687faaa988ac6818e
+  OPTIONS "BUILD_TESTING OFF"
 )
 
 # Suppress developer warnings and deprecated warnings
@@ -125,6 +131,7 @@ target_include_directories(${Target}
     ${jsoncons_SOURCE_DIR}/include
     ${jwt-cpp_SOURCE_DIR}/include
     ${PicoSHA2_SOURCE_DIR}
+    ${Catch2_SOURCE_DIR}/src
     ${OPENSSL_INCLUDE_DIR}
 )
 
