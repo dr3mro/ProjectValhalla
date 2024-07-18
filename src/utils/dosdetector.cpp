@@ -51,6 +51,7 @@ bool DOSDetector::is_dos_attack(const crow::request& req, crow::response& res)
 
 void DOSDetector::cleanUpTask()
 {
+    bool first_run = true;
     while (running_.load()) {
         auto now = std::chrono::steady_clock::now();
         auto next = now + std::chrono::seconds(600);
@@ -73,9 +74,13 @@ void DOSDetector::cleanUpTask()
                 }
             }
         }
-        auto elapsed_time = std::chrono::steady_clock::now() - now;
-        CROW_LOG_INFO << "cleanUpTask: DOS Protection database cleanup complete. " << elapsed_time.count() << " seconds elapsed.";
+        if (!first_run) {
+            auto elapsed_time = std::chrono::steady_clock::now() - now;
+            CROW_LOG_INFO << "DOS CleanUpTask: DOSP database cleanup complete. " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time);
+        }
+
         std::this_thread::sleep_until(next);
+        first_run = false;
     }
 }
 

@@ -13,7 +13,7 @@ export let options = {
   ],
 };
 
-const BASE_URL = 'http://172.20.0.4:8080/v1/patient';
+const BASE_URL = 'http://localhost:8080/v1/patient';
 const AUTH_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0NDk3MjAsImlhdCI6MTcyMDg1NzcyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.PoXaVi0AZ_Ptah1WmeZyKtcpMl4IUbiVSiTFpTbn19c';
 const X_REQUEST = 'ewogICJpZCI6IDE0MDAwNCwKICAic2NoZW1hIjpbCiAgICAiYmFzaWNfZGF0YSIsCiAgICAiaGVhbHRoX2RhdGEiLAogICAgImFwcG9pbnRtZW50c19kYXRhIgogIF0KfQoK';
 
