@@ -85,7 +85,7 @@ curl -X POST -H "Content-Type: application/json" -d @user.json http://172.20.0.3
       }
     }
   },
-  "xxh64sum": "8657efb831ff66d61a6f26106a7acbe3f5a3bbc021b97fe1f1e4f69f21e20ec6"
+  "xxh64sum": "7c3cb6ca0e74c8be"
 }
 ```
 - a sucessful registeration will yield this result in json format.
@@ -228,7 +228,7 @@ curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJl
     "appointments_data": {
     }
   },
-  "xxh64sum": "81eaf148afea6c1c6577e518f6c5e9987a128b0e451670be9f3c171b91205b17"
+  "xxh64sum": "e3076fbfb603155a"
 }
 ```
 - The payload should contain 3 item:
@@ -402,7 +402,7 @@ curl -X PATCH -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJ
     "appointments_data": {
     }
   },
-  "xxh64sum": "a57ba46b2f25823cbdbb69a839dd9db9cee7c6fb303302498a7e0516a3431315"
+  "xxh64sum": "6258941d4ce30c2a"
 }
 ```
 - a successful delete reply with a json like this
@@ -459,7 +459,7 @@ curl -X DELETE -H "X-Request: $(cat del_patient.json | base64)" -H "Authorizatio
       "gender": "Male"
     }
   },
-  "xxh64sum": "eb0ba7887fec5a0e369ae9cb56155ec9b0e13935af64a1af6adae31777e83951"
+  "xxh64sum": "42c92a7aea3a821a"
 }
 ```
 - data should be correct as any wrong info will invalidate the request.

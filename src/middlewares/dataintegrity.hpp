@@ -24,21 +24,22 @@ struct DataIntegrity : crow::ILocalMiddleware {
 
             if (!json.contains("xxh64sum") || !json.contains("payload")) {
                 res.code = 400;
-                res.end();
+                res.end("xxh64sum or payload not provided, aborting.");
                 return;
             }
 
-            unsigned long long xxh64sum = json.at("xxh64sum").as<unsigned long long>();
+            std::string checksum = json.at("xxh64sum").as<std::string>();
             std::string payload = json.at("payload").as<std::string>();
+            XXH64_hash_t hash = XXH64(payload.data(), payload.size(), 0);
 
-            if (xxh64sum != XXH3_64bits(payload.c_str(), payload.size())) {
+            if (checksum != fmt::format("{:016x}", hash)) {
                 res.code = 400;
-                res.end();
+                res.end("hash mismatch, aborting.");
                 return;
             }
         } catch (const std::exception& e) {
-            res.code = 400;
-            res.end();
+            res.code = 500;
+            res.end(fmt::format("Failure, {}", e.what()));
             return;
         }
     }
