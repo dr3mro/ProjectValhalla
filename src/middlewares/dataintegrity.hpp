@@ -2,7 +2,7 @@
 
 #include <crow.h>
 #include <jsoncons/json.hpp>
-#include <picosha2.h>
+#include <xxhash.h>
 
 struct DataIntegrity : crow::ILocalMiddleware {
 
@@ -22,16 +22,16 @@ struct DataIntegrity : crow::ILocalMiddleware {
 
             jsoncons::json json = jsoncons::json::parse(req.body);
 
-            if (!json.contains("sha256sum") || !json.contains("payload")) {
+            if (!json.contains("xxh64sum") || !json.contains("payload")) {
                 res.code = 400;
                 res.end();
                 return;
             }
 
-            std::string sha256sum = json.at("sha256sum").as<std::string>();
+            unsigned long long xxh64sum = json.at("xxh64sum").as<unsigned long long>();
             std::string payload = json.at("payload").as<std::string>();
 
-            if (sha256sum != picosha2::hash256_hex_string(payload)) {
+            if (xxh64sum != XXH3_64bits(payload.c_str(), payload.size())) {
                 res.code = 400;
                 res.end();
                 return;

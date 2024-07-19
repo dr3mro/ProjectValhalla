@@ -43,9 +43,9 @@ that means the server is up and running
 "Message" : "NOT FOUND, Are you lost?"
 }%
 ```
-### 🧮 to create the sha256sum of the payload use this command
+### 🧮 to create the xxh64sum of the payload use this command
 ```
-jq -Sjc '.payload' patient.json | sha256sum
+jq -Sjc '.payload' patient.json | xxh64sum
 ```
 - DataIntegrity protection is disabled by default and can be enabled anytime to verify payload by setting header value:
 - `"Enable-data-integrity-check : true"`
@@ -85,7 +85,7 @@ curl -X POST -H "Content-Type: application/json" -d @user.json http://172.20.0.3
       }
     }
   },
-  "sha256sum": "8657efb831ff66d61a6f26106a7acbe3f5a3bbc021b97fe1f1e4f69f21e20ec6"
+  "xxh64sum": "8657efb831ff66d61a6f26106a7acbe3f5a3bbc021b97fe1f1e4f69f21e20ec6"
 }
 ```
 - a sucessful registeration will yield this result in json format.
@@ -131,7 +131,7 @@ Connection: Keep-Alive
     "status_message": "Failed to create a new user, user exists"
 }%
 ```
-- the "payload" value is optionally verified on the server against SHA256SUM that might be generated and added to the JSON in sha256sum key.
+- the "payload" value is optionally verified on the server against xxh64sum that might be generated and added to the JSON in xxh64sum key.
 - in the "payload" the username should only composed of lower case characters and numbers and not start with number and does not contains white spaces.
 - the password should contains upper and lower case characters, symbols, numbers and at lest 8 characters long.
 - the email should be in a valid format user@domain.ext
@@ -228,7 +228,7 @@ curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJl
     "appointments_data": {
     }
   },
-  "sha256sum": "81eaf148afea6c1c6577e518f6c5e9987a128b0e451670be9f3c171b91205b17"
+  "xxh64sum": "81eaf148afea6c1c6577e518f6c5e9987a128b0e451670be9f3c171b91205b17"
 }
 ```
 - The payload should contain 3 item:
@@ -238,7 +238,7 @@ curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJl
 - The basic_data should contains {"id" = 0}.
 - Providing empty value '{}' will clear the corresponding field in the database.
 - Not providing a key for example "health_data" has no effect as only the provided data is processed.
-- The payload might be verified with sha256sum and the hash can be provided in the JSON as "sha256sum" value.
+- The payload might be verified with xxh64sum and the hash can be provided in the JSON as "xxh64sum" value.
 - A successful request will return the user_id and it looks like this.
 ```
 HTTP/1.1 200 OK
@@ -402,7 +402,7 @@ curl -X PATCH -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJ
     "appointments_data": {
     }
   },
-  "sha256sum": "a57ba46b2f25823cbdbb69a839dd9db9cee7c6fb303302498a7e0516a3431315"
+  "xxh64sum": "a57ba46b2f25823cbdbb69a839dd9db9cee7c6fb303302498a7e0516a3431315"
 }
 ```
 - a successful delete reply with a json like this
@@ -459,11 +459,11 @@ curl -X DELETE -H "X-Request: $(cat del_patient.json | base64)" -H "Authorizatio
       "gender": "Male"
     }
   },
-  "sha256sum": "eb0ba7887fec5a0e369ae9cb56155ec9b0e13935af64a1af6adae31777e83951"
+  "xxh64sum": "eb0ba7887fec5a0e369ae9cb56155ec9b0e13935af64a1af6adae31777e83951"
 }
 ```
 - data should be correct as any wrong info will invalidate the request.
-- sha256sum is optional prevent malicious mass deletion of data.
+- xxh64sum is optional prevent malicious mass deletion of data.
 - a successful delete reply with a json like this
 ```
 HTTP/1.1 200 OK
