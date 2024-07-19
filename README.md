@@ -627,3 +627,7 @@ Connection: Keep-Alive
 ```
 ASAN_OPTIONS=detect_leaks=1 ./server
 ```
+
+### Benchmark 
+- on 16 core AMD Ryzen 3800X with 32 GB of RAM using Release with GCC 14.1 running k6r.js & k6w.js with 1000 virtual users and 100,000 iterations
+  ![alt text](https://github.com/dr3mro/ProjectValhalla/blob/4c79a5bc52b3e8a2f489ce8429595a1c63261081/benchmark.png?raw=true)
