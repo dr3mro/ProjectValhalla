@@ -1,5 +1,5 @@
 #Unreleased
-
+ * switch DataIntegrity and DOS Detection to xxHash64 for better performance.
 # Version 0.2.2
  * Add testing primer
  * Implement basic Denial of service protection.

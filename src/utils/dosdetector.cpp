@@ -1,7 +1,6 @@
 #include "dosdetector.hpp"
 #include <fmt/format.h>
 #include <iostream>
-#include <picosha2.h>
 #include <thread>
 #include <xxhash.h>
 
@@ -93,8 +92,8 @@ std::string DOSDetector::generate_key(const crow::request& req)
     // Append body
     data.append(req.body);
 
-    // Hash the complete string using picosha2
-    // std::string hashed_key = XXH3 // picosha2::hash256_hex_string(data);
+    // Hash the complete string using xxHash
+
     XXH64_hash_t hashed_key
         = XXH3_64bits(data.c_str(), data.size());
 

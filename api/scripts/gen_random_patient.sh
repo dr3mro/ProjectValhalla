@@ -83,15 +83,15 @@ json=$(jq -r -n \
             health_data: {},
             appointments_data: {}
         },
-        sha256sum: ""
+        xxh64sum: ""
     }')
 
 # Calculate SHA-256 checksum of the payload
 payload=$(echo "$json" | jq -Scj '.payload')
-sha256sum=$(echo -n "$payload" | sha256sum | awk '{print $1}')
+xxh64sum=$(echo -n "$payload" | xxh64sum | awk '{print $1}')
 
 # Insert SHA-256 checksum into JSON
-json=$(echo "$json" | jq --arg sha256sum "$sha256sum" '.sha256sum = $sha256sum')
+json=$(echo "$json" | jq --arg xxh64sum "$xxh64sum" '.xxh64sum = $xxh64sum')
 
 # Output JSON to a file
 echo "$json"
