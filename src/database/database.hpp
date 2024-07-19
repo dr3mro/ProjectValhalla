@@ -12,9 +12,41 @@ public:
     ~Database() = default;
 
     bool isConnected();
-    json executeQuery(const std::string& query);
-    json executeReadQuery(const std::string& query);
     bool checkExists(const std::string& table, const std::string& column, const std::string& value);
+
+    template <typename TransactionType>
+    json executeQuery(const std::string& query)
+    {
+        try {
+            TransactionType txn(*connection);
+            pqxx::result res = txn.exec(query);
+
+            if constexpr (std::is_same_v<TransactionType, pqxx::work>) {
+                txn.commit();
+            }
+
+            json json_array = json::array();
+            json affected_rows;
+
+            if constexpr (std::is_same_v<TransactionType, pqxx::work>) {
+                affected_rows["affected rows"] = res.affected_rows();
+                json_array.push_back(affected_rows);
+            }
+
+            for (const auto& row : res) {
+                json jsonObj;
+                for (const auto& field : row) {
+                    jsonObj[field.name()] = json::parse(field.as<std::string>());
+                }
+                json_array.push_back(jsonObj);
+            }
+
+            return json_array;
+        } catch (const std::exception& e) {
+            std::cerr << "Error executing query: " << e.what() << std::endl;
+            throw; // Rethrow the exception to indicate failure
+        }
+    }
 
     template <typename T>
     T doSimpleQuery(const std::string& query)

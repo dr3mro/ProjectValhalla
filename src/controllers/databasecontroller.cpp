@@ -8,12 +8,12 @@ DatabaseController::DatabaseController(std::shared_ptr<DatabaseConnectionPool> d
 
 json DatabaseController::executeQuery(const std::string& query)
 {
-    return executer<json>(&Database::executeQuery, query);
+    return executer<json>(&Database::executeQuery<pqxx::work>, query);
 }
 
 json DatabaseController::executeReadQuery(const std::string& query)
 {
-    return executer<json>(&Database::executeReadQuery, query);
+    return executer<json>(&Database::executeQuery<pqxx::nontransaction>, query);
 }
 
 bool DatabaseController::checkItemExists(const std::string& table, const std::string& column, const std::string& value)
