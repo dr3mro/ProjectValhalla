@@ -33,7 +33,7 @@ public:
     ~SqlMan() = default;
 
 private:
-    typedef struct PatientData {
+    using PatientData = struct PatientData {
         uint64_t user_id;
         std::vector<std::string> schema;
         std::string username;
@@ -44,5 +44,5 @@ private:
             user_id = data.at("id").as<uint64_t>();
             schema = data.at("schema").as<std::vector<std::string>>();
         }
-    } PatientData;
+    };
 };

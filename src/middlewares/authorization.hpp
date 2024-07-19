@@ -2,6 +2,7 @@
 #include "utils/tokenizer.hpp"
 #include <crow.h>
 #include <jsoncons/json.hpp>
+#include <utility>
 
 struct Authorization : crow::ILocalMiddleware {
 
@@ -9,7 +10,7 @@ struct Authorization : crow::ILocalMiddleware {
         Tokenizer::LoggedUserInfo userinfo;
     };
     Authorization(std::shared_ptr<Tokenizer> tokenizer)
-        : tokenizer(tokenizer)
+        : tokenizer(std::move(tokenizer))
     {
     }
 

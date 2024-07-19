@@ -1,15 +1,16 @@
 #pragma once
 
-#include "crow.h"
 #include "utils/dosdetector.hpp"
+#include <crow.h>
 #include <memory>
+#include <utility>
 
 struct RateLimit : crow::ILocalMiddleware {
 public:
     struct context { };
 
     RateLimit(std::shared_ptr<DOSDetector> dos_detector)
-        : dos_detector(dos_detector)
+        : dos_detector(std::move(dos_detector))
     {
     }
 

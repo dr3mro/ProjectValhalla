@@ -15,14 +15,14 @@ std::optional<std::string> SqlMan::get_create_patient_sql(const crow::request& r
 
         jsoncons::json payload = json.at("payload");
 
-        for (auto it = payload.object_range().begin(); it != payload.object_range().end(); ++it) {
+        for (auto& it : payload.object_range()) {
 
-            if (it->key() == "basic_data" && it->value().contains("id")) {
-                it->value()["id"] = nextid;
+            if (it.key() == "basic_data" && it.value().contains("id")) {
+                it.value()["id"] = nextid;
             }
 
-            keys_arr.push_back(it->key());
-            values_arr.push_back(it->value().as<std::string>());
+            keys_arr.push_back(it.key());
+            values_arr.push_back(it.value().as<std::string>());
         }
 
         std::string columns = fmt::format("{}", fmt::join(keys_arr, ","));
@@ -43,7 +43,7 @@ std::optional<std::string> SqlMan::get_read_patient_sql(const crow::request& req
     std::optional<std::string> query;
     PatientData patientData;
     try {
-        jsoncons::json json = criteria;
+        const jsoncons::json& json = criteria;
         patientData.fill(json);
 
         std::string columns = fmt::format("{}", fmt::join(patientData.schema, ", "));

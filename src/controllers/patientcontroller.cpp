@@ -4,7 +4,6 @@
 #include <fmt/ranges.h>
 #include <optional>
 #include <utility>
-#include <vector>
 
 PatientController::PatientController(std::shared_ptr<DatabaseController> dbController,
     std::shared_ptr<RestHelper> rHelper,

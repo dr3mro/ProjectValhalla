@@ -1,10 +1,10 @@
 #include "database.hpp"
 #include <fmt/core.h>
-#include <future>
 #include <iostream>
+#include <utility>
 
 Database::Database(std::shared_ptr<pqxx::connection> conn)
-    : connection(conn)
+    : connection(std::move(conn))
 {
     if (connection->is_open()) {
         // std::cout << "Opened database successfully: " << conn->dbname() << std::endl;

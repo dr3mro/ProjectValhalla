@@ -128,8 +128,7 @@ UserController::UserController(std::shared_ptr<DatabaseController> dbController,
 }
 
 UserController::UserController()
-{
-}
+    = default;
 
 UserController::~UserController()
 {

@@ -1,8 +1,10 @@
 #include "resthelper.hpp"
+
 #include "fmt/core.h"
+#include <utility>
 
 RestHelper::RestHelper(std::shared_ptr<DatabaseController> dbController)
-    : dbController(dbController)
+    : dbController(std::move(dbController))
 {
 }
 
