@@ -83,13 +83,6 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME PicoSHA2
-  VERSION 1.0.0
-  URL https://github.com/okdshin/PicoSHA2/archive/refs/tags/v1.0.0.zip
-  URL_HASH MD5=45e593dd312e567c5b7327cbe114f9c9
-)
-
-CPMAddPackage(
   NAME Catch2
   VERSION 3.6.0
   URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.6.0.tar.gz
@@ -105,6 +98,13 @@ CPMAddPackage(
 
   OPTIONS "XXHASH_BUILD_XXHSUM OFF" "BUILD_SHARED_LIBS OFF" "XXH_STATIC_LINKING_ONLY ON" "XXH_INLINE_ALL ON" "XXHASH_BUILD_ENABLE_INLINE_API OFF"
   SOURCE_SUBDIR cmake_unofficial
+)
+
+CPMAddPackage(
+  NAME Bcrypt
+  VERSION 2.0
+  URL https://github.com/hilch/Bcrypt.cpp/archive/refs/tags/V2.0_NODEBCRYPT.tar.gz
+  URL_HASH MD5=89ed66b1e9283cc03aa4a0f4467a1335
 )
 
 # Suppress developer warnings and deprecated warnings
@@ -140,9 +140,9 @@ target_include_directories(${Target}
   ${yamlcpp_SOURCE_DIR}/include
   ${jsoncons_SOURCE_DIR}/include
   ${jwtcpp_SOURCE_DIR}/include
-  ${PicoSHA2_SOURCE_DIR}
   ${xxHash_SOURCE_DIR}
   ${Catch2_SOURCE_DIR}/src
+  ${Bcrypt_SOURCE_DIR}/include
   ${OPENSSL_INCLUDE_DIR}
 )
 

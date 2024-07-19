@@ -1,7 +1,7 @@
 #include "usercontroller.hpp"
+#include <bcrypt.h>
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <jsoncons/json.hpp> // Include jsoncons library for JSON handling
-#include <picosha2.h>
 #include <regex>
 #include <utility>
 
@@ -27,7 +27,7 @@ public:
     bool is_email_pattern_valid(const std::string& email);
     bool extract_and_sanity_check_user_registration_data(UserRegistrationData& userRegistrationData, json& userdata_json, json& response_json, crow::response& res);
 
-    uint64_t authenticate_user(const std::string& username, const std::string& password);
+    uint64_t authenticate_user(const std::string& username, const std::string& password) const;
 
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> rHelper;
@@ -73,7 +73,7 @@ bool UserController::Impl::extract_and_sanity_check_user_registration_data(UserR
 
         payload.erase("password");
 
-        userRegistrationData.password_hash = picosha2::hash256_hex_string(password);
+        userRegistrationData.password_hash = bcrypt::generateHash(password);
         userRegistrationData.role = payload["role"].as<std::string>();
         userRegistrationData.user_data = payload["user_data"].as<std::string>();
 
@@ -103,7 +103,7 @@ bool UserController::Impl::extract_and_sanity_check_user_registration_data(UserR
     return true;
 }
 
-uint64_t UserController::Impl::authenticate_user(const std::string& username, const std::string& password)
+uint64_t UserController::Impl::authenticate_user(const std::string& username, const std::string& password) const
 {
     try {
         uint64_t user_id = dbController->findIfUserID(std::ref(username));
@@ -111,7 +111,7 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
         if (user_id == 0)
             return 0;
 
-        if (dbController->getPasswordHashForUserID(user_id) == picosha2::hash256_hex_string(password))
+        if (bcrypt::validatePassword(dbController->getPasswordHashForUserID(user_id), bcrypt::generateHash(password)))
             return user_id;
         else
             return 0;
