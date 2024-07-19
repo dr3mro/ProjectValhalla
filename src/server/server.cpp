@@ -37,10 +37,10 @@ int Server::run()
     print_banner();
 
     crow::CORSHandler& crowCorsHandler = app->get_middleware<crow::CORSHandler>();
-    CORSHandler corsHandler(crowCorsHandler); // Apply CORS settings
+    CORSHandler corsHandler(std::ref(crowCorsHandler)); // Apply CORS settings
 
     try {
-        app->loglevel(crow::LogLevel::WARNING)
+        app->loglevel(crow::LogLevel::INFO)
             .use_compression(crow::compression::algorithm::GZIP)
             .port(PORT)
             .multithreaded()

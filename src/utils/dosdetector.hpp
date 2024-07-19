@@ -22,5 +22,5 @@ private:
     std::atomic<bool> running_ { true };
 
     void cleanUpTask();
-    std::string generate_fingerprint(const crow::request& req);
+    std::string generate_key(const crow::request& req);
 };

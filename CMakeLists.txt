@@ -97,6 +97,16 @@ CPMAddPackage(
   OPTIONS "BUILD_TESTING OFF"
 )
 
+CPMAddPackage(
+  NAME xxHash
+  VERSION 0.8.2
+  URL https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.2.tar.gz
+  URL_HASH MD5=a7628d7a4fd608a7573c5a3e2c856ea5
+
+  OPTIONS "XXHASH_BUILD_XXHSUM OFF" "BUILD_SHARED_LIBS OFF" "XXH_STATIC_LINKING_ONLY ON" "XXH_INLINE_ALL ON" "XXHASH_BUILD_ENABLE_INLINE_API OFF"
+  SOURCE_SUBDIR cmake_unofficial
+)
+
 # Suppress developer warnings and deprecated warnings
 set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 set(CMAKE_WARN_DEPRECATED OFF)
@@ -131,6 +141,7 @@ target_include_directories(${Target}
   ${jsoncons_SOURCE_DIR}/include
   ${jwtcpp_SOURCE_DIR}/include
   ${PicoSHA2_SOURCE_DIR}
+  ${xxHash_SOURCE_DIR}
   ${Catch2_SOURCE_DIR}/src
   ${OPENSSL_INCLUDE_DIR}
 )
@@ -146,6 +157,7 @@ target_link_libraries(${Target}
   pqxx
   yaml-cpp
   jwt-cpp
+  xxHash::xxhash
   ${OPENSSL_LIBRARIES}
 )
 
