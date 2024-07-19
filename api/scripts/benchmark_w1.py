@@ -12,7 +12,7 @@ def send_curl_request(data):
     start_time = time.time()
     try:
         # Execute the curl command with provided data
-        subprocess.run(["curl", "--silent", "-o", "/dev/null", "-X", "POST", "-H" , "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0NDk3MjAsImlhdCI6MTcyMDg1NzcyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.PoXaVi0AZ_Ptah1WmeZyKtcpMl4IUbiVSiTFpTbn19c","-d", data, "http://172.20.0.3:8080/v1/patient"], check=True)
+        subprocess.run(["curl", "-X", "POST", "-H" , "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0NDk3MjAsImlhdCI6MTcyMDg1NzcyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.PoXaVi0AZ_Ptah1WmeZyKtcpMl4IUbiVSiTFpTbn19c","-d", data, "http://172.20.0.4:8080/v1/patient"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing curl command: {e}")
     return time.time() - start_time

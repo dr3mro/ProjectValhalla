@@ -1,4 +1,5 @@
 #Unreleased
+ * switch password hashing to bcrypt, all users passwords will be invalid.
  * switch DataIntegrity and DOS Detection to xxHash64 for better performance.
 # Version 0.2.2
  * Add testing primer
