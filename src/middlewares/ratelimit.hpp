@@ -3,7 +3,6 @@
 #include "utils/dosdetector.hpp"
 #include <crow.h>
 #include <memory>
-#include <utility>
 
 struct RateLimit : crow::ILocalMiddleware {
 public:
