@@ -18,4 +18,23 @@ public:
 
 private:
     std::shared_ptr<DatabaseConnectionPool> databaseConnectionPool;
+
+    template <typename R, typename F, typename... Args>
+    R executer(const F& f, Args&&... args)
+    {
+        std::shared_ptr<Database> db = nullptr;
+        try {
+            db = databaseConnectionPool->get_connection();
+            R results = (db.get()->*f)(std::forward<Args>(args)...);
+            databaseConnectionPool->return_connection(std::move(db));
+            return results;
+        } catch (const std::exception& e) {
+            std::cerr << "Exception occurred during query execution: " << e.what() << std::endl;
+            throw;
+        } catch (...) {
+            std::cerr << "Unknown exception occurred during query execution." << std::endl;
+            throw;
+        }
+        return R();
+    }
 };
