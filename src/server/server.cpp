@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "banner.hpp"
+#include "corshandler.hpp"
 #include <fmt/color.h>
 #include <fmt/core.h>
 
@@ -29,34 +30,17 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
     , srv_threads(srv_threads)
     , db_connections(db_connections)
 {
-    auto& cors = app->get_middleware<crow::CORSHandler>();
-
-    cors.global()
-        .origin("*")
-        .methods(crow::HTTPMethod::GET, crow::HTTPMethod::OPTIONS)
-        .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method")
-        .max_age(3600);
-
-    cors.prefix("/v1/patient")
-        .origin("*")
-        .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST, crow::HTTPMethod::DELETE, crow::HTTPMethod::PATCH, crow::HTTPMethod::SEARCH, crow::HTTPMethod::OPTIONS)
-        .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method", "Authorization")
-        .max_age(7200)
-        .allow_credentials();
-
-    cors.prefix("/v1/user")
-        .origin("*")
-        .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST, crow::HTTPMethod::OPTIONS)
-        .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method", "Authentication")
-        .max_age(7200)
-        .allow_credentials();
 }
 
 int Server::run()
 {
     print_banner();
+
+    crow::CORSHandler& crowCorsHandler = app->get_middleware<crow::CORSHandler>();
+    CORSHandler corsHandler(crowCorsHandler); // Apply CORS settings
+
     try {
-        app->loglevel(crow::LogLevel::INFO)
+        app->loglevel(crow::LogLevel::WARNING)
             .use_compression(crow::compression::algorithm::GZIP)
             .port(PORT)
             .multithreaded()
