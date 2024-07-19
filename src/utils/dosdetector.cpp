@@ -1,7 +1,9 @@
 #include "dosdetector.hpp"
+#include <fmt/format.h>
 #include <iostream>
 #include <picosha2.h>
 #include <thread>
+#include <xxhash.h>
 
 DOSDetector::DOSDetector(size_t max_requests, std::chrono::seconds period)
     : max_requests_(max_requests)
@@ -22,11 +24,8 @@ bool DOSDetector::is_dos_attack(const crow::request& req, crow::response& res)
 {
     (void)res;
     try {
-        auto ip = req.remote_ip_address;
         auto now = std::chrono::steady_clock::now();
-        std::string fingerprint = generate_fingerprint(req);
-        std::string key = ip + fingerprint;
-
+        std::string key = generate_key(req); // ip + hash of reuqest (Header and Body).
         {
             std::lock_guard<std::mutex> lock(m_);
             auto& ip_requests = requests_[key];
@@ -51,46 +50,54 @@ bool DOSDetector::is_dos_attack(const crow::request& req, crow::response& res)
 
 void DOSDetector::cleanUpTask()
 {
-    bool first_run = true;
     while (running_.load()) {
         auto now = std::chrono::steady_clock::now();
         auto next = now + std::chrono::seconds(600);
+        auto window = now - period_;
 
         {
             std::lock_guard<std::mutex> lock(m_);
-            auto window = now - period_;
 
-            for (auto it = requests_.begin(); it != requests_.end();) {
+            for (auto it = requests_.begin(); it != requests_.end(); /* no increment here */) {
                 auto& times = it->second;
-                times.erase(
-                    std::remove_if(times.begin(), times.end(),
-                        [window](const auto& time) { return time < window; }),
-                    times.end());
 
+                // Remove old requests that are outside the time window
+                while (!times.empty() && times.front() < window) {
+                    times.pop_front();
+                }
+
+                // If no requests are left for this key, erase the entry from the map
                 if (times.empty()) {
                     it = requests_.erase(it); // Remove the entry if no requests are left
                 } else {
-                    ++it;
+                    ++it; // Increment iterator only if we did not erase
                 }
             }
         }
-        if (!first_run) {
-            auto elapsed_time = std::chrono::steady_clock::now() - now;
-            CROW_LOG_INFO << "DOS CleanUpTask: DOSP database cleanup complete. " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time);
-        }
 
         std::this_thread::sleep_until(next);
-        first_run = false;
     }
 }
 
-std::string DOSDetector::generate_fingerprint(const crow::request& req)
+std::string DOSDetector::generate_key(const crow::request& req)
 {
-    std::stringstream fp;
+    // Reserve space to avoid multiple reallocations
+    std::string data;
+    data.reserve(4096);
+
+    // Append headers
     for (const auto& header : req.headers) {
-        fp << header.second;
+        data.append(header.second);
     }
-    fp << req.body;
-    fp << req.remote_ip_address;
-    return picosha2::hash256_hex_string(fp.str());
+
+    // Append body
+    data.append(req.body);
+
+    // Hash the complete string using picosha2
+    // std::string hashed_key = XXH3 // picosha2::hash256_hex_string(data);
+    XXH64_hash_t hashed_key
+        = XXH3_64bits(data.c_str(), data.size());
+
+    // Format and return the final key
+    return fmt::format("{}.{}", req.remote_ip_address, hashed_key);
 }
