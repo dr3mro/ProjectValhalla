@@ -1,5 +1,5 @@
 #!/bin/bash
-
+git pull
 git rebase
 
 # Build the project
