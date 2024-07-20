@@ -1,5 +1,5 @@
-#Unreleased
- * switch password hashing to bcrypt, all users passwords will be invalid.
+# Version 0.3.0
+ * switch password hashing to libsodium scrypt, all users passwords will be invalid, need to recreate users.
  * switch DataIntegrity and DOS Detection to xxHash64 for better performance.
 # Version 0.2.2
  * Add testing primer

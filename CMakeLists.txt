@@ -101,9 +101,10 @@ CPMAddPackage(
 )
 
 CPMAddPackage(
-  NAME Bcrypt
-  GITHUB_REPOSITORY trusch/libbcrypt
-  GIT_TAG d6523c3
+  NAME libsodium
+  GIT_REPOSITORY https://github.com/robinlinden/libsodium-cmake.git
+  GIT_TAG HEAD
+  OPTIONS "SODIUM_DISABLE_TESTS ON"
 )
 
 # Suppress developer warnings and deprecated warnings
@@ -141,7 +142,7 @@ target_include_directories(${Target}
   ${jwtcpp_SOURCE_DIR}/include
   ${xxHash_SOURCE_DIR}
   ${Catch2_SOURCE_DIR}/src
-  ${Bcrypt_SOURCE_DIR}/include
+  ${libsodium_SOURCE_DIR}/src/libsodium/include
   ${OPENSSL_INCLUDE_DIR}
 )
 
@@ -157,7 +158,7 @@ target_link_libraries(${Target}
   yaml-cpp
   jwt-cpp
   xxHash::xxhash
-  bcrypt
+  sodium
   ${OPENSSL_LIBRARIES}
 )
 

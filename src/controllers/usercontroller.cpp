@@ -1,5 +1,5 @@
 #include "usercontroller.hpp"
-#include <bcrypt/BCrypt.hpp>
+#include "utils/passwordcrypt.hpp"
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <jsoncons/json.hpp> // Include jsoncons library for JSON handling
 #include <regex>
@@ -32,6 +32,7 @@ public:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> rHelper;
     std::shared_ptr<Tokenizer> tokenizer;
+    PasswordCrypt passwordCrypt;
 };
 
 bool UserController::Impl::is_username_pattern_valid(const std::string& username)
@@ -73,7 +74,7 @@ bool UserController::Impl::extract_and_sanity_check_user_registration_data(UserR
 
         payload.erase("password");
 
-        userRegistrationData.password_hash = BCrypt::generateHash(password.data());
+        userRegistrationData.password_hash = passwordCrypt.hashPassword(password).value();
         userRegistrationData.role = payload["role"].as<std::string>();
         userRegistrationData.user_data = payload["user_data"].as<std::string>();
 
@@ -111,7 +112,7 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
         if (user_id == 0)
             return 0;
 
-        if (BCrypt::validatePassword(dbController->getPasswordHashForUserID(user_id), BCrypt::generateHash(password)) == 0)
+        if (passwordCrypt.verifyPassword(password, dbController->getPasswordHashForUserID(user_id)))
             return user_id;
         else
             return 0;
