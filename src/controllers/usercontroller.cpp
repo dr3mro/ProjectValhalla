@@ -1,5 +1,5 @@
 #include "usercontroller.hpp"
-#include <bcrypt.h>
+#include <bcrypt/BCrypt.hpp>
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <jsoncons/json.hpp> // Include jsoncons library for JSON handling
 #include <regex>
@@ -73,7 +73,7 @@ bool UserController::Impl::extract_and_sanity_check_user_registration_data(UserR
 
         payload.erase("password");
 
-        userRegistrationData.password_hash = bcrypt::generateHash(password);
+        userRegistrationData.password_hash = BCrypt::generateHash(password.data());
         userRegistrationData.role = payload["role"].as<std::string>();
         userRegistrationData.user_data = payload["user_data"].as<std::string>();
 
@@ -111,7 +111,7 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
         if (user_id == 0)
             return 0;
 
-        if (bcrypt::validatePassword(dbController->getPasswordHashForUserID(user_id), bcrypt::generateHash(password)))
+        if (BCrypt::validatePassword(dbController->getPasswordHashForUserID(user_id).data(), BCrypt::generateHash(password.data())) == 0)
             return user_id;
         else
             return 0;

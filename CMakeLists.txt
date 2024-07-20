@@ -102,9 +102,8 @@ CPMAddPackage(
 
 CPMAddPackage(
   NAME Bcrypt
-  VERSION 2.0
-  URL https://github.com/hilch/Bcrypt.cpp/archive/refs/tags/V2.0_NODEBCRYPT.tar.gz
-  URL_HASH MD5=89ed66b1e9283cc03aa4a0f4467a1335
+  GITHUB_REPOSITORY trusch/libbcrypt
+  GIT_TAG d6523c3
 )
 
 # Suppress developer warnings and deprecated warnings
@@ -158,6 +157,7 @@ target_link_libraries(${Target}
   yaml-cpp
   jwt-cpp
   xxHash::xxhash
+  bcrypt
   ${OPENSSL_LIBRARIES}
 )
 
