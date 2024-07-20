@@ -111,7 +111,7 @@ uint64_t UserController::Impl::authenticate_user(const std::string& username, co
         if (user_id == 0)
             return 0;
 
-        if (BCrypt::validatePassword(dbController->getPasswordHashForUserID(user_id).data(), BCrypt::generateHash(password.data())) == 0)
+        if (BCrypt::validatePassword(dbController->getPasswordHashForUserID(user_id), BCrypt::generateHash(password)) == 0)
             return user_id;
         else
             return 0;
