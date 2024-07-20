@@ -22,7 +22,7 @@ void PatientController::create_patient(const crow::request& req, crow::response&
         if (!this->rHelper->getNextId(nextid, res)) {
             return std::optional<std::string>();
         }
-        return this->sqlman->get_create_patient_sql(std::ref(req), std::ref(res), nextid);
+        return this->sqlman->get_create_patient_sql(std::cref(req), std::cref(res), nextid);
     };
 
     crud_common(std::ref(res), w, dbexec);
@@ -30,18 +30,18 @@ void PatientController::create_patient(const crow::request& req, crow::response&
 
 void PatientController::read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria)
 {
-    auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::ref(req), std::ref(res), std::ref(criteria)); };
+    auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::cref(req), std::cref(res), std::cref(criteria)); };
     crud_common(std::ref(res), w, dbrexec);
 }
 
 void PatientController::update_patient(const crow::request& req, crow::response& res)
 {
-    auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(std::ref(req), std::ref(res)); };
+    auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(std::cref(req), std::cref(res)); };
     crud_common(std::ref(res), w, dbexec);
 }
 void PatientController::delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json)
 {
-    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(std::ref(req), std::ref(res), std::ref(delete_json)); };
+    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(std::cref(req), std::cref(res), std::cref(delete_json)); };
     crud_common(std::ref(res), w, dbexec);
 }
 

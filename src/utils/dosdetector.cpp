@@ -1,75 +1,102 @@
 #include "dosdetector.hpp"
 #include <fmt/format.h>
 #include <iostream>
+#include <regex>
 #include <thread>
 #include <xxhash.h>
 
-DOSDetector::DOSDetector(size_t max_requests, std::chrono::seconds period)
-    : max_requests_(max_requests)
-    , period_(period)
+DOSDetector::DOSDetector()
 {
-    async_task_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
+    async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
 }
 
 DOSDetector::~DOSDetector()
 {
-    running_.store(false);
-    if (async_task_.valid()) {
-        async_task_.wait();
+    running_clean_.store(false);
+    if (async_task_clean_.valid()) {
+        async_task_clean_.wait();
+    }
+
+    if (async_task_process_.valid()) {
+        async_task_process_.wait();
     }
 }
 
-bool DOSDetector::is_dos_attack(const crow::request& req, crow::response& res)
+DOSDetector::Status DOSDetector::is_dos_attack(const crow::request& req)
 {
-    (void)res;
     try {
-        auto now = std::chrono::steady_clock::now();
-        std::string key = generate_key(req); // ip + hash of reuqest (Header and Body).
-        {
-            std::lock_guard<std::mutex> lock(m_);
-            auto& ip_requests = requests_[key];
-
-            // Remove old requests that are outside the time window
-            while (!ip_requests.empty() && ip_requests.front() < now - period_) {
-                ip_requests.pop_front();
-            }
-
-            ip_requests.push_back(now);
-
-            if (ip_requests.size() > max_requests_) {
-                return true;
-            }
+        if (isWhitelisted(req.remote_ip_address)) {
+            return Status::WHITELISTED;
         }
+        if (isBlacklisted(req.remote_ip_address)) {
+            return Status::BLACKLISTED;
+        }
+
+        if (isRateLimited(req.remote_ip_address)) {
+            async_task_process_ = std::async(std::launch::async, &DOSDetector::processRequest<crow::request>, this, req);
+            return Status::RATELIMITED;
+        }
+
+        if (isBanned(req.remote_ip_address)) {
+            async_task_process_ = std::async(std::launch::async, &DOSDetector::processRequest<crow::request>, this, req);
+            return Status::BANNED;
+        }
+
+        return processRequest<const crow::request&>(std::cref(req));
     } catch (const std::exception& e) {
         std::cerr << "Failure: " << e.what() << std::endl;
-        return false;
+        return Status::ERROR;
     }
-    return false;
+    return Status::ALLOWED;
 }
 
 void DOSDetector::cleanUpTask()
 {
-    while (running_.load()) {
+    while (running_clean_.load()) {
         auto now = std::chrono::steady_clock::now();
-        auto next = now + std::chrono::seconds(600);
+        auto next = now + std::chrono::seconds(CLN_FRQ_);
         auto window = now - period_;
+        // Cleanup requests and blocked IPs
+        {
+            std::lock_guard<std::mutex> request_lock(request_mutex_);
+            // Cleanup requests
+            for (auto& ot : requests_) {
+                auto& requests = ot.second;
+
+                for (auto it = requests.begin(); it != requests.end(); /* no increment here */) {
+                    auto& times = it->second;
+
+                    while (!times.empty() && times.front() < window) {
+                        times.pop_front();
+                    }
+
+                    if (times.empty()) {
+                        it = requests.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+            }
+        }
 
         {
-            std::lock_guard<std::mutex> lock(m_);
-
-            for (auto it = requests_.begin(); it != requests_.end(); /* no increment here */) {
-                auto& times = it->second;
-
-                // Remove old requests that are outside the time window
-                while (!times.empty() && times.front() < window) {
-                    times.pop_front();
-                }
-
-                // If no requests are left for this key, erase the entry from the map
-                if (times.empty()) {
-                    it = requests_.erase(it); // Remove the entry if no requests are left
+            std::lock_guard<std::mutex> block_lock(ratelimit_mutex_);
+            for (auto it = ratelimited_ips_.begin(); it != ratelimited_ips_.end(); /* no increment here */) {
+                if (now >= it->second) {
+                    it = ratelimited_ips_.erase(it); // Unblock IP
                 } else {
-                    ++it; // Increment iterator only if we did not erase
+                    ++it;
+                }
+            }
+        }
+
+        {
+            std::lock_guard<std::mutex> ban_lock(ban_mutex_);
+            for (auto it = banned_ips_.begin(); it != banned_ips_.end(); /* no increment here */) {
+                if (now >= it->second) {
+                    it = banned_ips_.erase(it); // Unblock IP
+                } else {
+                    ++it;
                 }
             }
         }
@@ -78,25 +105,106 @@ void DOSDetector::cleanUpTask()
     }
 }
 
-std::string DOSDetector::generate_key(const crow::request& req)
+std::string DOSDetector::generateRequestFingerprint(const crow::request& req)
 {
-    // Reserve space to avoid multiple reallocations
     std::string data;
     data.reserve(4096);
 
-    // Append headers
     for (const auto& header : req.headers) {
         data.append(header.second);
     }
 
-    // Append body
     data.append(req.body);
 
-    // Hash the complete string using xxHash
+    XXH64_hash_t hashed_key = XXH3_64bits(data.c_str(), data.size());
 
-    XXH64_hash_t hashed_key
-        = XXH3_64bits(data.c_str(), data.size());
+    return fmt::format("{}", hashed_key);
+}
+bool DOSDetector::isWhitelisted(const std::string& remote_ip)
+{
+    return regexFind(remote_ip, whitelist_, whitelist_mutex_);
+}
+bool DOSDetector::isBlacklisted(const std::string& remote_ip)
+{
+    return regexFind(remote_ip, blacklist_, blacklist_mutex_);
+}
+bool DOSDetector::regexFind(const std::string& remote_ip, const std::unordered_set<std::string>& list, std::mutex& mtx)
+{
+    std::lock_guard<std::mutex> lock(mtx);
 
-    // Format and return the final key
-    return fmt::format("{}.{}", req.remote_ip_address, hashed_key);
+    return std::any_of(list.begin(), list.end(), [&remote_ip](const std::string& pattern) {
+        try {
+            std::regex regex_pattern(pattern);
+            return std::regex_search(remote_ip, regex_pattern);
+        } catch (const std::regex_error& e) {
+            std::cerr << "Invalid regex pattern: " << e.what() << std::endl;
+            return false;
+        }
+    });
+}
+
+bool DOSDetector::isBanned(const std::string& remote_ip)
+{
+    return checkStatus(remote_ip, banned_ips_, ban_mutex_);
+}
+
+bool DOSDetector::isRateLimited(const std::string& remote_ip)
+{
+    return checkStatus(remote_ip, ratelimited_ips_, ratelimit_mutex_);
+}
+
+template <typename Map, typename Mutex>
+bool DOSDetector::checkStatus(const std::string& remote_ip, Map& ip_map, Mutex& mtx)
+{
+    auto now = std::chrono::steady_clock::now();
+    std::lock_guard<Mutex> lock(mtx);
+
+    if (ip_map.find(remote_ip) != ip_map.end()) {
+        auto forget_time = ip_map[remote_ip];
+        if (now < forget_time) {
+            return true;
+        } else {
+            ip_map.erase(remote_ip);
+        }
+    }
+    return false;
+}
+
+template <typename Req>
+DOSDetector::Status DOSDetector::processRequest(Req&& req)
+{
+    try {
+        auto now = std::chrono::steady_clock::now();
+        std::string remote_ip = req.remote_ip_address;
+        std::string request_fingerprint = generateRequestFingerprint(req);
+
+        {
+            std::lock_guard<std::mutex> request_lock(request_mutex_);
+            auto& ip_requests = requests_[remote_ip];
+            auto& fp_requests = ip_requests[request_fingerprint];
+
+            // Remove old requests that are outside the time window
+            while (!fp_requests.empty() && fp_requests.front() < now - period_) {
+                fp_requests.pop_front();
+            }
+
+            fp_requests.push_back(now);
+
+            if (ip_requests.size() > max_fingerprints_) {
+                std::lock_guard<std::mutex> block_lock(ratelimit_mutex_);
+                ratelimited_ips_[remote_ip] = now + ratelimit_duration_;
+                return Status::RATELIMITED;
+            }
+
+            if (fp_requests.size() > max_requests_) {
+                std::lock_guard<std::mutex> ban_lock(ban_mutex_);
+                banned_ips_[remote_ip] = now + ban_duration_;
+                return Status::BANNED;
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Failure: " << e.what() << std::endl;
+        return Status::ERROR;
+    }
+    return Status::ALLOWED;
 }

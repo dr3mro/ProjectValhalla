@@ -16,9 +16,34 @@ public:
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
         (void)ctx;
-        if (dos_detector->is_dos_attack(std::ref(req), std::ref(res))) {
+
+        DOSDetector::Status status = dos_detector->is_dos_attack(std::cref(req));
+
+        switch (status) {
+        case DOSDetector::Status::ALLOWED:
+            break;
+        case DOSDetector::Status::WHITELISTED:
+            break;
+        case DOSDetector::Status::BLACKLISTED:
+            res.code = 403;
+            res.end("IP is blacklisted.");
+            break;
+        case DOSDetector::Status::RATELIMITED:
             res.code = 429;
-            res.end("Too many requests.");
+            res.end("IP is ratelimited.");
+            break;
+        case DOSDetector::Status::BANNED:
+            res.code = 403;
+            res.end("IP is banned.");
+            break;
+        case DOSDetector::Status::ERROR:
+            res.code = 500;
+            res.end("Server Error");
+            break;
+        default:
+            res.code = 500;
+            res.end("Unknown Error");
+            break;
         }
     }
 
