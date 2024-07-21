@@ -8,56 +8,7 @@
 
 DOSDetector::DOSDetector()
 {
-    EnvVars env;
-
-    // Helper function to get integer values with default
-    auto getIntEnv = [&](const std::string& key, int defaultValue) {
-        auto value = env.get(key);
-        return value ? std::stoi(*value) : defaultValue;
-    };
-
-    // Helper function to get duration values with default
-    auto getDurationEnv = [&](const std::string& key, std::chrono::seconds defaultValue) {
-        auto value = env.get(key);
-        return value ? std::chrono::seconds(std::stoi(*value)) : defaultValue;
-    };
-
-    auto parseSet = [](const std::string& str) -> std::unordered_set<std::string> {
-        std::unordered_set<std::string> result;
-        std::stringstream ss(str);
-        std::string item;
-        while (std::getline(ss, item, ',')) {
-            // Trim any leading or trailing whitespace
-            item.erase(item.find_last_not_of(" \n\r\t") + 1);
-            item.erase(0, item.find_first_not_of(" \n\r\t"));
-            result.insert(item);
-        }
-        return result;
-    };
-
-    // Helper function to get comma-separated lists
-    auto getSetEnv = [&](const std::string& key, const std::string& defaultValue) {
-        auto value = env.get(key);
-        return value ? parseSet(*value) : parseSet(defaultValue);
-    };
-
-    // Retrieve environment variables with defaults
-    max_requests_ = getIntEnv("MAX_REQUESTS", MAX_REQUESTS_);
-    period_ = getDurationEnv("PERIOD", PERIOD_);
-    max_fingerprints_ = getIntEnv("MAX_FPS", MAX_FPS_);
-    ratelimit_duration_ = getDurationEnv("RL_DURATION", RL_DURATION_);
-    ban_duration_ = getDurationEnv("BAN_DURATION", BAN_DURATION_);
-    clean_freq_ = getIntEnv("CLN_FRQ", CLN_FRQ_);
-    whitelist_ = getSetEnv("WHITELIST", "127.0.1.*"); // Default value if not set
-    blacklist_ = getSetEnv("BLACKLIST", "127.0.1.*"); // Default value if not set
-    // Print the values using fmt::print
-    fmt::print("Max Requests: {}\n", max_requests_);
-    fmt::print("Period: {} seconds\n", period_.count());
-    fmt::print("Max FPS: {}\n", max_fingerprints_);
-    fmt::print("Rate Limit Duration: {} seconds\n", ratelimit_duration_.count());
-    fmt::print("Ban Duration: {} seconds\n", ban_duration_.count());
-    fmt::print("Cleanup Frequency: {} seconds\n", clean_freq_);
-
+    loadConfig();
     async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
 }
 
@@ -258,4 +209,57 @@ DOSDetector::Status DOSDetector::processRequest(Req&& req)
         return Status::ERROR;
     }
     return Status::ALLOWED;
+}
+
+void DOSDetector::loadConfig()
+{
+    EnvVars env;
+
+    // Helper function to get integer values with default
+    auto getIntEnv = [&](const std::string& key, int defaultValue) {
+        auto value = env.get(key);
+        return value ? std::stoi(*value) : defaultValue;
+    };
+
+    // Helper function to get duration values with default
+    auto getDurationEnv = [&](const std::string& key, std::chrono::seconds defaultValue) {
+        auto value = env.get(key);
+        return value ? std::chrono::seconds(std::stoi(*value)) : defaultValue;
+    };
+
+    auto parseSet = [](const std::string& str) -> std::unordered_set<std::string> {
+        std::unordered_set<std::string> result;
+        std::stringstream ss(str);
+        std::string item;
+        while (std::getline(ss, item, ',')) {
+            // Trim any leading or trailing whitespace
+            item.erase(item.find_last_not_of(" \n\r\t") + 1);
+            item.erase(0, item.find_first_not_of(" \n\r\t"));
+            result.insert(item);
+        }
+        return result;
+    };
+
+    // Helper function to get comma-separated lists
+    auto getSetEnv = [&](const std::string& key, const std::string& defaultValue) {
+        auto value = env.get(key);
+        return value ? parseSet(*value) : parseSet(defaultValue);
+    };
+
+    // Retrieve environment variables with defaults
+    max_requests_ = getIntEnv("MAX_REQUESTS", MAX_REQUESTS_);
+    period_ = getDurationEnv("PERIOD", PERIOD_);
+    max_fingerprints_ = getIntEnv("MAX_FPS", MAX_FPS_);
+    ratelimit_duration_ = getDurationEnv("RL_DURATION", RL_DURATION_);
+    ban_duration_ = getDurationEnv("BAN_DURATION", BAN_DURATION_);
+    clean_freq_ = getIntEnv("CLN_FRQ", CLN_FRQ_);
+    whitelist_ = getSetEnv("WHITELIST", "127.0.1.*"); // Default value if not set
+    blacklist_ = getSetEnv("BLACKLIST", "127.0.1.*"); // Default value if not set
+    // Print the values using fmt::print
+    fmt::print("Max Requests: {}\n", max_requests_);
+    fmt::print("Period: {} seconds\n", period_.count());
+    fmt::print("Max FPS: {}\n", max_fingerprints_);
+    fmt::print("Rate Limit Duration: {} seconds\n", ratelimit_duration_.count());
+    fmt::print("Ban Duration: {} seconds\n", ban_duration_.count());
+    fmt::print("Cleanup Frequency: {} seconds\n", clean_freq_);
 }

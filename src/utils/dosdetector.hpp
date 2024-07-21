@@ -67,6 +67,7 @@ private:
     bool isRateLimited(const std::string& remote_ip);
     template <typename Map, typename Mutex>
     bool checkStatus(const std::string& remote_ip, Map& ip_map, Mutex& mtx);
+    void loadConfig();
 
     template <typename Req>
     DOSDetector::Status processRequest(Req&& req);
