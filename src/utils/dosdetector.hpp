@@ -16,7 +16,7 @@
 #define BAN_DURATION_ std::chrono::seconds(3600)
 #define CLN_FRQ_ 30
 #define WHITELIST { "127.0.1.*" }
-#define BLACKLIST { "127.0.0.*" }
+#define BLACKLIST { "127.0.1.*" }
 
 class DOSDetector {
 public:

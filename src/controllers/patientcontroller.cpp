@@ -56,7 +56,7 @@ void PatientController::search_patient(const crow::request& req, crow::response&
         SqlMan::SearchData searchData(search_json);
         query = sqlman->get_search_patient_sql(searchData);
         if (query) {
-            query_results_json = dbController->executeReadQuery(std::ref(query.value()));
+            query_results_json = dbController->executeReadQuery(std::cref(query.value()));
             size_t results_count = query_results_json.size();
 
             if (results_count > searchData.limit) {
