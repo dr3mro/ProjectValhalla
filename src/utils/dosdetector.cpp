@@ -50,6 +50,13 @@ DOSDetector::DOSDetector()
     clean_freq_ = getIntEnv("CLN_FRQ", CLN_FRQ_);
     whitelist_ = getSetEnv("WHITELIST", "127.0.1.*"); // Default value if not set
     blacklist_ = getSetEnv("BLACKLIST", "127.0.1.*"); // Default value if not set
+    // Print the values using fmt::print
+    fmt::print("Max Requests: {}\n", max_requests_);
+    fmt::print("Period: {} seconds\n", period_.count());
+    fmt::print("Max FPS: {}\n", max_fingerprints_);
+    fmt::print("Rate Limit Duration: {} seconds\n", ratelimit_duration_.count());
+    fmt::print("Ban Duration: {} seconds\n", ban_duration_.count());
+    fmt::print("Cleanup Frequency: {} seconds\n", clean_freq_);
 
     async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
 }
@@ -98,7 +105,7 @@ void DOSDetector::cleanUpTask()
 {
     while (running_clean_.load()) {
         auto now = std::chrono::steady_clock::now();
-        auto next = now + std::chrono::seconds(CLN_FRQ_);
+        auto next = now + std::chrono::seconds(clean_freq_);
         auto window = now - period_;
         // Cleanup requests and blocked IPs
         {
