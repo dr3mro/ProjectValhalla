@@ -39,6 +39,7 @@ private:
     size_t max_fingerprints_ = MAX_FPS_;
     std::chrono::seconds ratelimit_duration_ = RL_DURATION_;
     std::chrono::seconds ban_duration_ = BAN_DURATION_;
+    uint32_t clean_freq_ = CLN_FRQ_;
 
     //                     // IP                       // Hash of Request                // times of requests
     std::unordered_map<std::string, std::unordered_map<std::string, std::deque<std::chrono::steady_clock::time_point>>> requests_;

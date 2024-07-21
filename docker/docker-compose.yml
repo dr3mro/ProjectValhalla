@@ -23,6 +23,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.api
+    env_file:
+      - .env
     networks:
       docker_valhalla_network:
         ipv4_address: 172.20.0.3
@@ -43,6 +45,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.api_dev
+    env_file:
+      - .env
     networks:
       docker_valhalla_network:
         ipv4_address: 172.20.0.4
