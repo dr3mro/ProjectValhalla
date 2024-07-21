@@ -1,8 +1,8 @@
 #pragma once
 
-#include "controllers/databasecontroller.hpp"
-#include "utils/resthelper.hpp"
-#include "utils/tokenizer.hpp"
+#include "controllers/databasecontroller/databasecontroller.hpp"
+#include "utils/resthelper/resthelper.hpp"
+#include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
 #include <memory>
 

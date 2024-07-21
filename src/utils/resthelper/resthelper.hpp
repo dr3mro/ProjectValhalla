@@ -1,5 +1,5 @@
 #pragma once
-#include "controllers/databasecontroller.hpp"
+#include "controllers/databasecontroller/databasecontroller.hpp"
 #include <crow.h>
 #include <jsoncons/json.hpp>
 

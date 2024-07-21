@@ -1,7 +1,7 @@
 #pragma once
-#include "controllers/databasecontroller.hpp"
-#include "controllers/patientcontroller.hpp"
-#include "controllers/usercontroller.hpp"
+#include "controllers/databasecontroller/databasecontroller.hpp"
+#include "controllers/patientcontroller/patientcontroller.hpp"
+#include "controllers/usercontroller/usercontroller.hpp"
 #include "database/databaseconnectionpool.hpp"
 #include "memory"
 #include "middlewares/authentication.hpp"
@@ -12,10 +12,10 @@
 #include "middlewares/search.hpp"
 #include "middlewares/xrequest.hpp"
 #include "routes/api_v1_routes.hpp"
-#include "utils/dosdetector.hpp"
-#include "utils/resthelper.hpp"
-#include "utils/sqlman.hpp"
-#include "utils/tokenizer.hpp"
+#include "utils/dosdetector/dosdetector.hpp"
+#include "utils/resthelper/resthelper.hpp"
+#include "utils/sqlman/sqlman.hpp"
+#include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
 
 class Server {

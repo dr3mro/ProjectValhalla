@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#define MAX_REQUESTS_ 30
+#define MAX_REQUESTS_ 10
 #define PERIOD_ std::chrono::seconds(30)
 #define MAX_FPS_ 30
 #define RL_DURATION_ std::chrono::seconds(30)

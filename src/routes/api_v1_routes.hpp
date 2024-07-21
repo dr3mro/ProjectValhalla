@@ -1,6 +1,6 @@
 #pragma once
-#include "controllers/patientcontroller.hpp"
-#include "controllers/usercontroller.hpp"
+#include "controllers/patientcontroller/patientcontroller.hpp"
+#include "controllers/usercontroller/usercontroller.hpp"
 #include "middlewares/authentication.hpp"
 #include "middlewares/authorization.hpp"
 #include "middlewares/dataintegrity.hpp"

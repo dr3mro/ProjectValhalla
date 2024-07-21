@@ -1,5 +1,5 @@
 #include "dosdetector.hpp"
-#include "getvars.hpp"
+#include "utils/getvars/getvars.hpp"
 #include <fmt/format.h>
 #include <iostream>
 #include <regex>
@@ -27,19 +27,19 @@ DOSDetector::~DOSDetector()
 DOSDetector::Status DOSDetector::is_dos_attack(const crow::request& req)
 {
     try {
-        if (isWhitelisted(req.remote_ip_address)) {
+        if (isWhitelisted(std::cref(req.remote_ip_address))) {
             return Status::WHITELISTED;
         }
-        if (isBlacklisted(req.remote_ip_address)) {
+        if (isBlacklisted(std::cref(req.remote_ip_address))) {
             return Status::BLACKLISTED;
         }
 
-        if (isRateLimited(req.remote_ip_address)) {
+        if (isRateLimited(std::cref(req.remote_ip_address))) {
             async_task_process_ = std::async(std::launch::async, &DOSDetector::processRequest<crow::request>, this, req);
             return Status::RATELIMITED;
         }
 
-        if (isBanned(req.remote_ip_address)) {
+        if (isBanned(std::cref(req.remote_ip_address))) {
             async_task_process_ = std::async(std::launch::async, &DOSDetector::processRequest<crow::request>, this, req);
             return Status::BANNED;
         }
@@ -255,6 +255,7 @@ void DOSDetector::loadConfig()
     clean_freq_ = getIntEnv("CLN_FRQ", CLN_FRQ_);
     whitelist_ = getSetEnv("WHITELIST", "127.0.1.*"); // Default value if not set
     blacklist_ = getSetEnv("BLACKLIST", "127.0.1.*"); // Default value if not set
+
     // Print the values using fmt::print
     fmt::print("Max Requests: {}\n", max_requests_);
     fmt::print("Period: {} seconds\n", period_.count());

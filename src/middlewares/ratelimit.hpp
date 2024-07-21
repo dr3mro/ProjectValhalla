@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/dosdetector.hpp"
+#include "utils/dosdetector/dosdetector.hpp"
 #include <crow.h>
 #include <memory>
 

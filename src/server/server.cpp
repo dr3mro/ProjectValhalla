@@ -1,6 +1,6 @@
 #include "server.hpp"
-#include "banner.hpp"
-#include "corshandler.hpp"
+#include "server/extras/banner.hpp"
+#include "server/extras/corshandler.hpp"
 #include <fmt/color.h>
 #include <fmt/core.h>
 

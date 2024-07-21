@@ -1,7 +1,7 @@
 #pragma once
-#include "databasecontroller.hpp"
-#include "utils/resthelper.hpp"
-#include "utils/sqlman.hpp"
+#include "controllers/databasecontroller/databasecontroller.hpp"
+#include "utils/resthelper/resthelper.hpp"
+#include "utils/sqlman/sqlman.hpp"
 #include <crow.h>
 #include <fmt/format.h>
 #include <jsoncons/json.hpp>
