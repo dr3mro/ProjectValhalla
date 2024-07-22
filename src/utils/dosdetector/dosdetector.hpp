@@ -29,7 +29,6 @@ public:
 private:
     EnvVars ev;
     DOSDetectorEnvLoader dosDetectorEnvLoader;
-
     DOSDetectorEnvLoader::Config config;
 
     //                     // IP                       // Hash of Request                // times of requests

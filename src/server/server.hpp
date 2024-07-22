@@ -3,7 +3,6 @@
 #include "controllers/patientcontroller/patientcontroller.hpp"
 #include "controllers/usercontroller/usercontroller.hpp"
 #include "database/databaseconnectionpool.hpp"
-#include "memory"
 #include "middlewares/authentication.hpp"
 #include "middlewares/authorization.hpp"
 #include "middlewares/dataintegrity.hpp"
@@ -17,6 +16,7 @@
 #include "utils/sqlman/sqlman.hpp"
 #include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
+#include <memory>
 
 class Server {
 public:
@@ -41,7 +41,7 @@ private:
     std::shared_ptr<DataIntegrity> dataIntegrity;
     std::shared_ptr<Search> search;
     std::shared_ptr<XRequest> xrequest;
-    std::shared_ptr<crow::App<crow::CORSHandler, RateLimit, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>> app;
+    std::shared_ptr<APP> app;
     std::shared_ptr<API_V1_Routes> routes;
     uint16_t srv_threads;
     uint16_t db_connections;

@@ -25,7 +25,7 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
     , dataIntegrity(std::make_shared<DataIntegrity>())
     , search(std::make_shared<Search>())
     , xrequest(std::make_shared<XRequest>())
-    , app(std::make_shared<crow::App<crow::CORSHandler, RateLimit, ElapsedTime, Authentication, Authorization, XRequest, Search, DataIntegrity>>(*rateLimit, *elapsedTime, *authentication, *authorization, *xrequest, *search, *dataIntegrity))
+    , app(std::make_shared<APP>(*rateLimit, *elapsedTime, *authentication, *authorization, *xrequest, *search, *dataIntegrity))
     , routes(std::make_shared<API_V1_Routes>(app, userController, patientController))
     , srv_threads(srv_threads)
     , db_connections(db_connections)
@@ -35,9 +35,7 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
 int Server::run()
 {
     print_banner();
-
-    crow::CORSHandler& crowCorsHandler = app->get_middleware<crow::CORSHandler>();
-    CORSHandler corsHandler(std::ref(crowCorsHandler)); // Apply CORS settings
+    CORSHandler cors(app);
 
     try {
         app->loglevel(crow::LogLevel::INFO)

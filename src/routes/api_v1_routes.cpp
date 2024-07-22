@@ -1,6 +1,6 @@
 #include "api_v1_routes.hpp"
 
-API_V1_Routes::API_V1_Routes(const APP& app, const std::shared_ptr<UserController>& userController, const std::shared_ptr<PatientController>& patientController)
+API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app, const std::shared_ptr<UserController>& userController, const std::shared_ptr<PatientController>& patientController)
 {
     ////////////////   ROUTES   ////////////////////
     CROW_ROUTE((*app), "/v1/user")

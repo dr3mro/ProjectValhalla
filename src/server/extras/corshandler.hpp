@@ -1,31 +1,47 @@
 #pragma once
 
-#include "crow/middlewares/cors.h"
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 
 class CORSHandler {
 public:
-    CORSHandler(crow::CORSHandler& corsHandler)
+    template <typename App>
+    CORSHandler(App app)
     {
-        corsHandler.global()
-            .origin("*")
-            .methods(crow::HTTPMethod::GET, crow::HTTPMethod::OPTIONS)
-            .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method")
-            .max_age(3600);
+        auto& cors = app->template get_middleware<crow::CORSHandler>();
 
-        corsHandler.prefix("/v1/patient")
-            .origin("*")
-            .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST, crow::HTTPMethod::DELETE, crow::HTTPMethod::PATCH, crow::HTTPMethod::SEARCH, crow::HTTPMethod::OPTIONS)
-            .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method", "Authorization")
+        // Global CORS settings
+        cors.global()
+            .origin("http://localhost:3000")
+            .methods("GET"_method, "OPTIONS"_method)
+            .headers("Content-Type", "Accept-Encoding", "Origin")
+            .max_age(3600)
+            .allow_credentials();
+
+        // CORS settings for /v1/patient prefix
+        cors.prefix("/v1/patient")
+            .origin("http://localhost:3000")
+            .methods("GET"_method, "POST"_method, "DELETE"_method, "PATCH"_method, "SEARCH"_method, "OPTIONS"_method)
+            .headers("Content-Type", "Accept-Encoding", "Origin", "Authorization")
             .max_age(7200)
             .allow_credentials();
 
-        corsHandler.prefix("/v1/user")
-            .origin("*")
-            .methods(crow::HTTPMethod::GET, crow::HTTPMethod::POST, crow::HTTPMethod::OPTIONS)
-            .headers("Content-Type", "Accept-Encoding", "Origin", "Access-Control-Request-Method", "Authentication")
+        // CORS settings for /v1/user prefix
+        cors.prefix("/v1/user")
+            .origin("http://localhost:3000")
+            .methods("GET"_method, "POST"_method, "OPTIONS"_method)
+            .headers("Content-Type", "Accept-Encoding", "Origin", "Authentication")
+            .max_age(7200)
+            .allow_credentials();
+
+        // CORS settings for /v1/hello prefix
+        cors.prefix("/v1/hello")
+            .origin("http://localhost:3000")
+            .methods("GET"_method, "OPTIONS"_method)
+            .headers("Content-Type", "Accept-Encoding", "Origin")
             .max_age(7200)
             .allow_credentials();
     }
+
     ~CORSHandler() = default;
 };
