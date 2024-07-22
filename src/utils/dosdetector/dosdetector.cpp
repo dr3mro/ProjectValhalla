@@ -6,7 +6,7 @@
 #include <xxhash.h>
 
 DOSDetector::DOSDetector()
-    : dosDetectorEnvLoader(DOSDetectorEnvLoader(ev))
+    : dosDetectorEnvLoader(DOSDetectorEnvLoader(std::cref(ev)))
 {
     config = dosDetectorEnvLoader.getConfig();
     async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);

@@ -12,12 +12,12 @@ constexpr int MAX_FPS_ = 30;
 constexpr int RL_DURATION_ = 30;
 constexpr int BAN_DURATION_ = 3600;
 constexpr int CLN_FRQ_ = 30;
-const std::unordered_set<std::string> WHITELIST_ = { "127.0.1.*" };
-const std::unordered_set<std::string> BLACKLIST_ = { "127.0.1.*" };
+const std::unordered_set<std::string> WHITELIST_;
+const std::unordered_set<std::string> BLACKLIST_;
 
 class DOSDetectorEnvLoader : public EnvLoader {
 public:
-    DOSDetectorEnvLoader(EnvVars& env)
+    DOSDetectorEnvLoader(const EnvVars& env)
         : EnvLoader(env)
     {
         initialize();

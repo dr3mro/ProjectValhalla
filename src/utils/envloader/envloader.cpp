@@ -2,8 +2,8 @@
 #include <fmt/core.h>
 #include <sstream>
 
-EnvLoader::EnvLoader(EnvVars& env)
-    : env(env)
+EnvLoader::EnvLoader(const EnvVars& env)
+    : env(std::cref(env))
 {
 }
 
