@@ -21,7 +21,6 @@ public:
 
         switch (status) {
         case DOSDetector::Status::ALLOWED:
-            break;
         case DOSDetector::Status::WHITELISTED:
             break;
         case DOSDetector::Status::BLACKLISTED:

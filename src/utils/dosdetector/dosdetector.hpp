@@ -1,4 +1,6 @@
 #pragma once
+#include "utils/dosdetector/helpers/ddenvloader.hpp"
+#include "utils/envvars/envvars.hpp"
 #include <atomic>
 #include <chrono>
 #include <crow.h>
@@ -8,15 +10,6 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-
-#define MAX_REQUESTS_ 10
-#define PERIOD_ std::chrono::seconds(30)
-#define MAX_FPS_ 30
-#define RL_DURATION_ std::chrono::seconds(30)
-#define BAN_DURATION_ std::chrono::seconds(3600)
-#define CLN_FRQ_ 30
-#define WHITELIST { "127.0.1.*" }
-#define BLACKLIST { "127.0.1.*" }
 
 class DOSDetector {
 public:
@@ -34,19 +27,17 @@ public:
     DOSDetector::Status is_dos_attack(const crow::request& req);
 
 private:
-    size_t max_requests_ = MAX_REQUESTS_;
-    std::chrono::seconds period_ = PERIOD_;
-    size_t max_fingerprints_ = MAX_FPS_;
-    std::chrono::seconds ratelimit_duration_ = RL_DURATION_;
-    std::chrono::seconds ban_duration_ = BAN_DURATION_;
-    uint32_t clean_freq_ = CLN_FRQ_;
+    EnvVars ev;
+    DOSDetectorEnvLoader dosDetectorEnvLoader;
+
+    DOSDetectorEnvLoader::Config config;
 
     //                     // IP                       // Hash of Request                // times of requests
     std::unordered_map<std::string, std::unordered_map<std::string, std::deque<std::chrono::steady_clock::time_point>>> requests_;
     std::unordered_map<std::string, std::chrono::steady_clock::time_point> ratelimited_ips_; // time to unblock
     std::unordered_map<std::string, std::chrono::steady_clock::time_point> banned_ips_; // time to unban
-    std::unordered_set<std::string> whitelist_ WHITELIST;
-    std::unordered_set<std::string> blacklist_ BLACKLIST;
+    std::unordered_set<std::string> whitelist_ = config.whitelist;
+    std::unordered_set<std::string> blacklist_ = config.blacklist;
 
     std::mutex request_mutex_;
     std::mutex ratelimit_mutex_;
@@ -67,7 +58,6 @@ private:
     bool isRateLimited(const std::string& remote_ip);
     template <typename Map, typename Mutex>
     bool checkStatus(const std::string& remote_ip, Map& ip_map, Mutex& mtx);
-    void loadConfig();
 
     template <typename Req>
     DOSDetector::Status processRequest(Req&& req);

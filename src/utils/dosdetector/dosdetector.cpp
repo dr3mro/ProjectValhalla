@@ -1,5 +1,4 @@
 #include "dosdetector.hpp"
-#include "utils/getvars/getvars.hpp"
 #include <fmt/format.h>
 #include <iostream>
 #include <regex>
@@ -7,8 +6,9 @@
 #include <xxhash.h>
 
 DOSDetector::DOSDetector()
+    : dosDetectorEnvLoader(DOSDetectorEnvLoader(ev))
 {
-    loadConfig();
+    config = dosDetectorEnvLoader.getConfig();
     async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
 }
 
@@ -56,8 +56,8 @@ void DOSDetector::cleanUpTask()
 {
     while (running_clean_.load()) {
         auto now = std::chrono::steady_clock::now();
-        auto next = now + std::chrono::seconds(clean_freq_);
-        auto window = now - period_;
+        auto next = now + std::chrono::seconds(config.clean_freq);
+        auto window = now - config.period;
         // Cleanup requests and blocked IPs
         {
             std::lock_guard<std::mutex> request_lock(request_mutex_);
@@ -186,21 +186,21 @@ DOSDetector::Status DOSDetector::processRequest(Req&& req)
             auto& fp_requests = ip_requests[request_fingerprint];
 
             // Remove old requests that are outside the time window
-            while (!fp_requests.empty() && fp_requests.front() < now - period_) {
+            while (!fp_requests.empty() && fp_requests.front() < now - config.period) {
                 fp_requests.pop_front();
             }
 
             fp_requests.push_back(now);
 
-            if (ip_requests.size() > max_fingerprints_) {
+            if (ip_requests.size() > config.max_fingerprints) {
                 std::lock_guard<std::mutex> block_lock(ratelimit_mutex_);
-                ratelimited_ips_[remote_ip] = now + ratelimit_duration_;
+                ratelimited_ips_[remote_ip] = now + config.ratelimit_duration;
                 return Status::RATELIMITED;
             }
 
-            if (fp_requests.size() > max_requests_) {
+            if (fp_requests.size() > config.max_requests) {
                 std::lock_guard<std::mutex> ban_lock(ban_mutex_);
-                banned_ips_[remote_ip] = now + ban_duration_;
+                banned_ips_[remote_ip] = now + config.ban_duration;
                 return Status::BANNED;
             }
         }
@@ -209,58 +209,4 @@ DOSDetector::Status DOSDetector::processRequest(Req&& req)
         return Status::ERROR;
     }
     return Status::ALLOWED;
-}
-
-void DOSDetector::loadConfig()
-{
-    EnvVars env;
-
-    // Helper function to get integer values with default
-    auto getIntEnv = [&](const std::string& key, int defaultValue) {
-        auto value = env.get(key);
-        return value ? std::stoi(*value) : defaultValue;
-    };
-
-    // Helper function to get duration values with default
-    auto getDurationEnv = [&](const std::string& key, std::chrono::seconds defaultValue) {
-        auto value = env.get(key);
-        return value ? std::chrono::seconds(std::stoi(*value)) : defaultValue;
-    };
-
-    auto parseSet = [](const std::string& str) -> std::unordered_set<std::string> {
-        std::unordered_set<std::string> result;
-        std::stringstream ss(str);
-        std::string item;
-        while (std::getline(ss, item, ',')) {
-            // Trim any leading or trailing whitespace
-            item.erase(item.find_last_not_of(" \n\r\t") + 1);
-            item.erase(0, item.find_first_not_of(" \n\r\t"));
-            result.insert(item);
-        }
-        return result;
-    };
-
-    // Helper function to get comma-separated lists
-    auto getSetEnv = [&](const std::string& key, const std::string& defaultValue) {
-        auto value = env.get(key);
-        return value ? parseSet(*value) : parseSet(defaultValue);
-    };
-
-    // Retrieve environment variables with defaults
-    max_requests_ = getIntEnv("MAX_REQUESTS", MAX_REQUESTS_);
-    period_ = getDurationEnv("PERIOD", PERIOD_);
-    max_fingerprints_ = getIntEnv("MAX_FPS", MAX_FPS_);
-    ratelimit_duration_ = getDurationEnv("RL_DURATION", RL_DURATION_);
-    ban_duration_ = getDurationEnv("BAN_DURATION", BAN_DURATION_);
-    clean_freq_ = getIntEnv("CLN_FRQ", CLN_FRQ_);
-    whitelist_ = getSetEnv("WHITELIST", "127.0.1.*"); // Default value if not set
-    blacklist_ = getSetEnv("BLACKLIST", "127.0.1.*"); // Default value if not set
-
-    // Print the values using fmt::print
-    fmt::print("Max Requests: {}\n", max_requests_);
-    fmt::print("Period: {} seconds\n", period_.count());
-    fmt::print("Max FPS: {}\n", max_fingerprints_);
-    fmt::print("Rate Limit Duration: {} seconds\n", ratelimit_duration_.count());
-    fmt::print("Ban Duration: {} seconds\n", ban_duration_.count());
-    fmt::print("Cleanup Frequency: {} seconds\n", clean_freq_);
 }
