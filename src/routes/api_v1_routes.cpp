@@ -52,7 +52,14 @@ API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app, const std::shared_
             res.code = crow::OK;
             res.end("{\n\"Message\" : \"Welcome to ASGARD.\"\n}");
         });
-
+    CROW_ROUTE((*app), "/v1/<path>")
+        .methods(crow::HTTPMethod::OPTIONS)([](const crow::request& req, crow::response& res, const std::string& path) {
+            (void)req;
+            res.code = crow::OK;
+            res.add_header("Access-Control-Allow-Origin", "*");
+            res.add_header("Access-Control-Allow-Credentials", "true");
+            res.end(path);
+        });
     CROW_CATCHALL_ROUTE((*app))
     ([](crow::response& res) {
         res.code = crow::NOT_FOUND;
