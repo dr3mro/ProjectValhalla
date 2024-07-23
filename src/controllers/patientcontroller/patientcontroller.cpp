@@ -2,6 +2,7 @@
 #include <crow.h>
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <fmt/ranges.h>
+#include <functional>
 #include <optional>
 #include <utility>
 

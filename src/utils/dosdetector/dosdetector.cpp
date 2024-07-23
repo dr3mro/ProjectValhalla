@@ -1,10 +1,10 @@
 #include "dosdetector.hpp"
 #include <fmt/format.h>
+#include <functional>
 #include <iostream>
 #include <regex>
 #include <thread>
 #include <xxhash.h>
-
 DOSDetector::DOSDetector()
     : dosDetectorEnvLoader(DOSDetectorEnvLoader(std::cref(ev)))
 {

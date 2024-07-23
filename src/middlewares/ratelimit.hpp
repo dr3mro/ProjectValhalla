@@ -2,8 +2,8 @@
 
 #include "utils/dosdetector/dosdetector.hpp"
 #include <crow.h>
+#include <functional>
 #include <memory>
-
 struct RateLimit : crow::ILocalMiddleware {
 public:
     struct context { };

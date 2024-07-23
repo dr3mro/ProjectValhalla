@@ -1,5 +1,5 @@
 #include "api_v1_routes.hpp"
-
+#include <functional>
 API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app, const std::shared_ptr<UserController>& userController, const std::shared_ptr<PatientController>& patientController)
 {
     ////////////////   ROUTES   ////////////////////

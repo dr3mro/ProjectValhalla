@@ -1,7 +1,7 @@
 #include "utils/envloader/envloader.hpp"
 #include <fmt/core.h>
+#include <functional>
 #include <sstream>
-
 EnvLoader::EnvLoader(const EnvVars& env)
     : env(std::cref(env))
 {
