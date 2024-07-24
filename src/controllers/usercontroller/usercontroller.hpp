@@ -1,6 +1,7 @@
 #pragma once
-
+#include "controllers/controller/controller.hpp"
 #include "controllers/databasecontroller/databasecontroller.hpp"
+
 #include "utils/resthelper/resthelper.hpp"
 #include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
@@ -8,19 +9,15 @@
 
 using json = jsoncons::json;
 
-class UserController {
+class UserController : public Controller {
 public:
-    UserController(std::shared_ptr<DatabaseController> dbController,
-        std::shared_ptr<RestHelper> rHelper,
-        std::shared_ptr<Tokenizer> tokenizer);
-    UserController();
-    ~UserController();
+    explicit UserController(const std::shared_ptr<DatabaseController>& dbController,
+        const std::shared_ptr<RestHelper>& rHelper,
+        const std::shared_ptr<Tokenizer>& tokenizer);
+
+    ~UserController() = default;
 
     // PUBLIC
-    void register_user(const crow::request& req, crow::response& res);
-    void login_user(const crow::request& req, crow::response& res, const jsoncons::json& credentials);
-
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
+    void CreateUser(const crow::request& req, crow::response& res);
+    void AuthenticateUser(crow::response& res, const jsoncons::json& credentials);
 };

@@ -1,0 +1,3 @@
+FROM dr3mro/valhalla-dev:latest
+
+RUN apt update && apt install -y curl

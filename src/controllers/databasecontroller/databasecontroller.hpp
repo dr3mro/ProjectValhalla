@@ -8,7 +8,7 @@ using json = jsoncons::json;
 
 class DatabaseController {
 public:
-    DatabaseController(std::shared_ptr<DatabaseConnectionPool> dbConnPool);
+    DatabaseController(const std::shared_ptr<DatabaseConnectionPool>& dbConnPool);
     ~DatabaseController() = default;
     json executeQuery(const std::string& query);
     json executeReadQuery(const std::string& query);

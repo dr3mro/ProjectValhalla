@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     g++ \
     python3 \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
@@ -18,7 +19,7 @@ RUN git clone https://github.com/dr3mro/ProjectValhalla.git /usr/src/ProjectValh
 WORKDIR /usr/src/ProjectValhalla/
 
 # Make the entrypoint script executable
-RUN chmod +x /usr/src/ProjectValhalla/docker/entrypoint.sh
+RUN chmod +x /usr/src/ProjectValhalla/docker/dev/entrypoint.sh
 
 # Define the volume for persistent data
 VOLUME ["/usr/src"]
@@ -27,4 +28,4 @@ VOLUME ["/usr/src"]
 EXPOSE 8080
 
 # Use the entrypoint script as the default command
-ENTRYPOINT ["/usr/src/ProjectValhalla/docker/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/ProjectValhalla/docker/dev/entrypoint.sh"]

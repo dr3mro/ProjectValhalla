@@ -3,4 +3,4 @@
 FROM postgres:latest
 
 # Copy the initialization script
-COPY init.sql /docker-entrypoint-initdb.d/
+COPY backend/database/init.sql /docker-entrypoint-initdb.d/

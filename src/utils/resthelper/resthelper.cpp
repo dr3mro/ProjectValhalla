@@ -3,8 +3,8 @@
 #include "fmt/core.h"
 #include <utility>
 
-RestHelper::RestHelper(std::shared_ptr<DatabaseController> dbController)
-    : dbController(std::move(dbController))
+RestHelper::RestHelper(const std::shared_ptr<DatabaseController>& dbController)
+    : dbController(dbController)
 {
 }
 

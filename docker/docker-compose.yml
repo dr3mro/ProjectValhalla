@@ -1,9 +1,9 @@
 services:
   db:
-    profiles: ["default", "dev"]
+    profiles: ["run", "dev"]
     build:
       context: .
-      dockerfile: dockerfile.pq
+      dockerfile: backend/database/dockerfile.pq
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -18,13 +18,48 @@ services:
       timeout: 1s
       retries: 3
 
-  api:
-    profiles: ["default"]
+  proxy_dev:
+    profiles: ["dev"]
     build:
       context: .
-      dockerfile: dockerfile.api
+      dockerfile: backend/dev/dockerfile.nginx
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      api_dev:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/v1/hello || exit 1"]
+      interval: 10s
+      timeout: 1s
+      retries: 3
+
+  proxy:
+    profiles: ["run"]
+    build:
+      context: .
+      dockerfile: backend/run/dockerfile.nginx
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/v1/hello || exit 1"]
+      interval: 10s
+      timeout: 1s
+      retries: 3
+  api:
+    profiles: ["run"]
+    build:
+      context: .
+      dockerfile: backend/run/dockerfile.api
     env_file:
-      - .env
+      - backend/run/api.env
     networks:
       docker_valhalla_network:
         ipv4_address: 172.20.0.3
@@ -35,7 +70,7 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/hello || exit 1"]
       interval: 30s
       timeout: 2s
       retries: 3
@@ -44,9 +79,9 @@ services:
     profiles: ["dev"]
     build:
       context: .
-      dockerfile: dockerfile.api_dev
+      dockerfile: backend/dev/dockerfile.api
     env_file:
-      - .env
+      - backend/dev/api.env
     networks:
       docker_valhalla_network:
         ipv4_address: 172.20.0.4
@@ -54,15 +89,17 @@ services:
       - src_data:/usr/src/
     depends_on:
       db:
-        condition: service_healthy  # Wait for db service to be healthy
+        condition: service_healthy
     restart: always
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/hello || exit 1"]
       interval: 30s
       timeout: 2s
-      retries: 3
+      retries: 30
+
+
 
   client_dev:
     profiles: ["dev_"]
@@ -73,13 +110,13 @@ services:
       - .env
     networks:
       docker_valhalla_network:
-        ipv4_address: 172.20.0.5
+        ipv4_address: 172.20.0.7
     depends_on:
       api_dev:
         condition: service_healthy  # Wait for db service to be healthy
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://172.20.0.4:8080 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
       interval: 30s
       timeout: 2s
       retries: 3

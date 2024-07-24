@@ -9,8 +9,8 @@ struct Authorization : crow::ILocalMiddleware {
     struct context {
         Tokenizer::LoggedUserInfo userinfo;
     };
-    Authorization(std::shared_ptr<Tokenizer> tokenizer)
-        : tokenizer(std::move(tokenizer))
+    Authorization(const std::shared_ptr<Tokenizer>& tokenizer)
+        : tokenizer(tokenizer)
     {
     }
 

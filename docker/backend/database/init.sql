@@ -5,6 +5,8 @@ CREATE SEQUENCE patient_id_seq START 100000;
 -- Set starting user_id from 1000
 CREATE SEQUENCE user_id_seq START 1000;
 
+-- Set starting clinic_id from 1000
+CREATE SEQUENCE clinic_id_seq START 1000;
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE IF NOT EXISTS patients (
@@ -23,6 +25,12 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
     user_data JSONB
+);
+
+-- Create the table with correct usage of sequence for id column
+CREATE TABLE clinics (
+    clinic_id INTEGER PRIMARY KEY DEFAULT nextval('clinic_id_seq'),
+    clinic_data JSONB
 );
 
 -- Optional: Create a trigger to update `updated_at` on every update

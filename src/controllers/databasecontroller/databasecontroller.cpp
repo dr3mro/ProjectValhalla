@@ -1,8 +1,8 @@
 #include "databasecontroller.hpp"
 #include <fmt/core.h>
 
-DatabaseController::DatabaseController(std::shared_ptr<DatabaseConnectionPool> dbConnPool)
-    : databaseConnectionPool(std::move(dbConnPool))
+DatabaseController::DatabaseController(const std::shared_ptr<DatabaseConnectionPool>& dbConnPool)
+    : databaseConnectionPool(dbConnPool)
 {
 }
 

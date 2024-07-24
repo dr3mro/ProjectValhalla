@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 # update and install some packages
-RUN apt-get update && apt-get install -y wget libpq5
+RUN apt-get update && apt-get install -y wget libpq5 curl
 
 # Create API server directory and cd into it
 RUN mkdir /home/ubuntu/ProjectValhalla && cd /home/ubuntu/ProjectValhalla

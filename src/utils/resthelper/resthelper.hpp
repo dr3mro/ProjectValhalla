@@ -7,7 +7,7 @@ using json = jsoncons::json;
 
 class RestHelper {
 public:
-    RestHelper(std::shared_ptr<DatabaseController> dbController);
+    RestHelper(const std::shared_ptr<DatabaseController>& dbController);
 
     uint64_t getNextPatientId();
     bool isQuerySuccessful(const json& response);

@@ -8,8 +8,8 @@ struct RateLimit : crow::ILocalMiddleware {
 public:
     struct context { };
 
-    RateLimit(std::shared_ptr<DOSDetector> dos_detector)
-        : dos_detector(std::move(dos_detector))
+    RateLimit(const std::shared_ptr<DOSDetector>& dos_detector)
+        : dos_detector(dos_detector)
     {
     }
 
