@@ -1,1 +1,7 @@
 FROM dr3mro/valhalla-dev:latest
+
+RUN apt-get update && apt-get upgrade -y && apt-get install -y nginx
+
+COPY valhalla /etc/nginx/sites-available/
+
+RUN ln -s /etc/nginx/sites-available/valhalla /etc/nginx/sites-enabled/

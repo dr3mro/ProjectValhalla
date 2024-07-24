@@ -35,7 +35,7 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
 int Server::run()
 {
     print_banner();
-    CORSHandler cors(app);
+    // CORSHandler cors(app);
 
     try {
         app->loglevel(crow::LogLevel::INFO)
