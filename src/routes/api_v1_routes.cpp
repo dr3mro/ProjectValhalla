@@ -68,14 +68,17 @@ API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app, const std::shared_
             res.add_header("Access-Control-Allow-Credentials", "true");
             res.end();
         });
-    CROW_ROUTE((*app), "/v1/hello")
-        .methods(crow::HTTPMethod::OPTIONS)([](const crow::request& req, crow::response& res) {
-            (void)req;
-            res.code = crow::OK;
-            res.add_header("Access-Control-Allow-Origin", "*");
-            res.add_header("Access-Control-Allow-Credentials", "true");
-            res.end();
-        });
+    // CROW_ROUTE((*app), "/v1/hello")
+    //     .methods(crow::HTTPMethod::OPTIONS)([](const crow::request& req, crow::response& res) {
+    //         (void)req;
+    //         res.code = crow::NO_CONTENT;
+    //         res.add_header("Access-Control-Allow-Origin", "*");
+    //         res.add_header("Access-Control-Allow-Methods", "*");
+    //         res.add_header("Access-Control-Allow-Headers", "*");
+    //         res.add_header("Access-Control-Allow-Credentials", "true");
+
+    //         res.end();
+    //     });
     CROW_CATCHALL_ROUTE((*app))
     ([](crow::response& res) {
         res.code = crow::NOT_FOUND;
