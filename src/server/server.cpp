@@ -1,6 +1,5 @@
 #include "server.hpp"
 #include "server/extras/banner.hpp"
-#include "server/extras/corshandler.hpp"
 #include <fmt/color.h>
 #include <fmt/core.h>
 
@@ -35,7 +34,6 @@ Server::Server(uint16_t srv_threads, uint16_t db_connections)
 int Server::run()
 {
     print_banner();
-    CORSHandler cors(app);
 
     try {
         app->loglevel(crow::LogLevel::INFO)

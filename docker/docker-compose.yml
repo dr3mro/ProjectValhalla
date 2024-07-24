@@ -64,6 +64,26 @@ services:
       timeout: 2s
       retries: 3
 
+  client_dev:
+    profiles: ["dev_"]
+    build:
+      context: .
+      dockerfile: dockerfile.client_dev
+    env_file:
+      - .env
+    networks:
+      docker_valhalla_network:
+        ipv4_address: 172.20.0.5
+    depends_on:
+      api_dev:
+        condition: service_healthy  # Wait for db service to be healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://172.20.0.4:8080 || exit 1"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+
 networks:
   docker_valhalla_network:
     driver: bridge
