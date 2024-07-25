@@ -18,31 +18,31 @@ API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app, const std::shared_
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, DataIntegrity)
         .methods(crow::HTTPMethod::POST)([patientController](const crow::request& req, crow::response& res) {
-            patientController->create_patient(std::cref(req), std::ref(res));
+            patientController->CreatePatient(std::cref(req), std::ref(res));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest)
         .methods(crow::HTTPMethod::GET)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->read_patient(std::cref(req), std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
+            patientController->ReadPatient(std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, DataIntegrity)
         .methods(crow::HTTPMethod::PATCH)([patientController](const crow::request& req, crow::response& res) {
-            patientController->update_patient(std::cref(req), std::ref(res));
+            patientController->UpdatePatient(std::cref(req), std::ref(res));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest, DataIntegrity)
         .methods(crow::HTTPMethod::DELETE)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->delete_patient(std::cref(req), std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
+            patientController->DeletePatient(std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/patient")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest, Search)
         .methods(crow::HTTPMethod::SEARCH)([patientController, app](const crow::request& req, crow::response& res) {
-            patientController->search_patient(std::cref(req), std::ref(res), std::cref(app->get_context<Search>(std::cref(req)).search_json));
+            patientController->SearchPatient(std::ref(res), std::cref(app->get_context<Search>(std::cref(req)).search_json));
         });
 
     CROW_ROUTE((*app), "/v1/hello")

@@ -23,8 +23,7 @@ void UserController::CreateUser(const crow::request& req, crow::response& res)
             rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", result.second), -1, 400);
             return;
         }
-        Create<User>(req, res, user);
-
+        Create<User>(res, user);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }

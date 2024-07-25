@@ -19,7 +19,7 @@ RUN git clone https://github.com/dr3mro/ProjectValhalla.git /usr/src/ProjectValh
 WORKDIR /usr/src/ProjectValhalla/
 
 # Make the entrypoint script executable
-RUN chmod +x /usr/src/ProjectValhalla/docker/dev/entrypoint.sh
+RUN chmod +x /usr/src/ProjectValhalla/docker/backend/dev/entrypoint.sh
 
 # Define the volume for persistent data
 VOLUME ["/usr/src"]

@@ -1,4 +1,6 @@
 #include "patientcontroller.hpp"
+#include "entities/patient.hpp"
+#include <functional>
 
 PatientController::PatientController(const std::shared_ptr<DatabaseController>& dbController,
     const std::shared_ptr<RestHelper>& rHelper,
@@ -7,70 +9,75 @@ PatientController::PatientController(const std::shared_ptr<DatabaseController>& 
 {
 }
 
-void PatientController::create_patient(const crow::request& req, crow::response& res)
+void PatientController::CreatePatient(const crow::request& req, crow::response& res)
 {
-
-    // auto w = [this, &req, &res]() {
-    //     uint64_t nextid;
-    //     if (!this->rHelper->getNextId(nextid, res)) {
-    //         return std::optional<std::string>();
-    //     }
-    //     return this->sqlman->get_create_patient_sql(std::cref(req), std::cref(res), nextid);
-    // };
-
-    // crud_common(std::ref(res), w, dbexec);
+    json response;
+    try {
+        json data(json::parse(req.body));
+        json payload = data.at("payload");
+        Patient::CreatePatientData createpatientdata(payload, getNextID());
+        Patient patient(createpatientdata);
+        Controller::Create(std::ref(res), patient);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
 }
 
-void PatientController::read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria)
+void PatientController::ReadPatient(crow::response& res, const json& criteria)
 {
-    // auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::cref(req), std::cref(res), std::cref(criteria)); };
-    // crud_common(std::ref(res), w, dbrexec);
+    json response;
+    try {
+        uint64_t id = criteria.at("id").as<uint64_t>();
+        std::vector<std::string> schema = criteria.at("schema").as<std::vector<std::string>>();
+
+        Patient::ReadPatientData readpatientdata(schema, id);
+        Patient patient(readpatientdata);
+        Controller::Read(std::ref(res), patient);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
 }
 
-void PatientController::update_patient(const crow::request& req, crow::response& res)
+void PatientController::Updateatient(const crow::request& req, crow::response& res)
 {
-    // auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(std::cref(req), std::cref(res)); };
-    // crud_common(std::ref(res), w, dbexec);
+    json response;
+    try {
+        json data(json::parse(req.body));
+        json payload = data.at("payload");
+        json basic_data = payload.at("basic_data");
+        uint64_t user_id = basic_data.at("id").as<uint64_t>();
+
+        Patient::UpdatePatientData updatepatientdata(payload, user_id);
+        Patient patient(updatepatientdata);
+        Controller::Update(std::ref(res), patient);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
 }
-void PatientController::delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json)
+void PatientController::DeletePatient(crow::response& res, const jsoncons::json& delete_json)
 {
-    // auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(std::cref(req), std::cref(res), std::cref(delete_json)); };
-    // crud_common(std::ref(res), w, dbexec);
+    json response;
+    try {
+        json payload = delete_json.at("payload");
+        json basic_data = payload.at("basic_data");
+        uint64_t user_id = basic_data.at("id").as<uint64_t>();
+
+        Patient::DeletePatientData deletepatientdata(payload, user_id);
+        Patient patient(deletepatientdata);
+        Controller::Delete(std::ref(res), patient);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
 }
 
-void PatientController::search_patient(const crow::request& req, crow::response& res, const jsoncons::json& search_json)
+void PatientController::SearchPatient(crow::response& res, const jsoncons::json& search_json)
 {
-    // (void)req;
-    // json response_json;
-    // json query_results_json;
-    // std::optional<std::string> query;
-
-    // try {
-    //     SqlMan::SearchData searchData(search_json);
-    //     query = sqlman->get_search_patient_sql(searchData);
-    //     if (query) {
-    //         query_results_json = dbController->executeReadQuery(std::cref(query.value()));
-    //         size_t results_count = query_results_json.size();
-
-    //         if (results_count > searchData.limit) {
-    //             response_json["more"] = true;
-    //             response_json["offset"] = searchData.offset + searchData.limit;
-    //             query_results_json.erase(query_results_json.array_range().end() - 1);
-
-    //         } else {
-    //             response_json["more"] = false;
-    //             response_json["offset"] = 0;
-    //         }
-    //     }
-
-    //     if (query_results_json.empty()) {
-    //         rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", "not found", -1, 400);
-    //     } else {
-    //         rHelper->buildResponse(response_json, 0, "success", query_results_json);
-    //         rHelper->sendResponse(res, 200, response_json);
-    //     }
-    // } catch (const std::exception& e) {
-    //     // Handle exception (log, etc.)
-    //     rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
-    // }
+    json response;
+    try {
+        Patient::SearchData searchpatientdata(search_json);
+        Patient patient(searchpatientdata);
+        Controller::Search(std::ref(res), patient);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
 }

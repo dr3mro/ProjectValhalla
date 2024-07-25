@@ -85,29 +85,29 @@ public:
         return { true, "validation success" };
     }
 
-    std::string getSqlCreateStatement() override
+    std::optional<std::string> getSqlCreateStatement() override
     {
         return fmt::format(
             "INSERT INTO users (username, password_hash, role, user_data) VALUES ('{}','{}','{}','{}')",
             userdata.username, userdata.password_hash, userdata.role, userdata.user_data);
     }
 
-    std::string getSqlReadStatement() override
+    std::optional<std::string> getSqlReadStatement() override
     {
         return std::string();
     }
 
-    std::string getSqlUpdateStatement() override
+    std::optional<std::string> getSqlUpdateStatement() override
     {
         return std::string();
     }
 
-    std::string getSqlDeleteStatement() override
+    std::optional<std::string> getSqlDeleteStatement() override
     {
         return std::string();
     }
 
-    std::string getSqlSearchStatement() override
+    std::optional<std::string> getSqlSearchStatement() override
     {
         return std::string();
     }
