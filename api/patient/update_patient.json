@@ -2,8 +2,7 @@
   "payload": {
     "basic_data": {
       "id": 100001,
-      "firstname": "Mark",
-      "lastname": "Johnson",
+      "fullname": "Mark Johnson",
       "date_of_birth": "1990-01-01",
       "gender": "Male",
       "place_of_birth": "Philadilphia",

@@ -1,0 +1,50 @@
+{
+  "payload": {
+    "basic_data": {
+      "clinic_name": "Clinic0",
+      "clinic_id": "0",
+      "specialities": [
+        "Cardiology"
+      ],
+      "country": "Egypt",
+      "city": "Damietta",
+      "Address": "11 street Ras elbar",
+      "contact": [
+        {
+          "email": "clinic0@valhalla.com"
+        },
+        {
+          "phone": [
+            "+1987654321"
+          ]
+        }
+      ]
+    },
+    "providers": {
+      "Doctors": [
+        "100001",
+        "100002",
+        "100003"
+      ],
+      "nurses": [
+        "100004",
+        "100005"
+      ],
+      "paramedics": [
+        "100006",
+        "100007"
+      ],
+      "assistants": [
+        "100008",
+        "100009"
+      ],
+      "admin_id": [
+        "100000"
+      ],
+      "owner_id": [
+        "100000"
+      ]
+    }
+  },
+  "xxh64sum": "62f8c5fd6ba78d73"
+}

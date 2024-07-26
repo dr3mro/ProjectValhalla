@@ -6,7 +6,7 @@
     "role": 0,
     "user_data": {
       "contact": {
-        "phone": "+201299999999",
+        "phone": ["+201299999999"],
         "email": "amr@mail.com"
       },
       "address": {

@@ -2,8 +2,7 @@
   "payload": {
     "basic_data": {
       "id": 100009,
-      "firstname": "John",
-      "lastname": "Doe",
+      "fullname": "John Doe",
       "date_of_birth": "1990-01-01",
       "gender": "Male"
     }
