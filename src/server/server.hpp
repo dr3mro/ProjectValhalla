@@ -1,4 +1,5 @@
 #pragma once
+#include "controllers/cliniccontroller/cliniccontroller.hpp"
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "controllers/patientcontroller/patientcontroller.hpp"
 #include "controllers/usercontroller/usercontroller.hpp"
@@ -30,6 +31,7 @@ private:
     std::shared_ptr<RestHelper> restHelper;
     std::shared_ptr<Tokenizer> tokenizer;
     std::shared_ptr<PatientController> patientController;
+    std::shared_ptr<ClinicController> clinicController;
     std::shared_ptr<UserController> userController;
     std::shared_ptr<DOSDetector> dos_detector;
     std::shared_ptr<RateLimit> rateLimit;

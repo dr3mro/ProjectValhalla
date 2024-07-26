@@ -6,7 +6,9 @@
 #include <utility>
 
 UserController::UserController(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper, const std::shared_ptr<Tokenizer>& tokenizer)
-    : Controller(dbController, rHelper, tokenizer)
+    : Controller(dbController, rHelper)
+    , tokenizer(tokenizer)
+
 {
 }
 

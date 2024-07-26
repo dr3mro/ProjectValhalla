@@ -20,4 +20,7 @@ public:
     // PUBLIC
     void CreateUser(const crow::request& req, crow::response& res);
     void AuthenticateUser(crow::response& res, const jsoncons::json& credentials);
+
+private:
+    std::shared_ptr<Tokenizer> tokenizer;
 };

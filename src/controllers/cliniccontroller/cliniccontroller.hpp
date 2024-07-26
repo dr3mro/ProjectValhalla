@@ -2,7 +2,6 @@
 #include "controllers/controller/controller.hpp"
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
 #include <fmt/format.h>
 #include <jsoncons/json.hpp>
@@ -11,7 +10,7 @@ using json = jsoncons::json;
 
 class ClinicController : public Controller {
 public:
-    explicit ClinicController(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper, const std::shared_ptr<Tokenizer>& tokenizer);
+    explicit ClinicController(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper);
 
     // CRUDS
     void CreateClinic(const crow::request& req, crow::response& res);

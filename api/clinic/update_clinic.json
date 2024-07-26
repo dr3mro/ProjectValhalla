@@ -1,8 +1,8 @@
 {
   "payload": {
     "basic_data": {
-      "clinic_name": "Clinic0",
-      "id": "0",
+      "clinic_name": "Clinic1",
+      "id": "1002",
       "specialities": [
         "Cardiology"
       ],

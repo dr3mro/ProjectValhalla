@@ -2,7 +2,6 @@
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "entities/entity.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <fmt/format.h>
@@ -12,12 +11,9 @@ using json = jsoncons::json;
 
 class Controller {
 public:
-    Controller(const std::shared_ptr<DatabaseController>& dbController,
-        const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<Tokenizer>& tokenizer)
+    Controller(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper)
         : dbController(dbController)
         , rHelper(rHelper)
-        , tokenizer(tokenizer)
     {
     }
 
@@ -50,7 +46,6 @@ public:
     template <typename T>
     void Search(crow::response& res, T& entity)
     {
-
         json response_json;
         json query_results_json;
         std::optional<std::string> query;
@@ -89,7 +84,6 @@ public:
 protected:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> rHelper;
-    std::shared_ptr<Tokenizer> tokenizer;
 
     json (DatabaseController::*dbexec)(const std::string&) = &DatabaseController::executeQuery;
     json (DatabaseController::*dbrexec)(const std::string&) = &DatabaseController::executeReadQuery;

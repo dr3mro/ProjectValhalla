@@ -2,10 +2,8 @@
 #include "entities/patient.hpp"
 #include <functional>
 
-PatientController::PatientController(const std::shared_ptr<DatabaseController>& dbController,
-    const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<Tokenizer>& tokenizer)
-    : Controller(std::cref(dbController), std::cref(rHelper), std::cref(tokenizer))
+PatientController::PatientController(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper)
+    : Controller(std::cref(dbController), std::cref(rHelper))
 {
 }
 

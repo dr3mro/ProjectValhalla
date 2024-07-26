@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS patients (
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE users (
-    user_id INTEGER PRIMARY KEY DEFAULT nextval('user_id_seq'),
+    id INTEGER PRIMARY KEY DEFAULT nextval('user_id_seq'),
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
@@ -29,8 +29,9 @@ CREATE TABLE users (
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE clinics (
-    clinic_id INTEGER PRIMARY KEY DEFAULT nextval('clinic_id_seq'),
-    clinic_data JSONB
+    id INTEGER PRIMARY KEY DEFAULT nextval('clinic_id_seq'),
+    basic_data JSONB,
+    providers JSONB
 );
 
 -- Optional: Create a trigger to update `updated_at` on every update

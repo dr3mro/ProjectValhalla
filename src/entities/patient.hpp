@@ -143,17 +143,15 @@ public:
     {
         std::optional<std::string> query;
         uint64_t id;
-        std::string basic_data_str;
 
         try {
             jsoncons::json payload = std::any_cast<DeletePatientData>(data).payload;
             jsoncons::json basic_data = payload.at("basic_data");
             id = basic_data.at("id").as<uint64_t>();
-            basic_data_str = basic_data.as<std::string>();
 
             // Construct SQL query using {fmt} for parameterized query
             query
-                = fmt::format("DELETE FROM patients where id={} and basic_data @> '{}';", id, basic_data_str);
+                = fmt::format("DELETE FROM patients where id={};", id);
 
         } catch (const std::exception& e) {
             std::cerr << "faild to create query for delete_patient" << e.what() << std::endl;
