@@ -1,1 +1,3 @@
-* Implement Clinicdocke
+
+* create middleware to check token in ep user, provider and if data not his own remove sensitive data
+* Implement logout, changepassword, lostpassword.

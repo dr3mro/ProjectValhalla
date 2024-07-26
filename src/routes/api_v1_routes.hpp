@@ -1,6 +1,7 @@
 #pragma once
 #include "controllers/cliniccontroller/cliniccontroller.hpp"
 #include "controllers/patientcontroller/patientcontroller.hpp"
+#include "controllers/providercontroller/providercontroller.hpp"
 #include "controllers/usercontroller/usercontroller.hpp"
 #include "middlewares/authentication.hpp"
 #include "middlewares/authorization.hpp"
@@ -20,5 +21,6 @@ public:
     API_V1_Routes(const std::shared_ptr<APP>& app,
         const std::shared_ptr<UserController>& userController,
         const std::shared_ptr<PatientController>& patientController,
-        const std::shared_ptr<ClinicController>& clinicController);
+        const std::shared_ptr<ClinicController>& clinicController,
+        const std::shared_ptr<ProviderController>& providerController);
 };

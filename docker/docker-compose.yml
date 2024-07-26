@@ -28,13 +28,13 @@ services:
         ipv4_address: 172.20.0.10
     depends_on:
       api_dev:
-        condition: service_healthy
+        condition: service_started
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80/v1/hello || exit 1"]
-      interval: 10s
-      timeout: 1s
-      retries: 3
+      interval: 60s
+      timeout: 3s
+      retries: 5
 
   proxy:
     profiles: ["run"]
@@ -46,13 +46,13 @@ services:
         ipv4_address: 172.20.0.10
     depends_on:
       api:
-        condition: service_healthy
+        condition: service_started
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80/v1/hello || exit 1"]
-      interval: 10s
-      timeout: 1s
-      retries: 3
+      interval: 60s
+      timeout: 3s
+      retries: 5
   api:
     profiles: ["run"]
     build:
@@ -71,9 +71,9 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/hello || exit 1"]
-      interval: 30s
-      timeout: 2s
-      retries: 3
+      interval: 60s
+      timeout: 3s
+      retries: 5
 
   api_dev:
     profiles: ["dev"]
@@ -95,9 +95,9 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/hello || exit 1"]
-      interval: 30s
-      timeout: 2s
-      retries: 30
+      interval: 60s
+      timeout: 3s
+      retries: 5
 
 
 

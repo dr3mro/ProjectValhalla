@@ -1,3 +1,11 @@
+# Version 0.4.0
+ * Added user ,clinic and provider end points.
+ * code refactor.
+ * switch to nginx for cors solution.
+ * improve DOS protection algorithm.
+ * add environment variable support.
+ * tweak libsodium performance to max even if it would be less secure.
+
 # Version 0.3.0
  * switch password hashing to libsodium scrypt, all users passwords will be invalid, need to recreate users.
  * switch DataIntegrity and DOS Detection to xxHash64 for better performance.

@@ -1,22 +1,25 @@
 {
   "payload": {
-    "fullname": "Amr Nasr",
-    "username": "amr_nasr",
-    "password": "123Mm@p0",
-    "contact": {
-      "phone": [
-        "+201299999999"
-      ],
-      "email": "amr@mail.com"
+    "basic_data": {
+      "id": 1010,
+      "fullname": "Amr Nasr 555",
+      "contact": {
+        "phone": "+201299999999",
+        "email": "amr@mail.com"
+      },
+      "address": {
+        "city": "Damietta",
+        "street": "portsaid street"
+      },
+      "dob": "1990-10-10",
+      "gender": "male",
+      "married": true,
+      "job": {
+        "position": "Doctor",
+        "speciality": "Cardiology"
+      }
     },
-    "address": {
-      "city": "Damietta",
-      "street": "portsaid street"
-    },
-    "dob": "1990-10-10",
-    "gender": "male",
-    "married": true,
-    "job": "Engineer"
+    "role": 10
   },
   "xxh64sum": "7c3cb6ca0e74c8be"
 }

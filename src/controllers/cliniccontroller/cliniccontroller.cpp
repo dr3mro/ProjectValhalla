@@ -13,9 +13,10 @@ void ClinicController::CreateClinic(const crow::request& req, crow::response& re
     try {
         json data(json::parse(req.body));
         json payload = data.at("payload");
-        Clinic::CreateClinicData createClinicdata(payload, getNextID());
-        Clinic Clinic(createClinicdata);
-        Controller::Create(std::ref(res), Clinic);
+        Clinic::CreateData createData(payload, getNextID());
+
+        Clinic clinic(createData);
+        Controller::Create(std::ref(res), clinic);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
@@ -28,9 +29,9 @@ void ClinicController::ReadClinic(crow::response& res, const json& criteria)
         uint64_t id = criteria.at("id").as<uint64_t>();
         std::vector<std::string> schema = criteria.at("schema").as<std::vector<std::string>>();
 
-        Clinic::ReadClinicData readClinicdata(schema, id);
-        Clinic Clinic(readClinicdata);
-        Controller::Read(std::ref(res), Clinic);
+        Clinic::ReadData readData(schema, id);
+        Clinic clinic(readData);
+        Controller::Read(std::ref(res), clinic);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
@@ -45,9 +46,9 @@ void ClinicController::UpdateClinic(const crow::request& req, crow::response& re
         json basic_data = payload.at("basic_data");
         uint64_t user_id = basic_data.at("id").as<uint64_t>();
 
-        Clinic::UpdateClinicData updateClinicdata(payload, user_id);
-        Clinic Clinic(updateClinicdata);
-        Controller::Update(std::ref(res), Clinic);
+        Clinic::UpdateData updateData(payload, user_id);
+        Clinic clinic(updateData);
+        Controller::Update(std::ref(res), clinic);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
@@ -60,9 +61,9 @@ void ClinicController::DeleteClinic(crow::response& res, const jsoncons::json& d
         json basic_data = payload.at("basic_data");
         uint64_t user_id = basic_data.at("id").as<uint64_t>();
 
-        Clinic::DeleteClinicData deleteClinicdata(payload, user_id);
-        Clinic Clinic(deleteClinicdata);
-        Controller::Delete(std::ref(res), Clinic);
+        Clinic::DeleteData deleteData(payload, user_id);
+        Clinic clinic(deleteData);
+        Controller::Delete(std::ref(res), clinic);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
@@ -72,9 +73,9 @@ void ClinicController::SearchClinic(crow::response& res, const jsoncons::json& s
 {
     json response;
     try {
-        Clinic::SearchData searchClinicdata(search_json);
-        Clinic Clinic(searchClinicdata);
-        Controller::Search(std::ref(res), Clinic);
+        Clinic::SearchData searchData(search_json);
+        Clinic clinic(searchData);
+        Controller::Search(std::ref(res), clinic);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }

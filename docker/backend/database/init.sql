@@ -6,6 +6,9 @@ CREATE SEQUENCE patient_id_seq START 100000;
 CREATE SEQUENCE user_id_seq START 1000;
 
 -- Set starting clinic_id from 1000
+CREATE SEQUENCE provider_id_seq START 1000;
+
+-- Set starting clinic_id from 1000
 CREATE SEQUENCE clinic_id_seq START 1000;
 
 -- Create the table with correct usage of sequence for id column
@@ -24,7 +27,16 @@ CREATE TABLE users (
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
-    user_data JSONB
+    basic_data JSONB
+);
+
+-- Create the table with correct usage of sequence for id column
+CREATE TABLE providers (
+    id INTEGER PRIMARY KEY DEFAULT nextval('provider_id_seq'),
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    basic_data JSONB
 );
 
 -- Create the table with correct usage of sequence for id column

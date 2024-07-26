@@ -1,9 +1,7 @@
 {
-  "id": 100008,
+  "id": 1010,
   "schema":[
-    "basic_data",
-    "health_data",
-    "appointments_data"
+    "basic_data"
   ]
 }
 

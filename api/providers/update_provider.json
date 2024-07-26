@@ -1,10 +1,9 @@
 {
   "payload": {
-    "fullname": "Amr Nasr",
-    "username": "amr_nasr",
-    "password": "123Mm@p0",
-    "role": 0,
-    "user_data": {
+    "role": 1,
+    "basic_data": {
+      "fullname": "Amr Nasr2",
+      "id" : 1001,
       "contact": {
         "phone": ["+201299999999"],
         "email": "amr@mail.com"

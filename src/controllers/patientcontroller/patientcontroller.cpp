@@ -13,8 +13,8 @@ void PatientController::CreatePatient(const crow::request& req, crow::response& 
     try {
         json data(json::parse(req.body));
         json payload = data.at("payload");
-        Patient::CreatePatientData createpatientdata(payload, getNextID());
-        Patient patient(createpatientdata);
+        Patient::CreateData createData(payload, getNextID());
+        Patient patient(createData);
         Controller::Create(std::ref(res), patient);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
@@ -28,8 +28,8 @@ void PatientController::ReadPatient(crow::response& res, const json& criteria)
         uint64_t id = criteria.at("id").as<uint64_t>();
         std::vector<std::string> schema = criteria.at("schema").as<std::vector<std::string>>();
 
-        Patient::ReadPatientData readpatientdata(schema, id);
-        Patient patient(readpatientdata);
+        Patient::ReadData readData(schema, id);
+        Patient patient(readData);
         Controller::Read(std::ref(res), patient);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
@@ -45,8 +45,8 @@ void PatientController::UpdatePatient(const crow::request& req, crow::response& 
         json basic_data = payload.at("basic_data");
         uint64_t user_id = basic_data.at("id").as<uint64_t>();
 
-        Patient::UpdatePatientData updatepatientdata(payload, user_id);
-        Patient patient(updatepatientdata);
+        Patient::UpdateData updateData(payload, user_id);
+        Patient patient(updateData);
         Controller::Update(std::ref(res), patient);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
@@ -60,8 +60,8 @@ void PatientController::DeletePatient(crow::response& res, const jsoncons::json&
         json basic_data = payload.at("basic_data");
         uint64_t user_id = basic_data.at("id").as<uint64_t>();
 
-        Patient::DeletePatientData deletepatientdata(payload, user_id);
-        Patient patient(deletepatientdata);
+        Patient::DeleteData deleteData(payload, user_id);
+        Patient patient(deleteData);
         Controller::Delete(std::ref(res), patient);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
@@ -72,8 +72,8 @@ void PatientController::SearchPatient(crow::response& res, const jsoncons::json&
 {
     json response;
     try {
-        Patient::SearchData searchpatientdata(search_json);
-        Patient patient(searchpatientdata);
+        Patient::SearchData searchData(search_json);
+        Patient patient(searchData);
         Controller::Search(std::ref(res), patient);
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);

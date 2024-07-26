@@ -21,26 +21,26 @@ public:
     template <typename T>
     void Create(crow::response& res, T& entity)
     {
-        std::optional<std::string> (Entity::*sqlstatement)() = &Entity::getSqlCreateStatement;
+        std::optional<std::string> (T::*sqlstatement)() = &T::getSqlCreateStatement;
         cruds(std::ref(res), entity, sqlstatement, dbexec);
     }
 
     template <typename T>
     void Read(crow::response& res, T& entity)
     {
-        std::optional<std::string> (Entity::*sqlstatement)() = &Entity::getSqlReadStatement;
+        std::optional<std::string> (T::*sqlstatement)() = &T::getSqlReadStatement;
         cruds(std::ref(res), entity, sqlstatement, dbrexec);
     }
     template <typename T>
     void Update(crow::response& res, T& entity)
     {
-        std::optional<std::string> (Entity::*sqlstatement)() = &Entity::getSqlUpdateStatement;
+        std::optional<std::string> (T::*sqlstatement)() = &T::getSqlUpdateStatement;
         cruds(std::ref(res), entity, sqlstatement, dbexec);
     }
     template <typename T>
     void Delete(crow::response& res, T& entity)
     {
-        std::optional<std::string> (Entity::*sqlstatement)() = &Entity::getSqlDeleteStatement;
+        std::optional<std::string> (T::*sqlstatement)() = &T::getSqlDeleteStatement;
         cruds(std::ref(res), entity, sqlstatement, dbexec);
     }
     template <typename T>
@@ -88,8 +88,8 @@ protected:
     json (DatabaseController::*dbexec)(const std::string&) = &DatabaseController::executeQuery;
     json (DatabaseController::*dbrexec)(const std::string&) = &DatabaseController::executeReadQuery;
     ///////////////////////////
-    template <typename T>
-    bool get_sql_statement(json& response_json, crow::response& res, std::optional<std::string>& query, Entity& entity, T& sqlstatement)
+    template <typename S, typename T>
+    bool get_sql_statement(json& response_json, crow::response& res, std::optional<std::string>& query, T& entity, S& sqlstatement)
     {
         query = (entity.*sqlstatement)();
 
@@ -101,8 +101,8 @@ protected:
         return true;
     }
 
-    template <typename T, typename S>
-    void cruds(crow::response& res, T& entity, S sqlstatement, json (DatabaseController::*f)(const std::string&))
+    template <typename S, typename T>
+    void cruds(crow::response& res, T& entity, S& sqlstatement, json (DatabaseController::*f)(const std::string&))
     {
         json response_json;
         json query_results_json;

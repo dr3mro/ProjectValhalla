@@ -1,26 +1,24 @@
 #pragma once
-#include "controllers/controller/controller.hpp"
-#include "controllers/databasecontroller/databasecontroller.hpp"
-
-#include "utils/resthelper/resthelper.hpp"
-#include "utils/tokenizer/tokenizer.hpp"
-#include <crow.h>
+#include "controllers/clientcontroller/clientcontroller.tpp"
+#include "entities/user.hpp"
 #include <memory>
 
-using json = jsoncons::json;
-
-class UserController : public Controller {
+// The UserController class derives from ClientController<User>
+class UserController : public ClientController<User> {
 public:
-    explicit UserController(const std::shared_ptr<DatabaseController>& dbController,
+    UserController(const std::shared_ptr<DatabaseController>& dbController,
         const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<Tokenizer>& tokenizer);
+        const std::shared_ptr<Tokenizer>& tokenizer,
+        const std::shared_ptr<PasswordCrypt>& passwordCrypt);
 
-    ~UserController() = default;
+    // Destructor
+    virtual ~UserController() = default;
 
-    // PUBLIC
+    // Additional user-specific methods can be declared here
     void CreateUser(const crow::request& req, crow::response& res);
     void AuthenticateUser(crow::response& res, const jsoncons::json& credentials);
-
-private:
-    std::shared_ptr<Tokenizer> tokenizer;
+    void ReadUser(crow::response& res, const json& criteria);
+    void UpdateUser(const crow::request& req, crow::response& res);
+    void DeleteUser(const crow::request& req, crow::response& res, const json& criteria);
+    void SearchUser(const crow::request& req, crow::response& res, const json& search_json);
 };

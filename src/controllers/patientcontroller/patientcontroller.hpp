@@ -35,4 +35,5 @@ private:
         }
         return 0;
     }
+    const std::string tablename = "patients";
 };

@@ -2,6 +2,7 @@
 #include "controllers/cliniccontroller/cliniccontroller.hpp"
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "controllers/patientcontroller/patientcontroller.hpp"
+#include "controllers/providercontroller/providercontroller.hpp"
 #include "controllers/usercontroller/usercontroller.hpp"
 #include "database/databaseconnectionpool.hpp"
 #include "middlewares/authentication.hpp"
@@ -13,6 +14,7 @@
 #include "middlewares/xrequest.hpp"
 #include "routes/api_v1_routes.hpp"
 #include "utils/dosdetector/dosdetector.hpp"
+#include "utils/passwordcrypt/passwordcrypt.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
@@ -30,9 +32,11 @@ private:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> restHelper;
     std::shared_ptr<Tokenizer> tokenizer;
+    std::shared_ptr<PasswordCrypt> passwordCrypt;
     std::shared_ptr<PatientController> patientController;
     std::shared_ptr<ClinicController> clinicController;
     std::shared_ptr<UserController> userController;
+    std::shared_ptr<ProviderController> providerController;
     std::shared_ptr<DOSDetector> dos_detector;
     std::shared_ptr<RateLimit> rateLimit;
     std::shared_ptr<ElapsedTime> elapsedTime;
