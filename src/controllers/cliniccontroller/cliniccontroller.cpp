@@ -1,83 +1,83 @@
-#include "controllers/cliniccontroller/cliniccontroller.hpp"
-#include <crow.h>
-#include <fmt/core.h>
-#include <fmt/ranges.h>
+#include "cliniccontroller.hpp"
+#include "entities/clinic.hpp"
 #include <functional>
-#include <optional>
 
 ClinicController::ClinicController(const std::shared_ptr<DatabaseController>& dbController,
     const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<SqlMan>& sqlman)
-    : dbController(dbController)
-    , rHelper(rHelper)
-    , sqlman(sqlman)
+    const std::shared_ptr<Tokenizer>& tokenizer)
+    : Controller(std::cref(dbController), std::cref(rHelper), std::cref(tokenizer))
 {
 }
 
-void ClinicController::create_patient(const crow::request& req, crow::response& res)
+void ClinicController::CreateClinic(const crow::request& req, crow::response& res)
 {
-
-    auto w = [this, &req, &res]() {
-        uint64_t nextid;
-        if (!this->rHelper->getNextId(nextid, res)) {
-            return std::optional<std::string>();
-        }
-        return this->sqlman->get_create_patient_sql(std::cref(req), std::cref(res), nextid);
-    };
-
-    crud_common(std::ref(res), w, dbexec);
+    // json response;
+    // try {
+    //     json data(json::parse(req.body));
+    //     json payload = data.at("payload");
+    //     Clinic::CreateClinicData createClinicdata(payload, getNextID());
+    //     Clinic Clinic(createClinicdata);
+    //     Controller::Create(std::ref(res), Clinic);
+    // } catch (const std::exception& e) {
+    //     rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    // }
 }
 
-void ClinicController::read_patient(const crow::request& req, crow::response& res, const jsoncons::json& criteria)
+void ClinicController::ReadClinic(crow::response& res, const json& criteria)
 {
-    auto w = [this, &req, &res, &criteria]() { return this->sqlman->get_read_patient_sql(std::cref(req), std::cref(res), std::cref(criteria)); };
-    crud_common(std::ref(res), w, dbrexec);
+    // json response;
+    // try {
+    //     uint64_t id = criteria.at("id").as<uint64_t>();
+    //     std::vector<std::string> schema = criteria.at("schema").as<std::vector<std::string>>();
+
+    //     Clinic::ReadClinicData readClinicdata(schema, id);
+    //     Clinic Clinic(readClinicdata);
+    //     Controller::Read(std::ref(res), Clinic);
+    // } catch (const std::exception& e) {
+    //     rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    // }
 }
 
-void ClinicController::update_patient(const crow::request& req, crow::response& res)
+void ClinicController::UpdateClinic(const crow::request& req, crow::response& res)
 {
-    auto w = [this, &req, &res]() { return this->sqlman->get_update_patient_sql(std::cref(req), std::cref(res)); };
-    crud_common(std::ref(res), w, dbexec);
+    // json response;
+    // try {
+    //     json data(json::parse(req.body));
+    //     json payload = data.at("payload");
+    //     json basic_data = payload.at("basic_data");
+    //     uint64_t user_id = basic_data.at("id").as<uint64_t>();
+
+    //     Clinic::UpdateClinicData updateClinicdata(payload, user_id);
+    //     Clinic Clinic(updateClinicdata);
+    //     Controller::Update(std::ref(res), Clinic);
+    // } catch (const std::exception& e) {
+    //     rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    // }
 }
-void ClinicController::delete_patient(const crow::request& req, crow::response& res, const jsoncons::json& delete_json)
+void ClinicController::DeleteClinic(crow::response& res, const jsoncons::json& delete_json)
 {
-    auto w = [this, &req, &res, &delete_json]() { return this->sqlman->get_delete_patient_sql(std::cref(req), std::cref(res), std::cref(delete_json)); };
-    crud_common(std::ref(res), w, dbexec);
+    // json response;
+    // try {
+    //     json payload = delete_json.at("payload");
+    //     json basic_data = payload.at("basic_data");
+    //     uint64_t user_id = basic_data.at("id").as<uint64_t>();
+
+    //     Clinic::DeleteClinicData deleteClinicdata(payload, user_id);
+    //     Clinic Clinic(deleteClinicdata);
+    //     Controller::Delete(std::ref(res), Clinic);
+    // } catch (const std::exception& e) {
+    //     rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    // }
 }
 
-void ClinicController::search_patient(const crow::request& req, crow::response& res, const jsoncons::json& search_json)
+void ClinicController::SearchClinic(crow::response& res, const jsoncons::json& search_json)
 {
-    (void)req;
-    json response_json;
-    json query_results_json;
-    std::optional<std::string> query;
-
-    try {
-        SqlMan::SearchData searchData(search_json);
-        query = sqlman->get_search_patient_sql(searchData);
-        if (query) {
-            query_results_json = dbController->executeReadQuery(std::cref(query.value()));
-            size_t results_count = query_results_json.size();
-
-            if (results_count > searchData.limit) {
-                response_json["more"] = true;
-                response_json["offset"] = searchData.offset + searchData.limit;
-                query_results_json.erase(query_results_json.array_range().end() - 1);
-
-            } else {
-                response_json["more"] = false;
-                response_json["offset"] = 0;
-            }
-        }
-
-        if (query_results_json.empty()) {
-            rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", "not found", -1, 400);
-        } else {
-            rHelper->buildResponse(response_json, 0, "success", query_results_json);
-            rHelper->sendResponse(res, 200, response_json);
-        }
-    } catch (const std::exception& e) {
-        // Handle exception (log, etc.)
-        rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
-    }
+    // json response;
+    // try {
+    //     Clinic::SearchData searchClinicdata(search_json);
+    //     Clinic Clinic(searchClinicdata);
+    //     Controller::Search(std::ref(res), Clinic);
+    // } catch (const std::exception& e) {
+    //     rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    // }
 }

@@ -13,7 +13,6 @@
 #include "routes/api_v1_routes.hpp"
 #include "utils/dosdetector/dosdetector.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include "utils/sqlman/sqlman.hpp"
 #include "utils/tokenizer/tokenizer.hpp"
 #include <crow.h>
 #include <memory>
@@ -30,7 +29,6 @@ private:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> restHelper;
     std::shared_ptr<Tokenizer> tokenizer;
-    std::shared_ptr<SqlMan> sqlman;
     std::shared_ptr<PatientController> patientController;
     std::shared_ptr<UserController> userController;
     std::shared_ptr<DOSDetector> dos_detector;

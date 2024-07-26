@@ -28,4 +28,4 @@ VOLUME ["/usr/src"]
 EXPOSE 8080
 
 # Use the entrypoint script as the default command
-ENTRYPOINT ["/usr/src/ProjectValhalla/docker/dev/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/ProjectValhalla/docker/backend/dev/entrypoint.sh"]

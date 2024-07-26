@@ -38,7 +38,7 @@ void PatientController::ReadPatient(crow::response& res, const json& criteria)
     }
 }
 
-void PatientController::Updateatient(const crow::request& req, crow::response& res)
+void PatientController::UpdatePatient(const crow::request& req, crow::response& res)
 {
     json response;
     try {
