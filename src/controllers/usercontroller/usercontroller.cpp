@@ -6,9 +6,9 @@
 // Constructor for UserController, initializing the base class with User specialization
 UserController::UserController(const std::shared_ptr<DatabaseController>& dbController,
     const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<Tokenizer>& tokenizer,
+    const std::shared_ptr<TokenManager>& tokenManager,
     const std::shared_ptr<PasswordCrypt>& passwordCrypt)
-    : ClientController<User>(dbController, rHelper, tokenizer, passwordCrypt)
+    : ClientController<User>(dbController, rHelper, tokenManager, passwordCrypt)
 {
 }
 

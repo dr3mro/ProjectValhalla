@@ -255,6 +255,10 @@ public:
     {
         return data;
     }
+    std::string getGroupName() const // ie. tablename
+    {
+        return tablename;
+    }
 
 protected:
     std::string tablename;

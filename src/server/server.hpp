@@ -16,7 +16,7 @@
 #include "utils/dosdetector/dosdetector.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include "utils/tokenizer/tokenizer.hpp"
+#include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <memory>
 
@@ -31,7 +31,7 @@ private:
     std::shared_ptr<DatabaseConnectionPool> dbConnPool;
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> restHelper;
-    std::shared_ptr<Tokenizer> tokenizer;
+    std::shared_ptr<TokenManager> tokenManager;
     std::shared_ptr<PasswordCrypt> passwordCrypt;
     std::shared_ptr<PatientController> patientController;
     std::shared_ptr<ClinicController> clinicController;

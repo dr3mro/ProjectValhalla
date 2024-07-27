@@ -7,7 +7,7 @@
 #include "entities/client.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include "utils/tokenizer/tokenizer.hpp"
+#include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <fmt/core.h>
 #include <jsoncons/json.hpp>
@@ -20,7 +20,7 @@ class ClientController : public Controller {
 public:
     explicit ClientController(const std::shared_ptr<DatabaseController>& dbController,
         const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<Tokenizer>& tokenizer,
+        const std::shared_ptr<TokenManager>& tokenManager,
         const std::shared_ptr<PasswordCrypt>& passwordCrypt);
 
     virtual ~ClientController() = default;
@@ -34,7 +34,7 @@ public:
     void SearchClient(const crow::request& req, crow::response& res, const json& search_json);
 
 protected:
-    std::shared_ptr<Tokenizer> tokenizer;
+    std::shared_ptr<TokenManager> tokenManager;
     std::shared_ptr<PasswordCrypt> passwordCrypt;
 };
 
@@ -43,10 +43,10 @@ template <typename T>
 ClientController<T>::ClientController(
     const std::shared_ptr<DatabaseController>& dbController,
     const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<Tokenizer>& tokenizer,
+    const std::shared_ptr<TokenManager>& tokenManager,
     const std::shared_ptr<PasswordCrypt>& passwordCrypt)
     : Controller(dbController, rHelper)
-    , tokenizer(tokenizer)
+    , tokenManager(tokenManager)
     , passwordCrypt(passwordCrypt)
 {
 }
@@ -91,10 +91,15 @@ void ClientController<T>::AuthenticateUser(crow::response& res, const jsoncons::
             return;
         }
 
+        TokenManager::LoggedUserInfo loggedUserInfo;
+        loggedUserInfo.userID = user_id;
+        loggedUserInfo.userName = creds.username;
+
         json token_object;
-        token_object["token"] = tokenizer->generate_token(creds.username, std::to_string(user_id));
+        token_object["token"] = tokenManager->GenerateToken(loggedUserInfo);
         token_object["username"] = creds.username;
         token_object["user_id"] = user_id;
+        token_object["group"] = client.getGroupName();
 
         rHelper->buildResponse(response, 0, "success", token_object);
         rHelper->sendResponse(res, 200, response);

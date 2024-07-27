@@ -8,7 +8,7 @@ class UserController : public ClientController<User> {
 public:
     UserController(const std::shared_ptr<DatabaseController>& dbController,
         const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<Tokenizer>& tokenizer,
+        const std::shared_ptr<TokenManager>& tokenManager,
         const std::shared_ptr<PasswordCrypt>& passwordCrypt);
 
     // Destructor

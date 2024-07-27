@@ -53,14 +53,12 @@ public:
     {
         try {
             auto userpass = std::any_cast<Entity::Credentials>(getData());
-            std::string password = userpass.password;
-            std::string username = userpass.username;
-            uint64_t user_id = databaseController->findIfUserID(std::cref(username), std::cref(tablename));
+            uint64_t user_id = databaseController->findIfUserID(std::cref(userpass.username), std::cref(tablename));
 
             if (user_id == 0)
                 return 0;
 
-            if (passwordCrypt->verifyPassword(password, databaseController->getPasswordHashForUserID(std::cref(user_id), std::cref(tablename))))
+            if (passwordCrypt->verifyPassword(userpass.password, databaseController->getPasswordHashForUserID(std::cref(user_id), std::cref(tablename))))
                 return user_id;
             else
                 return 0;

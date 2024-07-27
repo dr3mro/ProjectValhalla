@@ -1,16 +1,15 @@
 #pragma once
-#include "utils/tokenizer/tokenizer.hpp"
+#include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <jsoncons/json.hpp>
-#include <utility>
 
 struct Authorization : crow::ILocalMiddleware {
 
     struct context {
-        Tokenizer::LoggedUserInfo userinfo;
+        TokenManager::LoggedUserInfo userInfo;
     };
-    Authorization(const std::shared_ptr<Tokenizer>& tokenizer)
-        : tokenizer(tokenizer)
+    Authorization(const std::shared_ptr<TokenManager>& tokenManager)
+        : tokenManager(tokenManager)
     {
     }
 
@@ -29,17 +28,17 @@ struct Authorization : crow::ILocalMiddleware {
             }
 
             if (authorization.value().substr(0, 7) == "Bearer ") {
-                ctx.userinfo.token = authorization.value().substr(7);
+                ctx.userInfo.token = authorization.value().substr(7);
             }
 
-            if (!ctx.userinfo.token) {
+            if (!ctx.userInfo.token) {
                 // Respond with a 400 Bad Request if shasum parsing failed
                 res.code = 403;
                 res.end("Authorization Token not found");
                 return;
             }
 
-            if (!tokenizer->token_validator(ctx.userinfo)) {
+            if (!tokenManager->ValidateToken(ctx.userInfo)) {
                 res.code = 403;
                 res.end("Authorization denied");
                 return;
@@ -63,5 +62,5 @@ struct Authorization : crow::ILocalMiddleware {
     }
 
 private:
-    std::shared_ptr<Tokenizer> tokenizer;
+    std::shared_ptr<TokenManager> tokenManager;
 };

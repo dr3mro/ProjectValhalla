@@ -46,6 +46,20 @@ CREATE TABLE clinics (
     providers JSONB
 );
 
+-- Create the table user_sessions
+CREATE TABLE users_sessions (
+    id INT PRIMARY KEY,
+    last_login TIMESTAMPTZ,
+    last_logout TIMESTAMPTZ
+);
+
+-- Create the table user_sessions
+CREATE TABLE providers_sessions (
+    id INT PRIMARY KEY,
+    last_login TIMESTAMPTZ,
+    last_logout TIMESTAMPTZ
+);
+
 -- Optional: Create a trigger to update `updated_at` on every update
 CREATE OR REPLACE FUNCTION update_updated_on_column()
 RETURNS TRIGGER AS $$
