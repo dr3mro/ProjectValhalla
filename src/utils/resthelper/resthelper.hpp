@@ -7,7 +7,7 @@ using json = jsoncons::json;
 
 class RestHelper {
 public:
-    RestHelper(const std::shared_ptr<DatabaseController>& dbController);
+    RestHelper();
 
     bool isQuerySuccessful(const json& response);
     void buildResponse(json& response_json, const short status, const std::string& status_message, const json& results);
@@ -17,5 +17,5 @@ public:
     void sendQueryResult(json& response_json, const json& query_results_json, crow::response& res);
 
 private:
-    std::shared_ptr<DatabaseController> dbController;
+    std::shared_ptr<DatabaseController> databaseController;
 };

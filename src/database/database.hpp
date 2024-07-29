@@ -49,12 +49,12 @@ public:
     }
 
     template <typename T>
-    T doSimpleQuery(const std::string& query)
+    std::optional<T> doSimpleQuery(const std::string& query)
     {
         try {
             pqxx::nontransaction txn(*connection);
             pqxx::result result = txn.exec(query);
-            return result[0][0].as<T>();
+            return result[0][0].as<std::optional<T>>();
         } catch (const std::exception& e) {
             std::cerr << "Error executing query: " << e.what() << std::endl;
             throw; // Rethrow the exception to indicate failure

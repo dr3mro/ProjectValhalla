@@ -1,4 +1,6 @@
 #include "tokenmanager.hpp"
+#include "store/store.hpp"
+#include "utils/sessionmanager/sessionmanager.hpp"
 
 // Function to generate JWT token
 using jwt::error::token_verification_exception;
@@ -15,7 +17,7 @@ TokenManager::GenerateToken(const LoggedUserInfo& loggedinUserInfo) const
                                                .set_id(std::to_string(loggedinUserInfo.userID.value()))
                                                .set_issued_at(std::chrono::system_clock::now())
                                                .set_expires_at(std::chrono::system_clock::now() + std::chrono::minutes { std::stoull(tokenMgrParm.validity) })
-                                               .set_payload_claim("llod", jwt::claim(loggedinUserInfo.llod.value()))
+                                               .set_payload_claim("llodt", jwt::claim(loggedinUserInfo.llodt.value()))
                                                .set_payload_claim("group", jwt::claim(loggedinUserInfo.group.value()))
                                                .sign(jwt::algorithm::hs256 { tokenMgrParm.secret });
 
@@ -29,30 +31,41 @@ TokenManager::GenerateToken(const LoggedUserInfo& loggedinUserInfo) const
 bool TokenManager::ValidateToken(LoggedUserInfo& loggedinUserInfo) const
 {
     try {
-        // Create a verifier
+
+        auto token = jwt::decode(loggedinUserInfo.token.value());
+
+        loggedinUserInfo.group = token.get_payload_claim("group").as_string();
+        loggedinUserInfo.userID = std::stoull(token.get_id());
+        loggedinUserInfo.userName = token.get_subject();
+
+        if (!loggedinUserInfo.group || !loggedinUserInfo.userID || !loggedinUserInfo.userName) {
+            return false;
+        }
+
+        if (databaseController->findIfUserID(loggedinUserInfo.userName.value(), loggedinUserInfo.group.value()) != loggedinUserInfo.userID) {
+            return false;
+        }
+
+        loggedinUserInfo.llodt = sessionManager->getLastLogoutTime(loggedinUserInfo.userID.value(), loggedinUserInfo.group.value());
+
+        // Check expiration
+        auto exp_time = token.get_payload_claim("exp").as_date().time_since_epoch();
+        auto issuer = token.get_payload_claim("iss").as_string();
+        auto now = std::chrono::system_clock::now().time_since_epoch();
+
         auto verifier = jwt::verify()
                             .allow_algorithm(jwt::algorithm::hs256 { tokenMgrParm.secret })
                             .with_issuer(tokenMgrParm.issuer)
-                            .with_type(tokenMgrParm.type);
-
-        // Decode the token
-        auto decoded_token = jwt::decode(loggedinUserInfo.token.value());
+                            .with_type(tokenMgrParm.type)
+                            .with_subject(loggedinUserInfo.userName.value())
+                            .with_id(std::to_string(loggedinUserInfo.userID.value()))
+                            .with_claim("group", jwt::claim(loggedinUserInfo.group.value()))
+                            .with_claim("llodt", jwt::claim(loggedinUserInfo.llodt.value_or("first_login")));
 
         // Verify the token
-        verifier.verify(decoded_token);
+        verifier.verify(token);
 
-        // Set user info
-        loggedinUserInfo.userID = std::stoull(decoded_token.get_id());
-        loggedinUserInfo.userName = decoded_token.get_subject();
-        loggedinUserInfo.group = decoded_token.get_payload_claim("group").as_string();
-        loggedinUserInfo.llod = decoded_token.get_payload_claim("llod").as_string();
-
-        // Check expiration
-        auto exp_time = decoded_token.get_payload_claim("exp").as_date().time_since_epoch();
-        auto issuer = decoded_token.get_payload_claim("iss").as_string();
-        auto now = std::chrono::system_clock::now().time_since_epoch();
-
-        // Check if token is still valid
+        //  Check if token is still valid
         if (now < exp_time && issuer == tokenMgrParm.issuer) {
             return true;
         }

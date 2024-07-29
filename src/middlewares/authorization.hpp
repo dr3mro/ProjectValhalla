@@ -17,7 +17,6 @@ struct Authorization : crow::ILocalMiddleware {
 
     void before_handle(crow::request& req, crow::response& res, context& ctx)
     {
-
         try {
             std::optional<std::string> authorization = req.get_header_value("Authorization");
 
@@ -45,7 +44,6 @@ struct Authorization : crow::ILocalMiddleware {
             }
             return;
         } catch (const std::exception& e) {
-
             res.code = 500; // login denied
             res.end();
             return;

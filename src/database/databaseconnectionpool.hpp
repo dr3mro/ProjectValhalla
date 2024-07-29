@@ -1,10 +1,9 @@
 #pragma once
+#include "database.hpp"
 #include <condition_variable>
 #include <memory>
 #include <mutex>
 #include <queue>
-
-#include "database.hpp"
 
 class DatabaseConnectionPool {
 public:

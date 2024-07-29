@@ -7,6 +7,7 @@
 #include "entities/client.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include "utils/resthelper/resthelper.hpp"
+#include "utils/sessionmanager/sessionmanager.hpp"
 #include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <fmt/core.h>
@@ -27,11 +28,12 @@ public:
 
     // PUBLIC
     void CreateUser(const crow::request& req, crow::response& res);
-    void AuthenticateUser(crow::response& res, const jsoncons::json& credentials);
+    std::optional<uint64_t> AuthenticateUser(crow::response& res, const jsoncons::json& credentials, std::shared_ptr<SessionManager>& sm);
     void ReadClient(crow::response& res, const json& criteria);
     void UpdateClient(const crow::request& req, crow::response& res);
     void DeleteClient(const crow::request& req, crow::response& res, const json& delete_json);
     void SearchClient(const crow::request& req, crow::response& res, const json& search_json);
+    void LogoutClient(crow::response& res, const std::optional<std::string>& token, std::shared_ptr<SessionManager>& sm);
 
 protected:
     std::shared_ptr<TokenManager> tokenManager;
@@ -74,9 +76,10 @@ void ClientController<T>::CreateUser(const crow::request& req, crow::response& r
 }
 
 template <typename T>
-void ClientController<T>::AuthenticateUser(crow::response& res, const jsoncons::json& credentials)
+std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response& res, const jsoncons::json& credentials, std::shared_ptr<SessionManager>& sm)
 {
     json response;
+    std::optional<uint64_t> client_id;
     try {
         typename T::Credentials creds;
         creds.username = credentials["username"].as<std::string>();
@@ -84,29 +87,34 @@ void ClientController<T>::AuthenticateUser(crow::response& res, const jsoncons::
 
         T client(creds, dbController, passwordCrypt);
 
-        uint64_t user_id = client.authenticate();
+        client_id = client.authenticate();
 
-        if (user_id == 0) {
+        if (!client_id) {
             rHelper->sendErrorResponse(res, response, "Login Failure", fmt::format("User '{}' not found or wrong password", creds.username), -1, 400);
-            return;
+            return std::nullopt;
         }
 
         TokenManager::LoggedUserInfo loggedUserInfo;
-        loggedUserInfo.userID = user_id;
+
+        loggedUserInfo.userID = client_id;
         loggedUserInfo.userName = creds.username;
+        loggedUserInfo.group = client.getGroupName();
+        loggedUserInfo.llodt = sm->getLastLogoutTime(loggedUserInfo.userID.value(), loggedUserInfo.group.value()).value_or("first_login");
 
         json token_object;
         token_object["token"] = tokenManager->GenerateToken(loggedUserInfo);
         token_object["username"] = creds.username;
-        token_object["user_id"] = user_id;
-        token_object["group"] = client.getGroupName();
+        token_object["user_id"] = client_id;
+        token_object["group"] = loggedUserInfo.group;
 
         rHelper->buildResponse(response, 0, "success", token_object);
         rHelper->sendResponse(res, 200, response);
+        return client_id;
     } catch (const std::exception& e) {
         // Handle exception (log, etc.)
         rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
+    return std::nullopt;
 }
 
 template <typename T>
@@ -170,6 +178,19 @@ void ClientController<T>::SearchClient(const crow::request& req, crow::response&
         Entity::SearchData searchData(search_json);
         T client(searchData, dbController, passwordCrypt);
         Controller::Search(std::ref(res), client);
+    } catch (const std::exception& e) {
+        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+    }
+}
+
+template <typename T>
+void ClientController<T>::LogoutClient(crow::response& res, const std::optional<std::string>& token, std::shared_ptr<SessionManager>& sm)
+{
+    json response;
+    try {
+        Entity::LogoutData logoutData(token);
+        T client(logoutData, dbController, passwordCrypt);
+        Controller::Logout(std::ref(res), client, std::ref(sm), std::ref(tokenManager));
     } catch (const std::exception& e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }

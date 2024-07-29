@@ -42,6 +42,7 @@ private:
     std::shared_ptr<ElapsedTime> elapsedTime;
     std::shared_ptr<Authentication> authentication;
     std::shared_ptr<Authorization> authorization;
+    std::shared_ptr<Deauthentication> deauthentication;
     std::shared_ptr<DataIntegrity> dataIntegrity;
     std::shared_ptr<Search> search;
     std::shared_ptr<XRequest> xrequest;

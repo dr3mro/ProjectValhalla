@@ -1,9 +1,9 @@
 #include "resthelper.hpp"
 #include "fmt/core.h"
-
-RestHelper::RestHelper(const std::shared_ptr<DatabaseController>& dbController)
-    : dbController(dbController)
+#include "store/store.hpp"
+RestHelper::RestHelper()
 {
+    databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
 }
 
 // Use a more descriptive name for the function

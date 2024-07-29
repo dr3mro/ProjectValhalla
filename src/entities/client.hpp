@@ -15,19 +15,6 @@ using json
 
 class Client : public Entity {
 public:
-    Client(const UserData& user_data, const std::shared_ptr<DatabaseController>& databaseController, const std::shared_ptr<PasswordCrypt>& passwordCrypt, const std::string& tablename)
-        : Entity(user_data, tablename)
-        , databaseController(databaseController)
-        , passwordCrypt(passwordCrypt)
-
-    {
-    }
-    Client(const Credentials& credentials, const std::shared_ptr<DatabaseController>& databaseController, const std::shared_ptr<PasswordCrypt>& passwordCrypt, const std::string& tablename)
-        : Entity(credentials, tablename)
-        , databaseController(databaseController)
-        , passwordCrypt(passwordCrypt)
-    {
-    }
     template <typename T>
     Client(const T& data, const std::shared_ptr<DatabaseController>& databaseController, const std::shared_ptr<PasswordCrypt>& passwordCrypt, const std::string& tablename)
         : Entity(data, tablename)
@@ -44,29 +31,34 @@ public:
             tablename, userdata.username, userdata.password_hash, userdata.role, userdata.user_data);
     }
 
-    bool exists(const std::string& username)
+    std::optional<bool> exists(const std::string& username)
     {
         return databaseController->checkItemExists(tablename, USERNAME, username);
     }
 
-    uint64_t authenticate() const
+    std::optional<uint64_t> authenticate() const
     {
         try {
-            auto userpass = std::any_cast<Entity::Credentials>(getData());
-            uint64_t user_id = databaseController->findIfUserID(std::cref(userpass.username), std::cref(tablename));
+            auto credentials = std::any_cast<Entity::Credentials>(getData());
+            auto client_id = databaseController->findIfUserID(std::cref(credentials.username), std::cref(tablename));
 
-            if (user_id == 0)
-                return 0;
+            if (!client_id)
+                return std::nullopt;
 
-            if (passwordCrypt->verifyPassword(userpass.password, databaseController->getPasswordHashForUserID(std::cref(user_id), std::cref(tablename))))
-                return user_id;
-            else
-                return 0;
+            auto hash = databaseController->getPasswordHashForUserID(std::cref(client_id.value()), std::cref(tablename));
+
+            if (!hash) {
+                return std::nullopt;
+            }
+
+            if (passwordCrypt->verifyPassword(credentials.password, hash.value())) {
+                return client_id;
+            }
 
         } catch (const std::exception& e) {
             std::cerr << "Error authenticating user : " << e.what() << std::endl;
         }
-        return 0;
+        return std::nullopt;
     }
     std::pair<bool, std::string> validate()
     {
