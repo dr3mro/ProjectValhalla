@@ -1,6 +1,7 @@
 #pragma once
 #include "controllers/clientcontroller/clientcontroller.tpp"
 #include "entities/user.hpp"
+#include "utils/sessionmanager/sessionmanager.hpp"
 #include <memory>
 
 // The UserController class derives from ClientController<User>
@@ -21,4 +22,8 @@ public:
     void UpdateUser(const crow::request& req, crow::response& res);
     void DeleteUser(const crow::request& req, crow::response& res, const json& criteria);
     void SearchUser(const crow::request& req, crow::response& res, const json& search_json);
+    void LogoutUser(crow::response& res, const std::optional<std::string>& token);
+
+private:
+    std::shared_ptr<SessionManager> userSessionManager;
 };

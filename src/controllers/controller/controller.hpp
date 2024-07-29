@@ -2,6 +2,8 @@
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "entities/entity.hpp"
 #include "utils/resthelper/resthelper.hpp"
+#include "utils/sessionmanager/sessionmanager.hpp"
+#include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <fmt/core.h> // Include fmt library for string formatting
 #include <fmt/format.h>
@@ -81,12 +83,30 @@ public:
         }
     }
 
+    template <typename T>
+    void Logout(crow::response& res, T& entity, std::shared_ptr<SessionManager>& sm, std::shared_ptr<TokenManager>& tokenmanager)
+    {
+
+        TokenManager::LoggedUserInfo loggedUserInfo;
+        loggedUserInfo.token = std::any_cast<Entity::LogoutData>(entity.getData()).token;
+
+        bool status = tokenmanager->ValidateToken(loggedUserInfo);
+        if (!status) {
+            res.code = 403;
+            res.end("Failed to logout");
+            return;
+        }
+        sm->setNowLogoutTime(loggedUserInfo.userID.value());
+        res.code = 200;
+        res.end("logout success");
+    }
+
 protected:
     std::shared_ptr<DatabaseController> dbController;
     std::shared_ptr<RestHelper> rHelper;
 
-    json (DatabaseController::*dbexec)(const std::string&) = &DatabaseController::executeQuery;
-    json (DatabaseController::*dbrexec)(const std::string&) = &DatabaseController::executeReadQuery;
+    std::optional<json> (DatabaseController::*dbexec)(const std::string&) = &DatabaseController::executeQuery;
+    std::optional<json> (DatabaseController::*dbrexec)(const std::string&) = &DatabaseController::executeReadQuery;
     ///////////////////////////
     template <typename S, typename T>
     bool get_sql_statement(json& response_json, crow::response& res, std::optional<std::string>& query, T& entity, S& sqlstatement)
@@ -102,16 +122,16 @@ protected:
     }
 
     template <typename S, typename T>
-    void cruds(crow::response& res, T& entity, S& sqlstatement, json (DatabaseController::*f)(const std::string&))
+    void cruds(crow::response& res, T& entity, S& sqlstatement, std::optional<json> (DatabaseController::*f)(const std::string&))
     {
         json response_json;
-        json query_results_json;
+        std::optional<json> query_results_json;
         std::optional<std::string> query;
         try {
             if (get_sql_statement(response_json, res, query, entity, sqlstatement) && query.has_value()) {
                 query_results_json = (*dbController.*f)(query.value());
             }
-            rHelper->sendQueryResult(response_json, query_results_json, res);
+            rHelper->sendQueryResult(response_json, query_results_json.value(), res);
         } catch (const std::exception& e) {
             // Handle exception (log, etc.)
             rHelper->buildResponse(response_json, -2, "failure", fmt::format("failed: {}", e.what()));

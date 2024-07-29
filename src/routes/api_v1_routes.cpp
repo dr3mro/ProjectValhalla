@@ -21,6 +21,12 @@ API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app,
             userController->AuthenticateUser(std::ref(res), std::cref(app->get_context<Authentication>(std::cref(req)).credentials));
         });
 
+    CROW_ROUTE((*app), "/v1/ulogout")
+        .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Deauthentication)
+        .methods(crow::HTTPMethod::POST)([userController, app](const crow::request& req, crow::response& res) {
+            userController->LogoutUser(std::ref(res), std::cref(app->get_context<Deauthentication>(std::cref(req)).token));
+        });
+
     CROW_ROUTE((*app), "/v1/user")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest)
         .methods(crow::HTTPMethod::GET)([userController, app](const crow::request& req, crow::response& res) {
@@ -56,6 +62,12 @@ API_V1_Routes::API_V1_Routes(const std::shared_ptr<APP>& app,
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authentication)
         .methods(crow::HTTPMethod::POST)([providerController, app](const crow::request& req, crow::response& res) {
             providerController->AuthenticateProvider(std::ref(res), std::cref(app->get_context<Authentication>(std::cref(req)).credentials));
+        });
+
+    CROW_ROUTE((*app), "/v1/plogout")
+        .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Deauthentication)
+        .methods(crow::HTTPMethod::POST)([providerController, app](const crow::request& req, crow::response& res) {
+            providerController->LogoutUser(std::ref(res), std::cref(app->get_context<Deauthentication>(std::cref(req)).token));
         });
 
     CROW_ROUTE((*app), "/v1/provider")

@@ -5,15 +5,15 @@
 #include <fmt/chrono.h>
 #include <string>
 
-void SessionManager::login(uint64_t id)
+void SessionManager::setNowLoginTime(uint64_t id)
 {
     try {
-        std::string login_time = current_time_to_string();
+        std::string login_time = current_time_to_utc_string();
 
         std::string query = fmt::format(
-            "INSERT INTO user_sessions (id, last_login) VALUES ({}, '{}') "
-            "ON CONFLICT (user_id) DO UPDATE SET last_login = EXCLUDED.last_login;",
-            id, login_time);
+            "INSERT INTO {}_sessions (id, last_login) VALUES ({}, '{}') "
+            "ON CONFLICT (id) DO UPDATE SET last_login = EXCLUDED.last_login;",
+            tablename, id, login_time);
 
         databaseController->executeQuery(query);
     } catch (const std::exception& e) {
@@ -21,15 +21,15 @@ void SessionManager::login(uint64_t id)
     }
 }
 
-void SessionManager::logout(uint64_t id)
+void SessionManager::setNowLogoutTime(uint64_t id)
 {
     try {
-        std::string logout_time = current_time_to_string();
+        std::string logout_time = current_time_to_utc_string();
 
         std::string query = fmt::format(
-            "INSERT INTO sessions (id, last_logout) VALUES ({}, '{}') "
-            "ON CONFLICT (user_id) DO UPDATE SET last_logout = EXCLUDED.last_logout;",
-            id, logout_time);
+            "INSERT INTO {}_sessions (id, last_logout) VALUES ({}, '{}') "
+            "ON CONFLICT (id) DO UPDATE SET last_logout = EXCLUDED.last_logout;",
+            tablename, id, logout_time);
 
         databaseController->executeQuery(query);
     } catch (const std::exception& e) {
@@ -37,7 +37,22 @@ void SessionManager::logout(uint64_t id)
     }
 }
 
-std::string current_time_to_utc_string()
+std::optional<std::string> SessionManager::getLastLoginTime(uint64_t id)
+{
+    std::string query = fmt::format(
+        "SELECT last_login FROM {}_sessions WHERE id = {};",
+        tablename, id);
+    return databaseController->doReadQuery(query);
+}
+std::optional<std::string> SessionManager::getLastLogoutTime(uint64_t id)
+{
+    std::string query = fmt::format(
+        "SELECT last_logout FROM {}_sessions WHERE id = {};",
+        tablename, id);
+    return databaseController->doReadQuery(query);
+}
+
+std::string SessionManager::current_time_to_utc_string()
 {
     // Get current time as a time_point
     auto now = std::chrono::system_clock::now();

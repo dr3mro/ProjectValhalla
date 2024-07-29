@@ -1,5 +1,6 @@
-#include "server/server.hpp"
 
+#include "server/server.hpp"
+#include "utils/factory/factory.hpp"
 int main(int argc, char** argv)
 {
     (void)argc;
@@ -8,6 +9,8 @@ int main(int argc, char** argv)
     uint16_t ncpus = std::thread::hardware_concurrency() ? std::thread::hardware_concurrency() : 1;
     uint16_t db_connections = ncpus * 5;
     uint16_t srv_threads = ncpus * 4;
+
+    Factory factory(db_connections);
 
     Server server(srv_threads, db_connections);
 

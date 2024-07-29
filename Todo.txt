@@ -7,3 +7,4 @@
 
 ps aux  | awk '{print $6/1024 " MB\t\t" $11}'  | sort -n
 
+// get code from author to deauth and implement provider

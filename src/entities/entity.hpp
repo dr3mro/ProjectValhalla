@@ -128,6 +128,14 @@ public:
         SearchData() = default;
     };
 
+    using LogoutData = struct LogoutData {
+        std::optional<std::string> token;
+        LogoutData(const std::optional<std::string>& _token)
+        {
+            token = _token;
+        }
+    };
+
     template <typename T>
     Entity(const T& _data, const std::string& _tablename)
         : tablename(_tablename)

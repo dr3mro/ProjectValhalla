@@ -2,7 +2,6 @@
 #include "utils/envvars/envvars.hpp"
 #include <jwt-cpp/jwt.h>
 #include <optional>
-
 class TokenManager {
 public:
     using LoggedUserInfo = struct LoggedUserInfo {
@@ -10,7 +9,7 @@ public:
         std::optional<std::string> userName;
         std::optional<std::string> group;
         std::optional<uint64_t> userID;
-        std::optional<std::string> llod; // used to invalidate tokens on logout
+        std::optional<std::string> llodt; // used to invalidate tokens on logout
     };
 
     using TokenManagerParameters = struct TokenManagerParameters {
