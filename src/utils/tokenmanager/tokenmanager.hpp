@@ -33,16 +33,15 @@ public:
     TokenManager()
     {
         databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
+        sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
     }
     virtual ~TokenManager() = default;
 
     std::optional<std::string> GenerateToken(const LoggedUserInfo& loggedinUserInfo) const;
     bool ValidateToken(LoggedUserInfo& loggedinUserInfo) const;
 
-protected:
-    std::shared_ptr<SessionManager> sessionManager;
-
 private:
     TokenManagerParameters tokenMgrParm;
     std::shared_ptr<DatabaseController> databaseController;
+    std::shared_ptr<SessionManager> sessionManager;
 };

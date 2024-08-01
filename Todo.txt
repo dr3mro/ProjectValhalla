@@ -1,10 +1,8 @@
 
 * create middleware to check token in ep user, provider and if data not his own remove sensitive data
-* Implement logout, changepassword, lostpassword.
+* Implement changepassword, lostpassword.
 
 * v1/services/ ---> []
-* usertype [provider,user]
 
 ps aux  | awk '{print $6/1024 " MB\t\t" $11}'  | sort -n
 
-create classes that inherits from token and session manager for both user and provider
