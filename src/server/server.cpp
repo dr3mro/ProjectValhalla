@@ -8,32 +8,12 @@
 #define GIT_TAG "unknown"
 #endif
 
-Server::Server(uint16_t _srv_threads, uint16_t _db_connections)
-
+Server::Server(const uint16_t srv_threads, const uint16_t db_connections)
+    : srv_threads(srv_threads)
+    , db_connections(db_connections)
+    , app(std::make_shared<APP>())
+    , routes(std::make_shared<API_V1_Routes>(app))
 {
-    srv_threads = _srv_threads;
-    db_connections = _db_connections;
-
-    dbConnPool = std::make_shared<DatabaseConnectionPool>(db_connections); //
-    dbController = std::make_shared<DatabaseController>(); //
-    restHelper = std::make_shared<RestHelper>(); //
-    tokenManager = std::make_shared<TokenManager>(); //
-    passwordCrypt = std::make_shared<PasswordCrypt>();
-    patientController = std::make_shared<PatientController>(dbController, restHelper);
-    clinicController = std::make_shared<ClinicController>(dbController, restHelper);
-    userController = std::make_shared<UserController>(dbController, restHelper, tokenManager, passwordCrypt);
-    providerController = std::make_shared<ProviderController>(dbController, restHelper, tokenManager, passwordCrypt);
-    dos_detector = std::make_shared<DOSDetector>();
-    rateLimit = std::make_shared<RateLimit>(dos_detector);
-    elapsedTime = std::make_shared<ElapsedTime>();
-    authentication = std::make_shared<Authentication>();
-    authorization = std::make_shared<Authorization>(tokenManager);
-    deauthentication = std::make_shared<Deauthentication>();
-    dataIntegrity = std::make_shared<DataIntegrity>();
-    search = std::make_shared<Search>();
-    xrequest = std::make_shared<XRequest>();
-    app = std::make_shared<APP>(*rateLimit, *elapsedTime, *authentication, *authorization, *deauthentication, *xrequest, *search, *dataIntegrity);
-    routes = std::make_shared<API_V1_Routes>(app, userController, patientController, clinicController, providerController);
 }
 
 int Server::run()

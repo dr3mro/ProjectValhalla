@@ -1,16 +1,16 @@
 #pragma once
+#include "store/store.hpp"
 #include "utils/tokenmanager/tokenmanager.hpp"
 #include <crow.h>
 #include <jsoncons/json.hpp>
-
 struct Authorization : crow::ILocalMiddleware {
 
     struct context {
         TokenManager::LoggedUserInfo userInfo;
     };
-    Authorization(const std::shared_ptr<TokenManager>& tokenManager)
-        : tokenManager(tokenManager)
+    Authorization()
     {
+        tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
     }
 
     ~Authorization() = default;

@@ -4,12 +4,7 @@
 #include <jsoncons/json.hpp>
 
 // Constructor for UserController, initializing the base class with User specialization
-ProviderController::ProviderController(const std::shared_ptr<DatabaseController>& dbController,
-    const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<TokenManager>& tokenManager,
-    const std::shared_ptr<PasswordCrypt>& passwordCrypt)
-    : ClientController<Provider>(dbController, rHelper, tokenManager, passwordCrypt)
-
+ProviderController::ProviderController()
 {
     sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
 }
@@ -22,7 +17,7 @@ void ProviderController::CreateProvider(const crow::request& req, crow::response
 }
 void ProviderController::AuthenticateProvider(crow::response& res, const json& credentials)
 {
-    auto provider_id = ClientController<Provider>::AuthenticateUser(std::ref(res), std::cref(credentials), std::ref(sessionManager));
+    auto provider_id = ClientController<Provider>::AuthenticateUser(std::ref(res), std::cref(credentials));
     if (provider_id) {
         sessionManager->setNowLoginTime(provider_id.value(), "providers");
     }
@@ -49,5 +44,5 @@ void ProviderController::SearchProvider(const crow::request& req, crow::response
 void ProviderController::LogoutUser(crow::response& res, const std::optional<std::string>& token)
 {
 
-    ClientController<Provider>::LogoutClient(std::ref(res), std::cref(token), sessionManager);
+    ClientController<Provider>::LogoutClient(std::ref(res), std::cref(token));
 }

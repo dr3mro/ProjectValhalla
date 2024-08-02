@@ -6,5 +6,11 @@ enum class Type {
     DatabaseController,
     RestHelper,
     SessionManager,
-    TokenManager
+    TokenManager,
+    PasswordCrypt,
+    PatientController,
+    ClinicController,
+    UserController,
+    ProviderController,
+    DOSDetector
 };

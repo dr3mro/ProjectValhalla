@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     uint16_t db_connections = ncpus * 5;
     uint16_t srv_threads = ncpus * 4;
 
-    Factory factory(db_connections);
+    Factory factory(db_connections); // pool_size
 
     Server server(srv_threads, db_connections);
 

@@ -8,10 +8,7 @@ using json = jsoncons::json;
 // The UserController class derives from ClientController<User>
 class ProviderController : public ClientController<Provider> {
 public:
-    ProviderController(const std::shared_ptr<DatabaseController>& dbController,
-        const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<TokenManager>& tokenManager,
-        const std::shared_ptr<PasswordCrypt>& passwordCrypt);
+    ProviderController();
 
     // Destructor
     ~ProviderController() override = default;

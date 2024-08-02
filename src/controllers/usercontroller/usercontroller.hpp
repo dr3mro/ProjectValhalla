@@ -7,13 +7,10 @@
 // The UserController class derives from ClientController<User>
 class UserController : public ClientController<User> {
 public:
-    UserController(const std::shared_ptr<DatabaseController>& dbController,
-        const std::shared_ptr<RestHelper>& rHelper,
-        const std::shared_ptr<TokenManager>& tokenManager,
-        const std::shared_ptr<PasswordCrypt>& passwordCrypt);
+    UserController();
 
     // Destructor
-    virtual ~UserController() = default;
+    ~UserController() override = default;
 
     // Additional user-specific methods can be declared here
     void CreateUser(const crow::request& req, crow::response& res);

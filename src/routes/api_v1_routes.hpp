@@ -18,9 +18,23 @@ using APP = crow::App<crow::CORSHandler, RateLimit, ElapsedTime, Authentication,
 
 class API_V1_Routes {
 public:
-    API_V1_Routes(const std::shared_ptr<APP>& app,
-        const std::shared_ptr<UserController>& userController,
-        const std::shared_ptr<PatientController>& patientController,
-        const std::shared_ptr<ClinicController>& clinicController,
-        const std::shared_ptr<ProviderController>& providerController);
+    API_V1_Routes(std::shared_ptr<APP>& app);
+    ~API_V1_Routes() = default;
+
+private:
+    // std::shared_ptr<RateLimit> rateLimit = std::make_shared<RateLimit>(); //
+    // std::shared_ptr<ElapsedTime> elapsedTime = std::make_shared<ElapsedTime>();
+    // std::shared_ptr<Authentication> authentication = std::make_shared<Authentication>();
+    // std::shared_ptr<Authorization> authorization = std::make_shared<Authorization>();
+    // std::shared_ptr<Deauthentication> deauthentication = std::make_shared<Deauthentication>(); //
+    // std::shared_ptr<DataIntegrity> dataIntegrity = std::make_shared<DataIntegrity>(); //
+    // std::shared_ptr<Search> search = std::make_shared<Search>(); //
+    // std::shared_ptr<XRequest> xrequest = std::make_shared<XRequest>(); //
+
+    // std::shared_ptr<APP> app = std::make_shared<APP>(*rateLimit, *elapsedTime, *authentication, *authorization, *deauthentication, *xrequest, *search, *dataIntegrity);
+
+    std::shared_ptr<UserController> userController;
+    std::shared_ptr<ProviderController> providerController;
+    std::shared_ptr<PatientController> patientController;
+    std::shared_ptr<ClinicController> clinicController;
 };

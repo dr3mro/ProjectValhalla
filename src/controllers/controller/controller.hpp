@@ -13,11 +13,14 @@ using json = jsoncons::json;
 
 class Controller {
 public:
-    Controller(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper)
-        : dbController(dbController)
-        , rHelper(rHelper)
+    Controller()
     {
+        databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
+        rHelper = std::any_cast<std::shared_ptr<RestHelper>>(Store::getObject(Type::RestHelper));
+        sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
+        tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
     }
+    virtual ~Controller() = default;
 
     // CRUDS
     template <typename T>
@@ -57,7 +60,7 @@ public:
             query = entity.getSqlSearchStatement();
 
             if (query) {
-                query_results_json = dbController->executeReadQuery(std::cref(query.value()));
+                query_results_json = databaseController->executeReadQuery(std::cref(query.value()));
                 size_t results_count = query_results_json.size();
 
                 if (results_count > std::any_cast<Entity::SearchData>(entity.getData()).limit) {
@@ -84,26 +87,28 @@ public:
     }
 
     template <typename T>
-    void Logout(crow::response& res, T& entity, std::shared_ptr<SessionManager>& sm, std::shared_ptr<TokenManager>& tokenmanager)
+    void Logout(crow::response& res, T& entity)
     {
 
         TokenManager::LoggedUserInfo loggedUserInfo;
         loggedUserInfo.token = std::any_cast<Entity::LogoutData>(entity.getData()).token;
 
-        bool status = tokenmanager->ValidateToken(loggedUserInfo);
+        bool status = tokenManager->ValidateToken(loggedUserInfo);
         if (!status) {
             res.code = 403;
             res.end("Failed to logout");
             return;
         }
-        sm->setNowLogoutTime(loggedUserInfo.userID.value(), loggedUserInfo.group.value());
+        sessionManager->setNowLogoutTime(loggedUserInfo.userID.value(), loggedUserInfo.group.value());
         res.code = 200;
         res.end("logout success");
     }
 
 protected:
-    std::shared_ptr<DatabaseController> dbController;
+    std::shared_ptr<DatabaseController> databaseController;
     std::shared_ptr<RestHelper> rHelper;
+    std::shared_ptr<SessionManager> sessionManager;
+    std::shared_ptr<TokenManager> tokenManager;
 
     std::optional<json> (DatabaseController::*dbexec)(const std::string&) = &DatabaseController::executeQuery;
     std::optional<json> (DatabaseController::*dbrexec)(const std::string&) = &DatabaseController::executeReadQuery;
@@ -129,7 +134,7 @@ protected:
         std::optional<std::string> query;
         try {
             if (get_sql_statement(response_json, res, query, entity, sqlstatement) && query.has_value()) {
-                query_results_json = (*dbController.*f)(query.value());
+                query_results_json = (*databaseController.*f)(query.value());
             }
             rHelper->sendQueryResult(response_json, query_results_json.value(), res);
         } catch (const std::exception& e) {

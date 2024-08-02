@@ -4,15 +4,20 @@
 #include "fmt/format.h"
 #include "fmt/ranges.h"
 #include "jsoncons/basic_json.hpp"
+#include "store/store.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include <any>
 #include <regex>
-
 using json = jsoncons::json;
 
 class Entity : public Base {
+
 public:
     using UserData = struct UserData {
+    private:
+        std::shared_ptr<PasswordCrypt> passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
+
+    public:
         std::string username;
         std::string password;
         std::string password_hash;
@@ -36,7 +41,7 @@ public:
             return std::regex_match(email, pattern);
         }
 
-        UserData(const json& _data, std::shared_ptr<PasswordCrypt>& passwordCrypt)
+        UserData(const json& _data)
         {
             json response;
             try {
@@ -141,6 +146,7 @@ public:
         : tablename(_tablename)
         , data(_data)
     {
+        passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
     }
 
     ~Entity() override = default;
@@ -273,4 +279,5 @@ protected:
 
 private:
     std::any data;
+    std::shared_ptr<PasswordCrypt> passwordCrypt;
 };

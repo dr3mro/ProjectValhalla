@@ -27,14 +27,10 @@ private:
         try {
             db = databaseConnectionPool->get_connection();
             std::optional<R> results = (db.get()->*f)(std::forward<Args>(args)...);
+            databaseConnectionPool->return_connection(std::move(db));
             if (results) {
                 return results.value();
-            } else {
-                return std::nullopt;
             }
-
-            databaseConnectionPool->return_connection(std::move(db));
-            return results;
         } catch (const std::exception& e) {
             std::cerr << "Exception occurred during query execution: " << e.what() << std::endl;
             throw;

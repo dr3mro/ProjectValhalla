@@ -1,6 +1,5 @@
 #pragma once
 #include "controllers/controller/controller.hpp"
-#include "controllers/databasecontroller/databasecontroller.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include <crow.h>
 #include <fmt/format.h>
@@ -10,8 +9,8 @@ using json = jsoncons::json;
 
 class ClinicController : public Controller {
 public:
-    explicit ClinicController(const std::shared_ptr<DatabaseController>& dbController, const std::shared_ptr<RestHelper>& rHelper);
-
+    ClinicController() = default;
+    ~ClinicController() = default;
     // CRUDS
     void CreateClinic(const crow::request& req, crow::response& res);
     void ReadClinic(crow::response& res, const jsoncons::json& criteria);
@@ -22,7 +21,7 @@ public:
 private:
     uint64_t getNextID()
     {
-        json json_nextval = dbController->executeQuery("SELECT NEXTVAL('clinic_id_seq');");
+        json json_nextval = databaseController->executeQuery("SELECT NEXTVAL('clinic_id_seq');");
 
         if (json_nextval.empty()) {
             return 0; // Or throw an exception if you prefer

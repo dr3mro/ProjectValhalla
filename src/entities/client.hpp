@@ -3,6 +3,7 @@
 #include "controllers/databasecontroller/databasecontroller.hpp"
 #include "entities/entity.hpp"
 #include "fmt/format.h"
+#include "store/store.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include <jsoncons/json.hpp>
 #include <memory>
@@ -16,12 +17,12 @@ using json
 class Client : public Entity {
 public:
     template <typename T>
-    Client(const T& data, const std::shared_ptr<DatabaseController>& databaseController, const std::shared_ptr<PasswordCrypt>& passwordCrypt, const std::string& tablename)
+    Client(const T& data, const std::string& tablename)
         : Entity(data, tablename)
-        , databaseController(databaseController)
-        , passwordCrypt(passwordCrypt)
 
     {
+        databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
+        passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
     }
     std::optional<std::string> getSqlCreateStatement() override
     {

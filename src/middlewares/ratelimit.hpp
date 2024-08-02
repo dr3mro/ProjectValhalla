@@ -1,5 +1,6 @@
 #pragma once
 
+#include "store/store.hpp"
 #include "utils/dosdetector/dosdetector.hpp"
 #include <crow.h>
 #include <functional>
@@ -8,9 +9,9 @@ struct RateLimit : crow::ILocalMiddleware {
 public:
     struct context { };
 
-    RateLimit(const std::shared_ptr<DOSDetector>& dos_detector)
-        : dos_detector(dos_detector)
+    RateLimit()
     {
+        dos_detector = std::any_cast<std::shared_ptr<DOSDetector>>(Store::getObject(Type::DOSDetector));
     }
 
     void before_handle(crow::request& req, crow::response& res, context& ctx)

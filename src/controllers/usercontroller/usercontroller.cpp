@@ -5,11 +5,7 @@
 #include <jsoncons/json.hpp>
 
 // Constructor for UserController, initializing the base class with User specialization
-UserController::UserController(const std::shared_ptr<DatabaseController>& dbController,
-    const std::shared_ptr<RestHelper>& rHelper,
-    const std::shared_ptr<TokenManager>& tokenManager,
-    const std::shared_ptr<PasswordCrypt>& passwordCrypt)
-    : ClientController<User>(dbController, rHelper, tokenManager, passwordCrypt)
+UserController::UserController()
 
 {
     sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
@@ -23,7 +19,7 @@ void UserController::CreateUser(const crow::request& req, crow::response& res)
 }
 void UserController::AuthenticateUser(crow::response& res, const jsoncons::json& credentials)
 {
-    auto user_id = ClientController<User>::AuthenticateUser(std::ref(res), std::cref(credentials), std::ref(sessionManager));
+    auto user_id = ClientController<User>::AuthenticateUser(std::ref(res), std::cref(credentials));
     if (user_id) {
         sessionManager->setNowLoginTime(user_id.value(), "users");
     }
@@ -49,5 +45,5 @@ void UserController::SearchUser(const crow::request& req, crow::response& res, c
 }
 void UserController::LogoutUser(crow::response& res, const std::optional<std::string>& token)
 {
-    ClientController<User>::LogoutClient(std::ref(res), std::cref(token), sessionManager);
+    ClientController<User>::LogoutClient(std::ref(res), std::cref(token));
 }
