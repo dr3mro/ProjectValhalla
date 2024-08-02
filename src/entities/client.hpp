@@ -66,7 +66,7 @@ public:
         auto userdata = std::any_cast<Entity::UserData>(getData());
         std::string username = userdata.username;
 
-        if (exists(username)) {
+        if (exists(username).value()) {
             return { false, fmt::format("username already exists in {}.", tablename) };
         } else if (!userdata.validateUsername()) {
             return { false, "username is invalid" };

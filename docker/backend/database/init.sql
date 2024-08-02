@@ -9,7 +9,17 @@ CREATE SEQUENCE user_id_seq START 1000;
 CREATE SEQUENCE provider_id_seq START 1000;
 
 -- Set starting clinic_id from 1000
-CREATE SEQUENCE clinic_id_seq START 1000;
+CREATE SEQUENCE clinics_id_seq START 1000;
+
+-- Set starting clinic_id from 1000
+CREATE SEQUENCE pharmacies_id_seq START 1000;
+
+-- Set starting clinic_id from 1000
+CREATE SEQUENCE laboratories_id_seq START 1000;
+
+-- Set starting clinic_id from 1000
+CREATE SEQUENCE radiologycenters_id_seq START 1000;
+
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE IF NOT EXISTS patients (
@@ -41,11 +51,31 @@ CREATE TABLE providers (
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE clinics (
-    id INTEGER PRIMARY KEY DEFAULT nextval('clinic_id_seq'),
+    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
     basic_data JSONB,
     providers JSONB
 );
 
+-- Create the table with correct usage of sequence for id column
+CREATE TABLE pharmacies (
+    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    basic_data JSONB,
+    providers JSONB
+);
+
+-- Create the table with correct usage of sequence for id column
+CREATE TABLE laboratories (
+    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    basic_data JSONB,
+    providers JSONB
+);
+
+-- Create the table with correct usage of sequence for id column
+CREATE TABLE radiologycenters (
+    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    basic_data JSONB,
+    providers JSONB
+);
 -- Create the table user_sessions
 CREATE TABLE users_sessions (
     id INT PRIMARY KEY,

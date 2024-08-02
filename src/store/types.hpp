@@ -2,15 +2,18 @@
 
 // Enum for object types
 enum class Type {
-    DatabaseConnectionPool,
-    DatabaseController,
-    RestHelper,
-    SessionManager,
-    TokenManager,
-    PasswordCrypt,
-    PatientController,
-    ClinicController,
-    UserController,
-    ProviderController,
-    DOSDetector
+  DatabaseConnectionPool,
+  DatabaseController,
+  RestHelper,
+  SessionManager,
+  TokenManager,
+  PasswordCrypt,
+  PatientController,
+  ClinicsController,
+  PharmaciesController,
+  LaboratoriesController,
+  RadiologyCentersController,
+  UserController,
+  ProviderController,
+  DOSDetector
 };

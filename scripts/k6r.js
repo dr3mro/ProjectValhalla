@@ -6,7 +6,7 @@ export let options = {
   iterations: 10000,
 };
 
-const BASE_URL = 'http://172.20.0.4:8080/v1/patient';
+const BASE_URL = 'http://172.20.0.10:80/v1/patient';
 const AUTH_TOKEN =
     'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUxODIwNDAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI1OTAwNDAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxMSIsImxsb2R0IjoiMjAyNC0wOC0wMSAyMzoxMzoxNiswMCIsInN1YiI6InVzZXIxIn0.fNF0YvJ1zcrxFzMbZ1Mf2DS4BXq9cV0lDhNatSMbxnA';
 const X_REQUEST =

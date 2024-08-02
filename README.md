@@ -1,31 +1,20 @@
 # 🚀 PROJECT VALHALLA
 ![alt text](https://github.com/dr3mro/ProjectValhalla/blob/a4162ecba8c1b9684f540fe0ef75a554b1308bb3/Screenshot.png?raw=true)
 
- - If you get any issues while testing make sure you clean all the old containers.
- - cd into $PROJECT_DIR/docker and run those commands if you have used it before
-```
-docker compose down --rmi all --volumes
-docker compose down --remove-orphans --volumes
-```
-- To get the latest version
-```
-docker compose --profile default up --build
-```
-or use the dev version
-```
-docker compose --profile dev up --build
-```
 ### 🐳 Run docker
 ```
 git clone git@github.com:dr3mro/ProjectValhalla.git
-cd ProjectValhalla/docker
-docker compose --profile default up
+cd ProjectValhalla/docker/
+docker compose --profile run up --build
 ```
-
+if you want to try the dev version
+```
+docker compose --profile dev up --build
+```
 ### 🧪 Verify the server is running
 
 ```
-curl http://172.20.0.3:8080/v1/hello
+curl http://172.20.0.10:80/v1/hello
 ```
 - if you get this reply
 ```
@@ -35,102 +24,23 @@ curl http://172.20.0.3:8080/v1/hello
 ```
 that means the server is up and running
 
-### 🚦 Resource not found
-- if for any reason the server did not find the requested end point it will display this message
-
-```
-{
-"Message" : "NOT FOUND, Are you lost?"
-}%
-```
 ### 🧮 to create the xxh64sum of the payload use this command
 ```
-jq -Sjc '.payload' patient.json | xxh64sum
+jq -Sjc '.payload' api/patient/create_patient.json | xxh64sum
 ```
 - DataIntegrity protection is disabled by default and can be enabled anytime to verify payload by setting header value:
 - `"Enable-data-integrity-check : true"`
 ### 📦 Test GZIP
 ```
-curl -X GET -H "Accept-Encoding:gzip" -d "$(bash ./gen_random_get_patient.sh)" http://172.20.0.3:8080/v1/patient --compressed --include  --output -
+curl -X GET -H "Accept-Encoding:gzip" -H "X-Request: $(cat api/patient/read_patient.json | base64 -w0)"  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUxODIwNDAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI1OTAwNDAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxMSIsImxsb2R0IjoiMjAyNC0wOC0wMSAyMzoxMzoxNiswMCIsInN1YiI6InVzZXIxIn0.fNF0YvJ1zcrxFzMbZ1Mf2DS4BXq9cV0lDhNatSMbxnA"  http://172.20.0.10:80/v1/patient --compressed --include  --output -
 ```
-
 
 ### 🎉 Create a new User
 ```
-curl -X POST -H "Content-Type: application/json" -d @user.json http://172.20.0.3:8080/v1/user -i
+curl -X POST -H "Content-Type: application/json" -d @api/users/create_user.json http://172.20.0.10:80/v1/user
 ```
-- do a POST request on `/v1/user` with a body contains a JSON with following data
-```
-{
-  "payload": {
-    "fullname": "Amr Nasr",
-    "username": "amr_nasr",
-    "password": "123Mm@p0",
-    "role": 0,
-    "user_data": {
-      "contact": {
-        "phone": "+201299999999",
-        "email": "amr@mail.com"
-      },
-      "address": {
-        "city": "Damietta",
-        "street": "portsaid street"
-      },
-      "dob": "1990-10-10",
-      "gender": "male",
-      "married": true,
-      "job": {
-        "position": "Doctor",
-        "speciality": "Cardiology"
-      }
-    }
-  },
-  "xxh64sum": "7c3cb6ca0e74c8be"
-}
-```
-- a sucessful registeration will yield this result in json format.
-```
-HTTP/1.1 200 OK
-Access-Control-Allow-Credentials: true
-Access-Control-Allow-Headers: Content-Type, Authentication, Accept-Encoding
-Access-Control-Allow-Origin: *
-Access-Control-Max-Age: 240
-Access-Control-Allow-Methods: GET, POST
-Content-Length: 132
-Server: ProjectValhalla
-Date: Wed, 10 Jul 2024 00:31:45 GMT
-Connection: Keep-Alive
+- do a `POST` request on `/v1/user` with a `body` contains a `JSON` with data from `api/users/create_user.json`
 
-{
-    "payload": [
-        {
-            "affected rows": 1
-        }
-    ],
-    "status_id": 0,
-    "status_message": "success"
-}%
-
-```
-- a failed regieration , for example user exists yields this results.
-```
-HTTP/1.1 400 Bad Request
-Access-Control-Allow-Credentials: true
-Access-Control-Allow-Headers: Content-Type, Authentication, Accept-Encoding
-Access-Control-Allow-Origin: *
-Access-Control-Max-Age: 240
-Access-Control-Allow-Methods: GET, POST
-Content-Length: 129
-Server: ProjectValhalla
-Date: Wed, 10 Jul 2024 00:31:53 GMT
-Connection: Keep-Alive
-
-{
-    "payload": "User already exists",
-    "status_id": -1,
-    "status_message": "Failed to create a new user, user exists"
-}%
-```
 - the "payload" value is optionally verified on the server against xxh64sum that might be generated and added to the JSON in xxh64sum key.
 - in the "payload" the username should only composed of lower case characters and numbers and not start with number and does not contains white spaces.
 - the password should contains upper and lower case characters, symbols, numbers and at lest 8 characters long.
@@ -140,97 +50,93 @@ Connection: Keep-Alive
 
 ### 🚪 Login
 ```
-curl -X GET -H "Authentication:ewogICAgInVzZXJuYW1lIiA6ICJhbXJfbmFzciIsCiAgICAicGFzc3dvcmQiIDogIjEyM01tQHAwIgp9" http://172.20.0.3:8080/v1/user -i
+curl -X POST -H "Authentication: $(cat api/users/login_user.json | base64 -w0)" http://172.20.0.10:80/v1/ulogin
 ```
-- do a GET request on `/v1/user` with a header contains a BASE64 encoded JSON with following data under key "Authentication"
-```
-{
-    "username" : "amr_nasr",
-    "password" : "123Mm@p0"
-}
-```
+- do a `POST` request on `/v1/ulogin` with a `header` contains a `BASE64` encoded JSON with data from `api/users/login_user.json` in header key `Authentication`
 - the username should be in lowercase and/or numbers and never contains spaces or symbols.
 - the password should be uppercase and lowercase and characters and symbols.
-- A successful login looks like this
-```
-HTTP/1.1 200 OK
-Access-Control-Max-Age: 7200
-Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authentication
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Credentials: true
-Access-Control-Allow-Origin: *
-Content-Length: 343
-Server: ProjectValhalla
-Date: Fri, 12 Jul 2024 19:28:40 GMT
-Connection: Keep-Alive
 
-{
-    "payload": {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDQ1MjAsImlhdCI6MTcyMDgxMjUyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.ocAJcFExlNEHSj608C3etgOeeTdBJxhDODaszwPMsV0",
-        "user_id": 1000,
-        "username": "amr_nasr"
-    },
-    "status id": 0,
-    "status message": "success"
-}%
 
-```
-- The returned token is valid only for 60 minutes and should be send in header with every subsequent request and after it is expired any request will fail until the user relogin and get a new token.
-- a failed login looks like this
-```
-HTTP/1.1 500 Internal Server Error
-Access-Control-Max-Age: 7200
-Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authentication
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Credentials: true
-Access-Control-Allow-Origin: *
-Content-Length: 21
-Server: ProjectValhalla
-Date: Fri, 12 Jul 2024 19:29:51 GMT
-Connection: Keep-Alive
-
-Authentication Denied%
-```
 ### example of header Authorization
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc
 ```
-* Authorization: Bearer ${token}
+
+### Logout a User
+- To logout just send the last valid token to `/v1/ulogout` under header key `Deauthentication`
+```
+curl -X POST -H "Deauthentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTAxMTcsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MTgxMTcsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNiIsImxsb2R0IjoiMjAyNC0wOC0wMiAxNjo1ODozNSswMCIsInN1YiI6InVzZXIifQ.faC_aadCWNqY67_tTYGM2DZuRPTy12Rma_6bwdITrN0"  http://172.20.0.10:80/v1/ulogout
+```
+### 🤓 Get a User
+```
+curl -X GET -H "X-Request: $(cat api/users/read_user.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTcyNDksImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjUyNDksImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.1Wz9jFiBhzfe6svyB8dQZeMwfgxKZzaCjsQnQkUn1L0" http://172.20.0.10:80/v1/user
+```
+- do a `GET` request on `/v1/user` with a header `X-Request` contains a `BASE64` encoded `JSON` with data from `api/users/read_user.json`
+
+### 👍🏻 Update a user
+```
+curl -X PUT -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTc1MDgsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjU1MDgsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.AXQzdnCRqIEC96LrSOH2NNMwQrALlOhH2xxWqESF_fA" -d @api/users/update_user.json http://172.20.0.10:80/v1/user -i
+```
+- In order to update a patient do a `PUT` request in `/v1/user` with a `body` contains `JSON` like `api/users/update_user.json`
+
+### Delete a User
+- To delete a user just send `DELETE` http request to `/v1/user` with
+```
+curl -X DELETE -H "X-Request: $(cat api/users/delete_user.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTExNTQsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MTkxNTQsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNiIsImxsb2R0IjoiMjAyNC0wOC0wMiAxNzoxNDo1MyswMCIsInN1YiI6InVzZXIifQ.UCKJeblAPzcERZcsVL1cFXPIJwsdDRCVdvY8jBlP7Pw"  http://172.20.0.10:80/v1/user
+```
+
+### 🎉 Create a new Provider
+```
+curl -X POST -H "Content-Type: application/json" -d @api/providers/create_provider.json http://172.20.0.10:80/v1/provider
+```
+- do a `POST` request on `/v1/provider` with a `body` contains a `JSON` with data from `api/providers/create_provider.json`
+
+- the "payload" value is optionally verified on the server against xxh64sum that might be generated and added to the JSON in xxh64sum key.
+- in the "payload" the username should only composed of lower case characters and numbers and not start with number and does not contains white spaces.
+- the password should contains upper and lower case characters, symbols, numbers and at lest 8 characters long.
+- the email should be in a valid format user@domain.ext
+- the role value is for now '0' as the role implementation is WIP.
+- The REQUIRED data are (username, email, role, password);
+
+### 🚪 Login
+```
+curl -X POST -H "Authentication: $(cat api/providers/login_provider.json | base64 -w0)" http://172.20.0.10:80/v1/plogin
+```
+- do a `POST` request on `/v1/plogin` with a `header` contains a `BASE64` encoded `JSON` with data from `api/providers/login_provider.json` in header key `Authentication`
+- the username should be in lowercase and/or numbers and never contains spaces or symbols.
+- the password should be uppercase and lowercase and characters and symbols.
+
+### Logout a Provider
+- To logout just send the last valid token to `/v1/plogout` under header key `Deauthentication`
+```
+curl -X POST -H "Deauthentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTAxMTcsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MTgxMTcsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNiIsImxsb2R0IjoiMjAyNC0wOC0wMiAxNjo1ODozNSswMCIsInN1YiI6InVzZXIifQ.faC_aadCWNqY67_tTYGM2DZuRPTy12Rma_6bwdITrN0"  http://172.20.0.10:80/v1/plogout
+```
+### 🤓 Get a Provider
+```
+curl -X GET -H "X-Request: $(cat api/Providers/read_provider.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTcyNDksImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjUyNDksImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.1Wz9jFiBhzfe6svyB8dQZeMwfgxKZzaCjsQnQkUn1L0" http://172.20.0.10:80/v1/provider
+```
+- do a `GET` request on `/v1/provider` with a header `X-Request` contains a `BASE64` encoded `JSON` data from `api/Providers/read_provider.json`
+
+### 👍🏻 Update a provider
+```
+curl -X PUT -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTc1MDgsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjU1MDgsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.AXQzdnCRqIEC96LrSOH2NNMwQrALlOhH2xxWqESF_fA" -d @api/providers/update_provider.json http://172.20.0.10:80/v1/provider -i
+```
+- In order to update a patient do a `PUT` request in `/v1/provider` with a `body` contains `JSON` like `api/providers/update_provider.json `
+
+
+### Delete a Provider
+- To delete a user just send `DELETE` http request to `/v1/provider` with `base64` encoded `X-Request` header of the file in `api/providers/delete_provider.json`
+-
+```
+curl -X DELETE -H "X-Request: $(cat api/providers/delete_provider.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTExNTQsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MTkxNTQsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNiIsImxsb2R0IjoiMjAyNC0wOC0wMiAxNzoxNDo1MyswMCIsInN1YiI6InVzZXIifQ.UCKJeblAPzcERZcsVL1cFXPIJwsdDRCVdvY8jBlP7Pw"  http://172.20.0.10:80/v1/provider
+```
 
 ### 👨🏻‍🦳 Add a patient
 ```
-curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc" -d @patient.json http://172.20.0.3:8080/v1/patient -i
+curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTg2NzAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjY2NzAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.VkWRvZ-CI97vRq0hYy4Ibb-EX4FbT_MSuE-A_550Lvg" -d @api/patient/create_patient.json http://172.20.0.10:80/v1/patient
 ```
-- In order to add a new user do a POST request in `/v1/patient` with a body contains JSON like this.
-```
-{
-  "payload": {
-    "basic_data": {
-      "id": 0,
-      "firstname": "John",
-      "lastname": "Doe",
-      "date_of_birth": "1990-01-01",
-      "gender": "Male",
-      "place_of_birth": "New York",
-      "address": "123 Main St, Anytown, USA",
-      "occupation": "Engineer",
-      "contact": [
-        {
-          "email": "john.doe@example.com"
-        },
-        {
-          "phone": "+1987654321"
-        }
-      ]
-    },
-    "health_data": {
-    },
-    "appointments_data": {
-    }
-  },
-  "xxh64sum": "e3076fbfb603155a"
-}
-```
+- In order to add a new patient do a `POST` request in `/v1/patient` with a `body` contains JSON like `api/patient/create_patient.json`.
+
 - The payload should contain 3 item:
   * "basic_data"
   * "appointments_data"
@@ -239,289 +145,34 @@ curl -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJl
 - Providing empty value '{}' will clear the corresponding field in the database.
 - Not providing a key for example "health_data" has no effect as only the provided data is processed.
 - The payload might be verified with xxh64sum and the hash can be provided in the JSON as "xxh64sum" value.
-- A successful request will return the user_id and it looks like this.
-```
-HTTP/1.1 200 OK
-Content-Length: 869
-Server: ProjectValhalla
-Date: Sat, 29 Jun 2024 21:49:37 GMT
-Connection: Keep-Alive
-
-{
-    "payload": [
-        {
-            "affected rows": 1
-        },
-        {
-            "appointments_data": {},
-            "basic_data": {
-                "address": "123 Main St, Anytown, USA",
-                "contact": [
-                    {
-                        "email": "john.doe@example.com"
-                    },
-                    {
-                        "phone": "+1987654321"
-                    }
-                ],
-                "date_of_birth": "1990-01-01",
-                "firstname": "John",
-                "gender": "Male",
-                "id": 100034,
-                "lastname": "Doe",
-                "occupation": "Engineer",
-                "place_of_birth": "New York"
-            },
-            "health_data": {},
-            "id": 100034
-        }
-    ],
-    "status_id": 0,
-    "status_message": "success"
-}%
-
-```
-- A failed request for example if the token becomes expired would look like this.
-```
-HTTP/1.1 400 Bad Request
-Content-Length: 133
-Server: ProjectValhalla
-Date: Sat, 29 Jun 2024 13:49:52 GMT
-Connection: Keep-Alive
-
-{
-    "payload": "authentication token invalidated",
-    "status_id": -1,
-    "status_message": "failed to create a new patient"
-}%
-```
 
 ### 🤓 Get a patient
 ```
-curl -X GET -H "X-Request:ewogICJpZCI6IDEwMDAwNCwKICAic2NoZW1hIjpbCiAgICAiYmFzaWNfZGF0YSIsCiAgICAiaGVhbHRoX2RhdGEiLAogICAgImFwcG9pbnRtZW50c19kYXRhIgogIF0KfQoK" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDkxODgsImlhdCI6MTcyMDgxNzE4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.lKjlzKtTd19DjpO4sBjDs-Z7JuDUha4p8OOzziJcgPo" http://172.20.0.3:8080/v1/patient -i
+curl -X GET -H "X-Request: $(cat api/patient/read_patient.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTg2NzAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjY2NzAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.VkWRvZ-CI97vRq0hYy4Ibb-EX4FbT_MSuE-A_550Lvg" http://172.20.0.10:80/v1/patient -i
 ```
-- do a GET request on `/v1/patient` with a header `X-Request` contains a `BASE64` encoded `JSON` with following data
-```
-{
-  "id": 100004,
-  "schema":[
-    "basic_data",
-    "health_data",
-    "appointments_data"
-  ]
-}
-```
-- A successful request looks like this:
-```
-HTTP/1.1 200 OK
-Access-Control-Allow-Credentials: true
-Access-Control-Allow-Headers: Content-Type, Accept-Encoding, Origin, Access-Control-Request-Method, Authorization
-Access-Control-Allow-Origin: *
-Access-Control-Max-Age: 7200
-Access-Control-Allow-Methods: GET, POST, DELETE, PATCH, SEARCH, OPTIONS
-Content-Length: 788
-Server: ProjectValhalla
-Date: Sat, 13 Jul 2024 14:37:06 GMT
-Connection: Keep-Alive
+- do a `GET` request on `/v1/patient` with a header `X-Request` contains a `BASE64` encoded `JSON` with following data
 
-{
-    "payload": [
-        {
-            "appointments_data": {},
-            "basic_data": {
-                "address": "123 Main St, Anytown, USA",
-                "contact": [
-                    {
-                        "email": "john.doe@example.com"
-                    },
-                    {
-                        "phone": "+1987654321"
-                    }
-                ],
-                "date_of_birth": "1990-01-01",
-                "firstname": "John",
-                "gender": "Male",
-                "id": 100004,
-                "lastname": "Doe",
-                "occupation": "Engineer",
-                "place_of_birth": "New York"
-            },
-            "health_data": {}
-        }
-    ],
-    "status_id": 0,
-    "status_message": "success"
-}%
-```
-- A failed request due to for example expired access token looks something like this:
-```
-HTTP/1.1 400 Bad Request
-Content-Length: 117
-Server: ProjectValhalla
-Date: Sat, 29 Jun 2024 13:52:36 GMT
-Connection: Keep-Alive
-
-{
-    "payload": "token is invalidated",
-    "status_id": -1,
-    "status_message": "failed to retrieve patient"
-}%
-```
 - the "schems" is an array of items you want to retrieve
 - you can request 1 or more or even 0.
 - the 'id' is the patient_id and should exists
 
 ### 👍🏻 Update a patient
 ```
-curl -X PATCH -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjMxNzQ3MjMsImlhdCI6MTcyMDU4MjcyMywiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwic3ViIjoiYW1yX25hc3IifQ.rI_u7GV9AtaGIawHzPJXEHOm_8wtz_2OKL0_wTAkgGc" -d @update_patient.json http://172.20.0.3:8080/v1/patient -i
+curl -X PUT -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTg2NzAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjY2NzAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.VkWRvZ-CI97vRq0hYy4Ibb-EX4FbT_MSuE-A_550Lvg" -d @api/patient/update_patient.json http://172.20.0.10:80/v1/patient
 ```
-- In order to update a patient do a PATCH request in `/v1/patient` with a body contains JSON like this.
-```
-{
-  "payload": {
-    "basic_data": {
-      "id": 100001,
-      "firstname": "Mark",
-      "lastname": "Johnson",
-      "date_of_birth": "1990-01-01",
-      "gender": "Male",
-      "place_of_birth": "Philadilphia",
-      "address": "123 Main St, Anytown, USA",
-      "occupation": "Nurse",
-      "contact": [
-        {
-          "email": "mark@example.com"
-        },
-        {
-          "phone": "+1987654321"
-        }
-      ]
-    },
-    "health_data": {
-    },
-    "appointments_data": {
-    }
-  },
-  "xxh64sum": "6258941d4ce30c2a"
-}
-```
-- a successful delete reply with a json like this
-```
-HTTP/1.1 200 OK
-Content-Length: 133
-Server: ProjectValhalla
-Date: Sun, 30 Jun 2024 19:47:04 GMT
-Connection: Keep-Alive
-
-{
-    "payload": [
-        {
-            "affected rows": 1
-        }
-    ],
-    "status_id": 0,
-    "status_message": "success"
-}%
-```
-- a failed request might be for example due to patient not found would look like this
-```
-HTTP/1.1 200 OK
-Content-Length: 134
-Server: ProjectValhalla
-Date: Sun, 30 Jun 2024 19:52:33 GMT
-Connection: Keep-Alive
-
-{
-    "payload": [
-        {
-            "affected rows": 0
-        }
-    ],
-    "status_id": -1,
-    "status_message": "failure"
-}%
-```
-- Notice that it returns 200 OK but affected records 0 that means every step was successful except the query to the database.
+- In order to update a patient do a `PUT` request in `/v1/patient` with a body contains JSON like `api/patient/update_patient.json`
 
 ### ❌ Delete a patient
-  ```
-curl -X DELETE -H "X-Request: $(cat del_patient.json | base64)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM1NDY3ODgsImlhdCI6MTcyMDk1NDc4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMSIsInN1YiI6ImFtcl9uYXNyIn0.iw9Sql6TDnVUmwXEfaFW9tmFqAeHeSZzD-54iReiZNo"  http://172.20.0.3:8080/v1/patient -i
-  ```
-  - In order to delete a patient do a DELETE request in `/v1/patient` with a header contains JSON under key `X-Request` like this.
-  ```
-  {
-  "payload": {
-    "basic_data": {
-      "id": 100032,
-      "firstname": "John",
-      "lastname": "Doe",
-      "date_of_birth": "1990-01-01",
-      "gender": "Male"
-    }
-  },
-  "xxh64sum": "42c92a7aea3a821a"
-}
 ```
-- data should be correct as any wrong info will invalidate the request.
-- xxh64sum is optional prevent malicious mass deletion of data.
-- a successful delete reply with a json like this
+curl -X DELETE -H "X-Request: $(cat api/patient/delete_patient.json | base64 -w0)" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMTg2NzAsImdyb3VwIjoidXNlcnMiLCJpYXQiOjE3MjI2MjY2NzAsImlzcyI6InZhbGhhbGxhIiwianRpIjoiMTAxNyIsImxsb2R0IjoiMjAyNC0wOC0wMiAxOTowMDo0MCswMCIsInN1YiI6InVzZXIifQ.VkWRvZ-CI97vRq0hYy4Ibb-EX4FbT_MSuE-A_550Lvg"  http://172.20.0.10:80/v1/patient
 ```
-HTTP/1.1 200 OK
-Content-Length: 133
-Server: ProjectValhalla
-Date: Sun, 30 Jun 2024 12:33:40 GMT
-Connection: Keep-Alive
-
-{
-    "payload": [
-        {
-            "affected rows": 1
-        }
-    ],
-    "status_id": 0,
-    "status_message": "success"
-}%
-```
-- a failed delete request will reply with
-```
-HTTP/1.1 200 OK
-Content-Length: 134
-Server: ProjectValhalla
-Date: Sun, 30 Jun 2024 12:34:23 GMT
-Connection: Keep-Alive
-
-{
-    "payload": [
-        {
-            "affected rows": 0
-        }
-    ],
-    "status_id": -1,
-    "status_message": "failure"
-}%
-```
-- notice that the http return code is `200` indicating it did reach the database but found no identical entry. it the data cannot get to the database due any other error the return code would be `400` like for example token invalidation or expiration.
-
-```
-HTTP/1.1 400 Bad Request
-Content-Length: 134
-Server: ProjectValhalla
-Date: Sun, 30 Jun 2024 12:29:44 GMT
-Connection: Keep-Alive
-
-{
-    "payload": "authentication token invalid or expired",
-    "status_id": -1,
-    "status_message": "failed to delete patient"
-}%
-```
-
+- In order to delete a patient do a `DELETE` request in `/v1/patient` with a header contains JSON under key `X-Request` like this.
 
 ### 🔎  Search
 ```
-curl -X SEARCH -H "X-Request: ewogICAgImtleXdvcmQiIDogIkpvaG4iLAogICAgImxpbWl0IiA6IDUsCiAgICAib2Zmc2V0IiA6IDAsCiAgICAib3JkZXJfYnkiIDogImlkIiwKICAgICJkaXJlY3Rpb24iIDogMCAKfQo=" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDkxODgsImlhdCI6MTcyMDgxNzE4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.lKjlzKtTd19DjpO4sBjDs-Z7JuDUha4p8OOzziJcgPo" http://172.20.0.3:8080/v1/patient -i
+curl -X SEARCH -H "X-Request: ewogICAgImtleXdvcmQiIDogIkpvaG4iLAogICAgImxpbWl0IiA6IDUsCiAgICAib2Zmc2V0IiA6IDAsCiAgICAib3JkZXJfYnkiIDogImlkIiwKICAgICJkaXJlY3Rpb24iIDogMCAKfQo=" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0MDkxODgsImlhdCI6MTcyMDgxNzE4OCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.lKjlzKtTd19DjpO4sBjDs-Z7JuDUha4p8OOzziJcgPo" http://172.20.0.10:80/v1/patient -i
 ```
- - In order to search for a patient do a SEARCH request in `/v1/patient` with a header variable `X-Request` that contains `base64` encoded JSON like this.
+ - In order to search for a patient do a SEARCH request in `/v1/patient` or `/v1/user` or `/v1/provider` with a header variable `X-Request` that contains `base64` encoded JSON like this.
 
 ```
 {

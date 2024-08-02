@@ -5,8 +5,8 @@ export let options = {
     iterations: 10000,
 };
 
-const BASE_URL = 'http://172.20.0.4:8080/v1/patient';
-const AUTH_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjM0NDk3MjAsImlhdCI6MTcyMDg1NzcyMCwiaXNzIjoiUHJvamVjdFZhbGhhbGxhIiwianRpIjoiMTAwMCIsInN1YiI6ImFtcl9uYXNyIn0.PoXaVi0AZ_Ptah1WmeZyKtcpMl4IUbiVSiTFpTbn19c';
+const BASE_URL = 'http://172.20.0.10:80/v1/patient';
+const AUTH_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJleHAiOjE3MjUyMDY2NTgsImdyb3VwIjoicHJvdmlkZXJzIiwiaWF0IjoxNzIyNjE0NjU4LCJpc3MiOiJ2YWxoYWxsYSIsImp0aSI6IjEwMDEiLCJsbG9kdCI6IjIwMjQtMDgtMDEgMjM6MTU6MjUrMDAiLCJzdWIiOiJwcm92aWRlcjEifQ.kCxEAlz-8xhuZ9CkBFOwiNcDXM1r0Lbfb_srcsjGCUw';
 
 export default function () {
     const data = __ENV.PATIENT_DATA;

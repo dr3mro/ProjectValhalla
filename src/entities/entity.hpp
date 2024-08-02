@@ -11,7 +11,6 @@
 using json = jsoncons::json;
 
 class Entity : public Base {
-
 public:
     using UserData = struct UserData {
     private:
@@ -25,24 +24,22 @@ public:
         std::string role;
         std::string user_data;
 
-        bool validateUsername() const
-        {
+        bool validateUsername() const {
             const std::regex pattern("^[a-z][a-z0-9_]*$");
             return std::regex_match(username, pattern);
         }
-        bool validatePassowrd() const
-        {
-            const std::regex pattern("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$");
+        bool validatePassowrd() const {
+            const std::regex pattern(
+                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]"
+                ")[A-Za-z\\d!@#$%^&*]{8,}$");
             return std::regex_match(password, pattern);
         }
-        bool validateEmail() const
-        {
+        bool validateEmail() const {
             const std::regex pattern(R"((\w+)(\.\w+)*@(\w+)(\.\w+)+)");
             return std::regex_match(email, pattern);
         }
 
-        UserData(const json& _data)
-        {
+        UserData(const json &_data) {
             json response;
             try {
                 // Extract the username from the JSON
@@ -56,7 +53,7 @@ public:
                 user_data = payload.at("basic_data").as<std::string>();
 
                 payload.erase("password");
-            } catch (const std::exception& e) {
+            } catch (const std::exception &e) {
                 std::cerr << fmt::format("failed to create user: {}\n", e.what());
             }
         }
@@ -68,11 +65,9 @@ public:
     };
 
     using CreateData = struct CreateData {
-
         json payload;
         uint64_t next_id;
-        CreateData(const json& _payload, const uint64_t nid)
-        {
+        CreateData(const json &_payload, const uint64_t nid) {
             payload = _payload;
             next_id = nid;
         }
@@ -80,11 +75,9 @@ public:
     };
 
     using ReadData = struct ReadData {
-
         std::vector<std::string> schema;
         uint64_t id;
-        ReadData(const std::vector<std::string>& _schema, const uint64_t _id)
-        {
+        ReadData(const std::vector<std::string> &_schema, const uint64_t _id) {
             schema = _schema;
             id = _id;
         }
@@ -92,11 +85,9 @@ public:
     };
 
     using UpdateData = struct UpdateData {
-
         json payload;
         uint64_t user_id;
-        UpdateData(const json& _data, const uint64_t id)
-        {
+        UpdateData(const json &_data, const uint64_t id) {
             payload = _data;
             user_id = id;
         }
@@ -104,11 +95,9 @@ public:
     };
 
     using DeleteData = struct DeleteData {
-
         json payload;
         uint64_t user_id;
-        DeleteData(const json& _data, const uint64_t id)
-        {
+        DeleteData(const json &_data, const uint64_t id) {
             payload = _data;
             user_id = id;
         }
@@ -122,8 +111,7 @@ public:
         size_t limit;
         size_t offset;
 
-        SearchData(const json& search_json)
-        {
+        SearchData(const json &search_json) {
             keyword = search_json.at("keyword").as<std::string>();
             order_by = search_json.at("order_by").as<std::string>();
             direction = search_json.at("direction").as<short>() == 0 ? "ASC" : "DESC";
@@ -135,24 +123,21 @@ public:
 
     using LogoutData = struct LogoutData {
         std::optional<std::string> token;
-        LogoutData(const std::optional<std::string>& _token)
-        {
+        LogoutData(const std::optional<std::string> &_token) {
             token = _token;
         }
     };
 
     template <typename T>
-    Entity(const T& _data, const std::string& _tablename)
-        : tablename(_tablename)
-        , data(_data)
-    {
+    Entity(const T &_data, const std::string &_tablename) : tablename(_tablename), data(_data) {
         passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
+    }
+    Entity(const std::string &_tablename) : tablename(_tablename) {
     }
 
     ~Entity() override = default;
 
-    std::optional<std::string> getSqlCreateStatement() override
-    {
+    std::optional<std::string> getSqlCreateStatement() override {
         std::optional<std::string> query;
         try {
             std::vector<std::string> keys_arr;
@@ -160,8 +145,7 @@ public:
 
             json payload = std::any_cast<CreateData>(data).payload;
             uint64_t next_id = std::any_cast<CreateData>(data).next_id;
-            for (auto& it : payload.object_range()) {
-
+            for (auto &it : payload.object_range()) {
                 if (it.key() == "basic_data" && it.value().contains("id")) {
                     it.value()["id"] = next_id;
                 }
@@ -175,14 +159,13 @@ public:
 
             query = fmt::format("INSERT INTO {} (id, {}) VALUES ({},{}) RETURNING id,{};", tablename, columns, next_id, values, columns);
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "faild to create query for create " << tablename << e.what() << std::endl;
             return std::nullopt;
         }
         return query;
     };
-    std::optional<std::string> getSqlReadStatement() override
-    {
+    std::optional<std::string> getSqlReadStatement() override {
         std::optional<std::string> query;
         try {
             auto user_id = std::any_cast<ReadData>(data).id;
@@ -191,14 +174,13 @@ public:
             std::string columns = fmt::format("{}", fmt::join(schema, ", "));
 
             query = fmt::format("SELECT {} FROM {} WHERE id={} LIMIT 1;", columns, tablename, user_id);
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "faild to create query for read " << tablename << e.what() << std::endl;
             return std::nullopt;
         }
         return query;
     }
-    std::optional<std::string> getSqlUpdateStatement() override
-    {
+    std::optional<std::string> getSqlUpdateStatement() override {
         std::optional<std::string> query;
 
         try {
@@ -217,15 +199,14 @@ public:
             }
 
             query = fmt::format("UPDATE {} set {} WHERE id={};", tablename, update_column_values, id);
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "faild to create query for update " << tablename << e.what() << std::endl;
             return std::nullopt;
         }
         return query;
     }
 
-    std::optional<std::string> getSqlDeleteStatement() override
-    {
+    std::optional<std::string> getSqlDeleteStatement() override {
         std::optional<std::string> query;
         uint64_t id;
 
@@ -235,38 +216,36 @@ public:
             id = basic_data.at("id").as<uint64_t>();
 
             // Construct SQL query using {fmt} for parameterized query
-            query
-                = fmt::format("DELETE FROM {} where id={};", tablename, id);
+            query = fmt::format("DELETE FROM {} where id={};", tablename, id);
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "faild to create query for delete " << tablename << e.what() << std::endl;
             return std::nullopt;
         }
         return query;
     }
-    std::optional<std::string> getSqlSearchStatement() override
-    {
+    std::optional<std::string> getSqlSearchStatement() override {
         std::optional<std::string> query;
         try {
             SearchData searchdata = std::any_cast<SearchData>(data);
-            query
-                = fmt::format("SELECT basic_data FROM {} WHERE basic_data::text ILIKE '%{}%' ORDER BY {} {} LIMIT {} OFFSET {};",
-                    tablename,
-                    searchdata.keyword,
-                    searchdata.order_by,
-                    searchdata.direction,
-                    searchdata.limit + 1,
-                    searchdata.offset);
+            query = fmt::format(
+                "SELECT basic_data FROM {} WHERE basic_data::text "
+                "ILIKE '%{}%' ORDER BY {} {} LIMIT {} OFFSET {};",
+                tablename,
+                searchdata.keyword,
+                searchdata.order_by,
+                searchdata.direction,
+                searchdata.limit + 1,
+                searchdata.offset);
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "faild to create query for search " << tablename << e.what() << std::endl;
             return std::nullopt;
         }
 
         return query;
     }
-    std::any getData() const
-    {
+    std::any getData() const {
         return data;
     }
     std::string getGroupName() const // ie. tablename

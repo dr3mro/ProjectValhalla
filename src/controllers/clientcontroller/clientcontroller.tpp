@@ -72,8 +72,8 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response& re
     std::optional<uint64_t> client_id;
     try {
         typename T::Credentials creds;
-        creds.username = credentials["username"].as<std::string>();
-        creds.password = credentials["password"].as<std::string>();
+        creds.username = credentials.at("username").as<std::string>();
+        creds.password = credentials.at("password").as<std::string>();
 
         T client(creds);
 

@@ -20,7 +20,7 @@ public:
     {
         if (!(req.headers.contains(xRequestHeader) && !req.get_header_value(xRequestHeader).empty())) {
             res.code = 400;
-            res.end();
+            res.end("Missing proper request");
             return;
         }
         try {
@@ -29,7 +29,7 @@ public:
 
             if (!encoded) {
                 res.code = 400;
-                res.end();
+                res.end("no request provided");
                 return;
             }
 

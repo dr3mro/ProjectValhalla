@@ -34,7 +34,15 @@ bool TokenManager::ValidateToken(LoggedUserInfo& loggedinUserInfo) const
 
         auto token = jwt::decode(loggedinUserInfo.token.value());
 
-        loggedinUserInfo.group = token.get_payload_claim("group").as_string();
+        // I want to make this code better , but it works or now albeit ugly it is.
+        if (!loggedinUserInfo.group) { // coming from authorization middleware
+            loggedinUserInfo.group = token.get_payload_claim("group").as_string();
+        } else { // coming from authenticator
+            if (loggedinUserInfo.group != token.get_payload_claim("group").as_string()) {
+                return false;
+            }
+        }
+
         loggedinUserInfo.userID = std::stoull(token.get_id());
         loggedinUserInfo.userName = token.get_subject();
 
@@ -69,7 +77,6 @@ bool TokenManager::ValidateToken(LoggedUserInfo& loggedinUserInfo) const
         if (now < exp_time && issuer == tokenMgrParm.issuer) {
             return true;
         }
-
     } catch (const token_verification_exception& e) {
         std::cerr << "Token verification failed: " << e.what() << std::endl;
     } catch (const std::exception& e) {
