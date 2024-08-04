@@ -22,10 +22,10 @@ public:
 
     // CRUDS
     void CreateService(const crow::request &req, crow::response &res) override;
-    void ReadService(crow::response &res, const jsoncons::json &criteria) override;
+    void ReadService(const crow::request &req, crow::response &res, const jsoncons::json &criteria) override;
     void UpdateService(const crow::request &req, crow::response &res) override;
-    void DeleteService(crow::response &res, const jsoncons::json &delete_json) override;
-    void SearchService(crow::response &res, const jsoncons::json &search_json) override;
+    void DeleteService(const crow::request &req, crow::response &res, const jsoncons::json &delete_json) override;
+    void SearchService(const crow::request &req, crow::response &res, const jsoncons::json &search_json) override;
 
 private:
     T service;
@@ -62,7 +62,8 @@ void ServiceController<T>::CreateService(const crow::request &req, crow::respons
 }
 
 template <typename T>
-void ServiceController<T>::ReadService(crow::response &res, const json &criteria) {
+void ServiceController<T>::ReadService(const crow::request &req, crow::response &res, const json &criteria) {
+    (void) req;
     json response;
     try {
         uint64_t id = criteria.at("id").as<uint64_t>();
@@ -94,7 +95,8 @@ void ServiceController<T>::UpdateService(const crow::request &req, crow::respons
 }
 
 template <typename T>
-void ServiceController<T>::DeleteService(crow::response &res, const jsoncons::json &delete_json) {
+void ServiceController<T>::DeleteService(const crow::request &req, crow::response &res, const jsoncons::json &delete_json) {
+    (void) req;
     json response;
     try {
         json payload = delete_json.at("payload");
@@ -110,7 +112,8 @@ void ServiceController<T>::DeleteService(crow::response &res, const jsoncons::js
 }
 
 template <typename T>
-void ServiceController<T>::SearchService(crow::response &res, const jsoncons::json &search_json) {
+void ServiceController<T>::SearchService(const crow::request &req, crow::response &res, const jsoncons::json &search_json) {
+    (void) req;
     json response;
     try {
         Entity::SearchData searchData(search_json);

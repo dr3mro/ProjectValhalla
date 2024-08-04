@@ -54,8 +54,9 @@ private:
     };
 
     template <typename Func, typename... Args>
-    void executeServiceMethod(const std::string &serviceName, Func method, Args &&...args) {
+    void executeServiceMethod(const std::string &serviceName, Func method, const crow::request &req, crow::response &res, Args &&...args) {
         auto it = serviceControllerMap.find(serviceName);
+
         if (it != serviceControllerMap.end()) {
             auto typeIt = typeMapping.find(serviceName);
             if (typeIt != typeMapping.end()) {
@@ -63,27 +64,36 @@ private:
                 try {
                     if (typeIndex == typeid(ServiceController<Clinics>)) {
                         auto controller = std::any_cast<std::shared_ptr<ServiceController<Clinics>>>(Store::getObject(it->second));
-                        std::invoke(method, *controller, std::forward<Args>(args)...);
+                        std::invoke(method, *controller, std::cref(req), std::ref(res), std::forward<Args>(args)...);
                     } else if (typeIndex == typeid(ServiceController<Pharmacies>)) {
                         auto controller = std::any_cast<std::shared_ptr<ServiceController<Pharmacies>>>(Store::getObject(it->second));
-                        std::invoke(method, *controller, std::forward<Args>(args)...);
+                        std::invoke(method, *controller, std::cref(req), std::ref(res), std::forward<Args>(args)...);
                     } else if (typeIndex == typeid(ServiceController<Laboratories>)) {
                         auto controller = std::any_cast<std::shared_ptr<ServiceController<Laboratories>>>(Store::getObject(it->second));
-                        std::invoke(method, *controller, std::forward<Args>(args)...);
+                        std::invoke(method, *controller, std::cref(req), std::ref(res), std::forward<Args>(args)...);
                     } else if (typeIndex == typeid(ServiceController<RadiologyCenters>)) {
                         auto controller = std::any_cast<std::shared_ptr<ServiceController<RadiologyCenters>>>(Store::getObject(it->second));
-                        std::invoke(method, *controller, std::forward<Args>(args)...);
+                        std::invoke(method, *controller, std::cref(req), std::ref(res), std::forward<Args>(args)...);
                     } else {
                         std::cerr << "Unsupported service type for: " << serviceName << std::endl;
                     }
                 } catch (const std::bad_any_cast &e) {
                     std::cerr << "Bad cast: " << e.what() << std::endl;
+                    res.code = 500;
+                    res.body = "Internal Server Error";
+                    res.end();
                 }
             } else {
                 std::cerr << "Type mapping not found for: " << serviceName << std::endl;
+                res.code = 400;
+                res.body = "Type mapping not found";
+                res.end();
             }
         } else {
             std::cerr << "Service not found: " << serviceName << std::endl;
+            res.code = 404;
+            res.body = "Service not found";
+            res.end();
         }
     }
 };

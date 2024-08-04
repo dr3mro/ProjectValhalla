@@ -127,13 +127,14 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<APP> &app) {
     CROW_ROUTE((*app), "/v1/service/<string>")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, DataIntegrity)
         .methods(crow::HTTPMethod::POST)([this](const crow::request &req, crow::response &res, const std::string &serviceName) {
-            executeServiceMethod(serviceName, &ServiceControllerBase::CreateService, req, res);
+            executeServiceMethod(serviceName, &ServiceControllerBase::CreateService, std::cref(req), std::ref(res));
         });
 
     CROW_ROUTE((*app), "/v1/service/<string>")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest)
         .methods(crow::HTTPMethod::GET)([this, app](const crow::request &req, crow::response &res, const std::string &serviceName) {
-            executeServiceMethod(serviceName, &ServiceControllerBase::ReadService, std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
+            executeServiceMethod(
+                serviceName, &ServiceControllerBase::ReadService, std::cref(req), std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/service/<string>")
@@ -146,14 +147,14 @@ API_V1_Routes::API_V1_Routes(std::shared_ptr<APP> &app) {
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest, DataIntegrity)
         .methods(crow::HTTPMethod::DELETE)([this, app](const crow::request &req, crow::response &res, const std::string &serviceName) {
             executeServiceMethod(
-                serviceName, &ServiceControllerBase::DeleteService, std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
+                serviceName, &ServiceControllerBase::DeleteService, std::cref(req), std::ref(res), std::cref(app->get_context<XRequest>(std::cref(req)).criteria));
         });
 
     CROW_ROUTE((*app), "/v1/service/<string>")
         .CROW_MIDDLEWARES(*app, RateLimit, ElapsedTime, Authorization, XRequest, Search)
         .methods(crow::HTTPMethod::SEARCH)([this, app](const crow::request &req, crow::response &res, const std::string &serviceName) {
             executeServiceMethod(
-                serviceName, &ServiceControllerBase::SearchService, std::ref(res), std::cref(app->get_context<Search>(std::cref(req)).search_json));
+                serviceName, &ServiceControllerBase::SearchService, std::cref(req), std::ref(res), std::cref(app->get_context<Search>(std::cref(req)).search_json));
         });
 
     ///////////////////---------------- HELLO--------------------////////////////////
