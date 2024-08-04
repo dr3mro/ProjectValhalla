@@ -20,9 +20,14 @@ template <typename T>
 class ClientController : public Controller {
 public:
     ClientController() {
-        tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
-        passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
-        sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
+        try {
+            tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
+            passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
+            sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
+        } catch (const std::exception &e) {
+            std::cerr << "Exception in ClientController constructor: " << e.what() << std::endl;
+            EXIT_FAILURE;
+        }
     }
 
     ~ClientController() override = default;

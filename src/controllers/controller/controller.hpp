@@ -14,10 +14,15 @@ using json = jsoncons::json;
 class Controller {
 public:
     Controller() {
-        databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
-        rHelper = std::any_cast<std::shared_ptr<RestHelper>>(Store::getObject(Type::RestHelper));
-        sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
-        tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
+        try {
+            databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
+            rHelper = std::any_cast<std::shared_ptr<RestHelper>>(Store::getObject(Type::RestHelper));
+            sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
+            tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
+        } catch (const std::exception &e) {
+            std::cout << "Exception in Controller constructor: " << e.what() << std::endl;
+            EXIT_FAILURE;
+        }
     }
     virtual ~Controller() = default;
 
@@ -85,18 +90,25 @@ public:
     void Logout(crow::response &res, T &entity) {
 
         TokenManager::LoggedUserInfo loggedUserInfo;
-        loggedUserInfo.token = std::any_cast<Entity::LogoutData>(entity.getData()).token;
-        loggedUserInfo.group = entity.getGroupName();
 
-        bool status = tokenManager->ValidateToken(loggedUserInfo);
-        if (!status) {
-            res.code = 403;
+        try {
+            loggedUserInfo.token = std::any_cast<Entity::LogoutData>(entity.getData()).token;
+            loggedUserInfo.group = entity.getGroupName();
+
+            bool status = tokenManager->ValidateToken(loggedUserInfo);
+            if (!status) {
+                res.code = 403;
+                res.end("Failed to logout");
+                return;
+            }
+            sessionManager->setNowLogoutTime(loggedUserInfo.userID.value(), loggedUserInfo.group.value());
+            res.code = 200;
+            res.end("logout success");
+        } catch (const std::exception &e) {
+            std::cerr << "Exception: " << e.what() << std::endl;
+            res.code = 500;
             res.end("Failed to logout");
-            return;
         }
-        sessionManager->setNowLogoutTime(loggedUserInfo.userID.value(), loggedUserInfo.group.value());
-        res.code = 200;
-        res.end("logout success");
     }
 
 protected:

@@ -289,11 +289,35 @@ available services:
 
 you can for example use `v1/service/clinics` to use clinic services and so on.
 
-* `POST` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/create_clinic.json`
-* `GET` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read_clinic.json`
-* `PUT` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/update_clinic.json`
-* `DELETE` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete_clinic.json`
-* `SEARCH` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search_clinic.json`
+* `POST` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/create.json`
+* `GET` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read.json`
+* `PUT` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/update.json`
+* `DELETE` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete.json`
+* `SEARCH` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search.json`
+
+you can for example use `v1/service/pharmacies` to use pharmacies services and so on.
+
+* `POST` request to `v1/service/pharmacies` with a `body` contains `JSON` like `api/services/create.json`
+* `GET` request to `v1/service/pharmacies` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read.json`
+* `PUT` request to `v1/service/pharmacies` with a `body` contains `JSON` like `api/services/update.json`
+* `DELETE` request to `v1/service/pharmacies` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete.json`
+* `SEARCH` request to `v1/service/pharmacies` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search.json`
+
+you can for example use `v1/service/laboratories` to use laboratories services and so on.
+
+* `POST` request to `v1/service/laboratories` with a `body` contains `JSON` like `api/services/create.json`
+* `GET` request to `v1/service/laboratories` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read.json`
+* `PUT` request to `v1/service/laboratories` with a `body` contains `JSON` like `api/services/update.json`
+* `DELETE` request to `v1/service/laboratories` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete.json`
+* `SEARCH` request to `v1/service/laboratories` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search.json`
+
+you can for example use `v1/service/radiologycenters` to use radiologycenters services and so on.
+
+* `POST` request to `v1/service/radiologycenters` with a `body` contains `JSON` like `api/services/create.json`
+* `GET` request to `v1/service/radiologycenters` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read.json`
+* `PUT` request to `v1/service/radiologycenters` with a `body` contains `JSON` like `api/services/update.json`
+* `DELETE` request to `v1/service/radiologycenters` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete.json`
+* `SEARCH` request to `v1/service/radiologycenters` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search.json`
 
 - do the same for other services.
 

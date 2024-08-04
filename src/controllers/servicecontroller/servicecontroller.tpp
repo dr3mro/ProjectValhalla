@@ -30,21 +30,24 @@ public:
 private:
     T service;
     uint64_t getNextID() override {
-        json json_nextval = databaseController->executeQuery(fmt::format("SELECT NEXTVAL('{}_id_seq');", service.getTableName()));
+        try {
+            json json_nextval = databaseController->executeQuery(fmt::format("SELECT NEXTVAL('{}_id_seq');", service.getTableName()));
 
-        if (json_nextval.empty()) {
-            return 0; // Or throw an exception if you prefer
-        }
-
-        for (const auto &obj : json_nextval.array_range()) {
-            if (obj.contains("nextval")) {
-                return obj["nextval"].as<uint64_t>();
+            if (json_nextval.empty()) {
+                return 0; // Or throw an exception if you prefer
             }
+
+            for (const auto &obj : json_nextval.array_range()) {
+                if (obj.contains("nextval")) {
+                    return obj["nextval"].as<uint64_t>();
+                }
+            }
+        } catch (const std::exception &e) {
+            std::cerr << fmt::format("Failed: {}", e.what()) << std::endl;
         }
         return 0;
     }
 };
-
 
 template <typename T>
 void ServiceController<T>::CreateService(const crow::request &req, crow::response &res) {

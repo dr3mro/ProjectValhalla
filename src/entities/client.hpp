@@ -20,8 +20,13 @@ public:
         : Entity(data, tablename)
 
     {
-        databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
-        passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
+        try {
+            databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
+            passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
+        } catch (const std::exception &e) {
+            std::cerr << "Exception caught in Client constructor: " << e.what() << std::endl;
+            EXIT_FAILURE;
+        }
     }
     std::optional<std::string> getSqlCreateStatement() override {
         auto userdata = std::any_cast<Entity::UserData>(getData());

@@ -1,8 +1,9 @@
 
 * create middleware to check token in ep user, provider and if data not his own remove sensitive data
 * Implement changepassword, lostpassword.
-
-* v1/services/ ---> []
+* json schema validation for all jsons.
 
 ps aux  | awk '{print $6/1024 " MB\t\t" $11}'  | sort -n
 
+#define PRINT_LINE_INFO() \
+    std::cout << "File: " << __FILE__ << ", Line: " << __LINE__ << std::endl;
