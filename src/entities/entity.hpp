@@ -17,42 +17,61 @@ public:
         std::shared_ptr<PasswordCrypt> passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
 
     public:
-        std::string username;
-        std::string password;
-        std::string password_hash;
-        std::string email;
-        std::string role;
-        std::string user_data;
+        std::vector<std::pair<std::string, std::string>> db_data;
+
+        json payload;
+
+        std::optional<std::string> username;
+        std::optional<std::string> password;
+        std::optional<std::string> password_hash;
+        std::optional<std::string> email;
+        std::optional<std::string> role;
+        std::optional<std::string> basic_data;
+        std::optional<std::string> service_data;
 
         bool validateUsername() const {
             const std::regex pattern("^[a-z][a-z0-9_]*$");
-            return std::regex_match(username, pattern);
+            return std::regex_match(username.value(), pattern);
         }
         bool validatePassowrd() const {
             const std::regex pattern(
                 "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*]"
                 ")[A-Za-z\\d!@#$%^&*]{8,}$");
-            return std::regex_match(password, pattern);
+            return std::regex_match(password.value(), pattern);
         }
         bool validateEmail() const {
             const std::regex pattern(R"((\w+)(\.\w+)*@(\w+)(\.\w+)+)");
-            return std::regex_match(email, pattern);
+            return std::regex_match(email.value(), pattern);
         }
 
         UserData(const json &_data) {
             json response;
             try {
                 // Extract the username from the JSON
-                json payload = _data["payload"];
+                payload = _data["payload"];
 
                 username = payload.at("username").as<std::string>();
                 password = payload.at("password").as<std::string>();
-                password_hash = passwordCrypt->hashPassword(password).value();
+                password_hash = passwordCrypt->hashPassword(password.value()).value();
                 email = payload.at("basic_data").at("contact").at("email").as<std::string>();
                 role = payload.at("basic_data").at("role").as<std::string>();
-                user_data = payload.at("basic_data").as<std::string>();
+                basic_data = payload.at("basic_data").as<std::string>();
+
+                if (payload.contains("service_data")) {
+                    service_data = payload.at("service_data").as<std::string>();
+                }
+
+                db_data.push_back({ "username", username.value() });
+                db_data.push_back({ "password_hash", password_hash.value() });
+                db_data.push_back({ "role", role.value() });
+                db_data.push_back({ "basic_data", basic_data.value() });
+
+                if (service_data) {
+                    db_data.push_back({ "service_data", service_data.value() });
+                }
 
                 payload.erase("password");
+
             } catch (const std::exception &e) {
                 std::cerr << fmt::format("failed to create user: {}\n", e.what());
             }

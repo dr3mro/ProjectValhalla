@@ -46,7 +46,8 @@ CREATE TABLE providers (
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
-    basic_data JSONB
+    basic_data JSONB,
+    service_data JSONB
 );
 
 -- Create the table with correct usage of sequence for id column
@@ -58,21 +59,21 @@ CREATE TABLE clinics (
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE pharmacies (
-    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    id INTEGER PRIMARY KEY DEFAULT nextval('pharmacies_id_seq'),
     basic_data JSONB,
     providers JSONB
 );
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE laboratories (
-    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    id INTEGER PRIMARY KEY DEFAULT nextval('laboratories_id_seq'),
     basic_data JSONB,
     providers JSONB
 );
 
 -- Create the table with correct usage of sequence for id column
 CREATE TABLE radiologycenters (
-    id INTEGER PRIMARY KEY DEFAULT nextval('clinics_id_seq'),
+    id INTEGER PRIMARY KEY DEFAULT nextval('radiologycenters_id_seq'),
     basic_data JSONB,
     providers JSONB
 );

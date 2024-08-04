@@ -278,6 +278,24 @@ Connection: Keep-Alive
 ```
 ASAN_OPTIONS=detect_leaks=1 ./server
 ```
+### Services
+
+all services are in `v1/service`
+available services:
+- clinics
+- pharmacies
+- laboratories
+- radiologycenters
+
+you can for example use `v1/service/clinics` to use clinic services and so on.
+
+* `POST` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/create_clinic.json`
+* `GET` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/read_clinic.json`
+* `PUT` request to `v1/service/clinics` with a `body` contains `JSON` like `api/services/update_clinic.json`
+* `DELETE` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/delete_clinic.json`
+* `SEARCH` request to `v1/service/clinics` with a `header` contains `X-Request` with `base64` encoded `JSON` like `api/services/search_clinic.json`
+
+- do the same for other services.
 
 ### Benchmark
 - Machine: MSI B450M, AMD Ryzen 3800X with 32 GB of RAM using Release version built with GCC 14.1 running k6r.js & k6w.js with 1000 virtual users and 100,000 iterations

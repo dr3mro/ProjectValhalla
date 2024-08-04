@@ -20,6 +20,12 @@
                 "speciality": "Cardiology"
             },
             "role": 0
+        },
+        "service_data":{
+            "clinics": "1000,1001",
+            "pharmacies":"1002,1003",
+            "laboratories":"1004,1005",
+            "radiology_centers":"1006,1007"
         }
     },
     "xxh64sum": "7c3cb6ca0e74c8be"

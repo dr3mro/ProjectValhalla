@@ -19,23 +19,22 @@ using json = jsoncons::json;
 template <typename T>
 class ClientController : public Controller {
 public:
-    ClientController()
-    {
+    ClientController() {
         tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
         passwordCrypt = std::any_cast<std::shared_ptr<PasswordCrypt>>(Store::getObject(Type::PasswordCrypt));
         sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
     }
 
-    virtual ~ClientController() = default;
+    ~ClientController() override = default;
 
     // PUBLIC
-    void CreateUser(const crow::request& req, crow::response& res);
-    std::optional<uint64_t> AuthenticateUser(crow::response& res, const jsoncons::json& credentials);
-    void ReadClient(crow::response& res, const json& criteria);
-    void UpdateClient(const crow::request& req, crow::response& res);
-    void DeleteClient(const crow::request& req, crow::response& res, const json& delete_json);
-    void SearchClient(const crow::request& req, crow::response& res, const json& search_json);
-    void LogoutClient(crow::response& res, const std::optional<std::string>& token);
+    void CreateUser(const crow::request &req, crow::response &res);
+    std::optional<uint64_t> AuthenticateUser(crow::response &res, const jsoncons::json &credentials);
+    void ReadClient(crow::response &res, const json &criteria);
+    void UpdateClient(const crow::request &req, crow::response &res);
+    void DeleteClient(const crow::request &req, crow::response &res, const json &delete_json);
+    void SearchClient(const crow::request &req, crow::response &res, const json &search_json);
+    void LogoutClient(crow::response &res, const std::optional<std::string> &token);
 
 protected:
     std::shared_ptr<TokenManager> tokenManager;
@@ -44,8 +43,7 @@ protected:
 };
 
 template <typename T>
-void ClientController<T>::CreateUser(const crow::request& req, crow::response& res)
-{
+void ClientController<T>::CreateUser(const crow::request &req, crow::response &res) {
     json response;
     try {
         jsoncons::json data = jsoncons::json::parse(req.body);
@@ -60,14 +58,13 @@ void ClientController<T>::CreateUser(const crow::request& req, crow::response& r
             return;
         }
         Create<T>(res, user);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
 template <typename T>
-std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response& res, const jsoncons::json& credentials)
-{
+std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response &res, const jsoncons::json &credentials) {
     json response;
     std::optional<uint64_t> client_id;
     try {
@@ -100,7 +97,7 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response& re
         rHelper->buildResponse(response, 0, "success", token_object);
         rHelper->sendResponse(res, 200, response);
         return client_id;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         // Handle exception (log, etc.)
         rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
@@ -108,8 +105,7 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response& re
 }
 
 template <typename T>
-void ClientController<T>::ReadClient(crow::response& res, const json& criteria)
-{
+void ClientController<T>::ReadClient(crow::response &res, const json &criteria) {
     json response;
     try {
         uint64_t id = criteria.at("id").as<uint64_t>();
@@ -118,14 +114,13 @@ void ClientController<T>::ReadClient(crow::response& res, const json& criteria)
         Entity::ReadData readData(schema, id);
         T client(readData);
         Controller::Read(std::ref(res), client);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
 template <typename T>
-void ClientController<T>::UpdateClient(const crow::request& req, crow::response& res)
-{
+void ClientController<T>::UpdateClient(const crow::request &req, crow::response &res) {
     json response;
     try {
         json data(json::parse(req.body));
@@ -136,15 +131,14 @@ void ClientController<T>::UpdateClient(const crow::request& req, crow::response&
         Entity::UpdateData updateData(payload, user_id);
         T client(updateData);
         Controller::Update(std::ref(res), client);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
 template <typename T>
-void ClientController<T>::DeleteClient(const crow::request& req, crow::response& res, const json& delete_json)
-{
-    (void)req;
+void ClientController<T>::DeleteClient(const crow::request &req, crow::response &res, const json &delete_json) {
+    (void) req;
     json response;
     try {
         json payload = delete_json.at("payload");
@@ -154,34 +148,32 @@ void ClientController<T>::DeleteClient(const crow::request& req, crow::response&
         Entity::DeleteData deleteData(payload, user_id);
         T client(deleteData);
         Controller::Delete(std::ref(res), client);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
 template <typename T>
-void ClientController<T>::SearchClient(const crow::request& req, crow::response& res, const json& search_json)
-{
-    (void)req;
+void ClientController<T>::SearchClient(const crow::request &req, crow::response &res, const json &search_json) {
+    (void) req;
     json response;
     try {
         Entity::SearchData searchData(search_json);
         T client(searchData);
         Controller::Search(std::ref(res), client);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
 template <typename T>
-void ClientController<T>::LogoutClient(crow::response& res, const std::optional<std::string>& token)
-{
+void ClientController<T>::LogoutClient(crow::response &res, const std::optional<std::string> &token) {
     json response;
     try {
         Entity::LogoutData logoutData(token);
         T client(logoutData);
         Controller::Logout(std::ref(res), client);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
