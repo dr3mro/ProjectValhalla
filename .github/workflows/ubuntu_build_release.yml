@@ -17,13 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https gnupg
-          wget https://github.com/Kitware/CMake/releases/download/v3.28.0/cmake-3.28.0-linux-x86_64.sh
-          sudo mkdir /opt/cmake
-          sudo sh cmake-3.28.0-linux-x86_64.sh --prefix=/opt/cmake --skip-license
-          sudo rm /usr/local/bin/cmake
-          sudo ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
-          sudo apt-get install -y ninja-build g++ python3 libpq-dev
+          sudo apt-get install -y wget apt-transport-https gnupg  ninja-build g++ python3 libpq-dev
 
       - name: Verify CMake Version
         run: cmake --version
