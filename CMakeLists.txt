@@ -23,9 +23,9 @@ include(get_cpm)
 # Add CPM packages
 CPMAddPackage(
   NAME fmt
-  VERSION 11.0.1
-  URL https://github.com/fmtlib/fmt/releases/download/11.0.1/fmt-11.0.1.zip
-  URL_HASH MD5=5f3915e2eff60e7f70c558120592100d
+  VERSION 11.0.2
+  URL https://github.com/fmtlib/fmt/archive/refs/tags/11.0.2.tar.gz
+  URL_HASH MD5=3fe10c5184c8ecd0d2f9536c1b1ae95c
 )
 
 CPMAddPackage(
@@ -52,7 +52,7 @@ CPMAddPackage(
 
 CPMAddPackage(
   NAME libpqxx
-  VERSION 7.9.1
+  VERSION 7.9.2
   URL https://github.com/jtv/libpqxx/archive/refs/tags/7.9.2.zip
   URL_HASH MD5=76a41edd47722f25ca9f0826dcc3b36d
   OPTIONS "SKIP_BUILD_TEST ON" "BUILD_SHARED_LIBS OFF"
