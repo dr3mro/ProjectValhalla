@@ -54,6 +54,19 @@ private:
     };
 
     template <typename Func, typename... Args>
+    /**
+     * Executes a service method on the appropriate service controller based on the provided service name.
+     *
+     * This function is responsible for finding the correct service controller based on the provided service name, and then invoking the specified method on
+     * that controller. It handles type-safe casting of the controller to the appropriate type, and provides error handling for cases where the service name is
+     * not found or the type mapping is not found.
+     *
+     * @param serviceName The name of the service to execute the method on.
+     * @param method The method to invoke on the service controller.
+     * @param req The Crow request object.
+     * @param res The Crow response object.
+     * @param args The arguments to pass to the service controller method.
+     */
     void executeServiceMethod(const std::string &serviceName, Func method, const crow::request &req, crow::response &res, Args &&...args) {
 
         auto it = serviceControllerMap.find(serviceName);

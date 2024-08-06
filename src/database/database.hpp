@@ -12,11 +12,10 @@ public:
     ~Database() = default;
 
     bool isConnected();
-    bool checkExists(const std::string& table, const std::string& column, const std::string& value);
+    bool checkExists(const std::string &table, const std::string &column, const std::string &value);
 
     template <typename TransactionType>
-    json executeQuery(const std::string& query)
-    {
+    json executeQuery(const std::string &query) {
         try {
             TransactionType txn(*connection);
             pqxx::result res = txn.exec(query);
@@ -33,29 +32,28 @@ public:
                 json_array.push_back(affected_rows);
             }
 
-            for (const auto& row : res) {
+            for (const auto &row : res) {
                 json jsonObj;
-                for (const auto& field : row) {
+                for (const auto &field : row) {
                     jsonObj[field.name()] = json::parse(field.as<std::string>());
                 }
                 json_array.push_back(jsonObj);
             }
 
             return json_array;
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "Error executing query: " << e.what() << std::endl;
             throw; // Rethrow the exception to indicate failure
         }
     }
 
     template <typename T>
-    std::optional<T> doSimpleQuery(const std::string& query)
-    {
+    std::optional<T> doSimpleQuery(const std::string &query) {
         try {
             pqxx::nontransaction txn(*connection);
             pqxx::result result = txn.exec(query);
             return result[0][0].as<std::optional<T>>();
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             std::cerr << "Error executing query: " << e.what() << std::endl;
             throw; // Rethrow the exception to indicate failure
         }
