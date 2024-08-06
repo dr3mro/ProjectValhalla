@@ -2,6 +2,7 @@
 * create middleware to check token in ep user, provider and if data not his own remove sensitive data
 * Implement changepassword, lostpassword.
 * json schema validation for all jsons.
+* "providers": {"Doctors","nurses","paramedics","assistants","admin_id","owner_id"}
 
 ps aux  | awk '{print $6/1024 " MB\t\t" $11}'  | sort -n
 
