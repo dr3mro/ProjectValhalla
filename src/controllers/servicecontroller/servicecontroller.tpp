@@ -1,8 +1,8 @@
 
 #pragma once
-#include "controllers/controller/controller.hpp"
+#include "controllers/base/controller/controller.hpp"
 #include "controllers/servicecontroller/servicecontrollerbase.hpp"
-#include "entities/entity.hpp"
+#include "entities/base/entity.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include <crow.h>
 #include <fmt/format.h>

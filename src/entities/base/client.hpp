@@ -1,7 +1,7 @@
 #pragma once
 
 #include "controllers/databasecontroller/databasecontroller.hpp"
-#include "entities/entity.hpp"
+#include "entities/base/entity.hpp"
 #include "fmt/format.h"
 #include "store/store.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"

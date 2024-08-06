@@ -29,9 +29,9 @@
 
 #pragma once
 
-#include "controllers/controller/controller.hpp"
+#include "controllers/base/controller/controller.hpp"
 #include "controllers/databasecontroller/databasecontroller.hpp"
-#include "entities/client.hpp"
+#include "entities/base/client.hpp"
 #include "utils/passwordcrypt/passwordcrypt.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include "utils/sessionmanager/sessionmanager.hpp"

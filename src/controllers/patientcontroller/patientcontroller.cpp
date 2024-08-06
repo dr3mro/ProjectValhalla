@@ -1,5 +1,5 @@
 #include "patientcontroller.hpp"
-#include "entities/patient.hpp"
+#include "entities/services/clinics/patient.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include <functional>
 

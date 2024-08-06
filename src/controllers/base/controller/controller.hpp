@@ -15,7 +15,7 @@
 
 #pragma once
 #include "controllers/databasecontroller/databasecontroller.hpp"
-#include "entities/entity.hpp"
+#include "entities/base/entity.hpp"
 #include "utils/resthelper/resthelper.hpp"
 #include "utils/sessionmanager/sessionmanager.hpp"
 #include "utils/tokenmanager/tokenmanager.hpp"

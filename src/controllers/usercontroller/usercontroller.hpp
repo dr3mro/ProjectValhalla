@@ -1,6 +1,6 @@
 #pragma once
-#include "controllers/clientcontroller/clientcontroller.tpp"
-#include "entities/user.hpp"
+#include "controllers/base/clientcontroller/clientcontroller.tpp"
+#include "entities/people/user.hpp"
 #include "utils/sessionmanager/sessionmanager.hpp"
 #include <memory>
 

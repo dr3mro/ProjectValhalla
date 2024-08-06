@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entities/entity.hpp"
+#include "entities/base/entity.hpp"
 #include <jsoncons/json.hpp>
 
 using json = jsoncons::json;

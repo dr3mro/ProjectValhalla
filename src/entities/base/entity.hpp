@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entities/base.hpp"
+#include "entities/base/base.hpp"
 #include "fmt/format.h"
 #include "fmt/ranges.h"
 #include "jsoncons/basic_json.hpp"

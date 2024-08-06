@@ -1,6 +1,6 @@
 #pragma once
-#include "controllers/clientcontroller/clientcontroller.tpp"
-#include "entities/provider.hpp"
+#include "controllers/base/clientcontroller/clientcontroller.tpp"
+#include "entities/people/provider.hpp"
 #include "utils/sessionmanager/sessionmanager.hpp"
 #include <memory>
 
@@ -14,13 +14,13 @@ public:
     ~ProviderController() override = default;
 
     // Additional user-specific methods can be declared here
-    void CreateProvider(const crow::request& req, crow::response& res);
-    void AuthenticateProvider(crow::response& res, const json& credentials);
-    void ReadProvider(crow::response& res, const json& criteria);
-    void UpdateProvider(const crow::request& req, crow::response& res);
-    void DeleteProvider(const crow::request& req, crow::response& res, const json& criteria);
-    void SearchProvider(const crow::request& req, crow::response& res, const json& search_json);
-    void LogoutUser(crow::response& res, const std::optional<std::string>& token);
+    void CreateProvider(const crow::request &req, crow::response &res);
+    void AuthenticateProvider(crow::response &res, const json &credentials);
+    void ReadProvider(crow::response &res, const json &criteria);
+    void UpdateProvider(const crow::request &req, crow::response &res);
+    void DeleteProvider(const crow::request &req, crow::response &res, const json &criteria);
+    void SearchProvider(const crow::request &req, crow::response &res, const json &search_json);
+    void LogoutUser(crow::response &res, const std::optional<std::string> &token);
 
 private:
     std::shared_ptr<SessionManager> sessionManager;
