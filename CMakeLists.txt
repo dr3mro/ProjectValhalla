@@ -53,8 +53,8 @@ CPMAddPackage(
 CPMAddPackage(
   NAME libpqxx
   VERSION 7.9.1
-  URL https://github.com/jtv/libpqxx/archive/refs/tags/7.9.1.zip
-  URL_HASH MD5=766ff83c2d478a03b527aad1e97a32d6
+  URL https://github.com/jtv/libpqxx/archive/refs/tags/7.9.2.zip
+  URL_HASH MD5=76a41edd47722f25ca9f0826dcc3b36d
   OPTIONS "SKIP_BUILD_TEST ON" "BUILD_SHARED_LIBS OFF"
 )
 
