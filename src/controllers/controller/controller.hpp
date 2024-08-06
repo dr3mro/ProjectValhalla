@@ -16,7 +16,6 @@ public:
     Controller() {
         try {
             databaseController = std::any_cast<std::shared_ptr<DatabaseController>>(Store::getObject(Type::DatabaseController));
-            rHelper = std::any_cast<std::shared_ptr<RestHelper>>(Store::getObject(Type::RestHelper));
             sessionManager = std::any_cast<std::shared_ptr<SessionManager>>(Store::getObject(Type::SessionManager));
             tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
         } catch (const std::exception &e) {
@@ -75,14 +74,14 @@ public:
             }
 
             if (query_results_json.empty()) {
-                rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", "not found", -1, 400);
+                RestHelper::sendErrorResponse(res, std::ref(response_json), "failure: ", "not found", -1, 400);
             } else {
-                rHelper->buildResponse(response_json, 0, "success", query_results_json);
-                rHelper->sendResponse(res, 200, response_json);
+                RestHelper::buildResponse(response_json, 0, "success", query_results_json);
+                RestHelper::sendResponse(res, 200, response_json);
             }
         } catch (const std::exception &e) {
             // Handle exception (log, etc.)
-            rHelper->sendErrorResponse(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
+            RestHelper::sendErrorResponse(res, std::ref(response_json), "failure: ", fmt::format("failed: {}", e.what()), -2, 500);
         }
     }
 
@@ -113,7 +112,6 @@ public:
 
 protected:
     std::shared_ptr<DatabaseController> databaseController;
-    std::shared_ptr<RestHelper> rHelper;
     std::shared_ptr<SessionManager> sessionManager;
     std::shared_ptr<TokenManager> tokenManager;
 
@@ -125,8 +123,8 @@ protected:
         query = (entity.*sqlstatement)();
 
         if (!query) {
-            rHelper->buildResponse(std::ref(response_json), -1, "failure", "failed to synthesize query");
-            rHelper->sendResponse(std::ref(res), 400, std::ref(response_json));
+            RestHelper::buildResponse(std::ref(response_json), -1, "failure", "failed to synthesize query");
+            RestHelper::sendResponse(std::ref(res), 400, std::ref(response_json));
             return false;
         }
         return true;
@@ -141,11 +139,11 @@ protected:
             if (get_sql_statement(response_json, res, query, entity, sqlstatement) && query.has_value()) {
                 query_results_json = (*databaseController.*f)(query.value());
             }
-            rHelper->sendQueryResult(response_json, query_results_json.value(), res);
+            RestHelper::sendQueryResult(response_json, query_results_json.value(), res);
         } catch (const std::exception &e) {
             // Handle exception (log, etc.)
-            rHelper->buildResponse(response_json, -2, "failure", fmt::format("failed: {}", e.what()));
-            rHelper->sendResponse(res, 500, response_json);
+            RestHelper::buildResponse(response_json, -2, "failure", fmt::format("failed: {}", e.what()));
+            RestHelper::sendResponse(res, 500, response_json);
         }
     }
 };

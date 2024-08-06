@@ -106,12 +106,12 @@ void ClientController<T>::CreateUser(const crow::request &req, crow::response &r
         auto result = user.validate();
 
         if (!result.first) {
-            rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", result.second), -1, 400);
+            RestHelper::sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", result.second), -1, 400);
             return;
         }
         Create<T>(res, user);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -139,7 +139,7 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response &re
         client_id = client.authenticate();
 
         if (!client_id) {
-            rHelper->sendErrorResponse(res, response, "Login Failure", fmt::format("User '{}' not found or wrong password", creds.username), -1, 400);
+            RestHelper::sendErrorResponse(res, response, "Login Failure", fmt::format("User '{}' not found or wrong password", creds.username), -1, 400);
             return std::nullopt;
         }
 
@@ -156,12 +156,12 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response &re
         token_object["user_id"] = client_id;
         token_object["group"] = loggedUserInfo.group;
 
-        rHelper->buildResponse(response, 0, "success", token_object);
-        rHelper->sendResponse(res, 200, response);
+        RestHelper::buildResponse(response, 0, "success", token_object);
+        RestHelper::sendResponse(res, 200, response);
         return client_id;
     } catch (const std::exception &e) {
         // Handle exception (log, etc.)
-        rHelper->sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(res, response, "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
     return std::nullopt;
 }
@@ -186,7 +186,7 @@ void ClientController<T>::ReadClient(crow::response &res, const json &criteria) 
         T client(readData);
         Controller::Read(std::ref(res), client);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -212,7 +212,7 @@ void ClientController<T>::UpdateClient(const crow::request &req, crow::response 
         T client(updateData);
         Controller::Update(std::ref(res), client);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -238,7 +238,7 @@ void ClientController<T>::DeleteClient(const crow::request &req, crow::response 
         T client(deleteData);
         Controller::Delete(std::ref(res), client);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -261,7 +261,7 @@ void ClientController<T>::SearchClient(const crow::request &req, crow::response 
         T client(searchData);
         Controller::Search(std::ref(res), client);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -282,6 +282,6 @@ void ClientController<T>::LogoutClient(crow::response &res, const std::optional<
         T client(logoutData);
         Controller::Logout(std::ref(res), client);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }

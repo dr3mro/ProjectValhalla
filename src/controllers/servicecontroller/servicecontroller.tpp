@@ -60,7 +60,7 @@ void ServiceController<T>::CreateService(const crow::request &req, crow::respons
         T service(createData);
         Controller::Create(std::ref(res), service);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -76,7 +76,7 @@ void ServiceController<T>::ReadService(const crow::request &req, crow::response 
         T service(readData);
         Controller::Read(std::ref(res), service);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -93,7 +93,7 @@ void ServiceController<T>::UpdateService(const crow::request &req, crow::respons
         T service(updateData);
         Controller::Update(std::ref(res), service);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -110,7 +110,7 @@ void ServiceController<T>::DeleteService(const crow::request &req, crow::respons
         T service(deleteData);
         Controller::Delete(std::ref(res), service);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
 
@@ -123,6 +123,6 @@ void ServiceController<T>::SearchService(const crow::request &req, crow::respons
         T service(searchData);
         Controller::Search(std::ref(res), service);
     } catch (const std::exception &e) {
-        rHelper->sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
+        RestHelper::sendErrorResponse(std::ref(res), std::ref(response), "Failure", fmt::format("Failed: {}", e.what()), -2, 500);
     }
 }
