@@ -5,6 +5,12 @@
 // Function to generate JWT token
 using jwt::error::token_verification_exception;
 
+/**
+ * Generates a JWT token with the provided user information.
+ *
+ * @param loggedinUserInfo The user information to include in the token.
+ * @return An optional string containing the generated JWT token, or std::nullopt if an error occurred.
+ */
 std::optional<std::string>
 TokenManager::GenerateToken(const LoggedUserInfo& loggedinUserInfo) const
 {
@@ -28,59 +34,97 @@ TokenManager::GenerateToken(const LoggedUserInfo& loggedinUserInfo) const
     return std::nullopt;
 }
 
+/**
+ * Validates the provided JWT token and updates the user information from the token.
+ *
+ * @param loggedinUserInfo The user information, including the token to be validated.
+ * @return `true` if the token is valid, `false` otherwise.
+ */
 bool TokenManager::ValidateToken(LoggedUserInfo& loggedinUserInfo) const
 {
     try {
-
         auto token = jwt::decode(loggedinUserInfo.token.value());
 
-        // I want to make this code better , but it works or now albeit ugly it is.
-        if (!loggedinUserInfo.group) { // coming from authorization middleware
-            loggedinUserInfo.group = token.get_payload_claim("group").as_string();
-        } else { // coming from authenticator
-            if (loggedinUserInfo.group != token.get_payload_claim("group").as_string()) {
-                return false;
-            }
-        }
-
-        loggedinUserInfo.userID = std::stoull(token.get_id());
-        loggedinUserInfo.userName = token.get_subject();
-
-        if (!loggedinUserInfo.group || !loggedinUserInfo.userID || !loggedinUserInfo.userName) {
-            return false;
-        }
-
-        if (databaseController->findIfUserID(loggedinUserInfo.userName.value(), loggedinUserInfo.group.value()) != loggedinUserInfo.userID) {
-            return false;
-        }
-
-        loggedinUserInfo.llodt = sessionManager->getLastLogoutTime(loggedinUserInfo.userID.value(), loggedinUserInfo.group.value());
-
-        // Check expiration
-        auto exp_time = token.get_payload_claim("exp").as_date().time_since_epoch();
-        auto issuer = token.get_payload_claim("iss").as_string();
+        // Validate token expiration
         auto now = std::chrono::system_clock::now().time_since_epoch();
+        auto exp_time = token.get_payload_claim("exp").as_date().time_since_epoch();
+        if (now >= exp_time) {
+            return false;
+        }
 
-        auto verifier = jwt::verify()
-                            .allow_algorithm(jwt::algorithm::hs256 { tokenMgrParm.secret })
-                            .with_issuer(tokenMgrParm.issuer)
-                            .with_type(tokenMgrParm.type)
-                            .with_subject(loggedinUserInfo.userName.value())
-                            .with_id(std::to_string(loggedinUserInfo.userID.value()))
-                            .with_claim("group", jwt::claim(loggedinUserInfo.group.value()))
-                            .with_claim("llodt", jwt::claim(loggedinUserInfo.llodt.value_or("first_login")));
+        // Update user info from token
+        fillUserInfo(loggedinUserInfo, token);
 
-        // Verify the token
+        // Validate token claims
+        auto verifier = createTokenVerifier(loggedinUserInfo);
         verifier.verify(token);
 
-        //  Check if token is still valid
-        if (now < exp_time && issuer == tokenMgrParm.issuer) {
-            return true;
+
+        // Validate user in database
+        if (!validateUserInDatabase(loggedinUserInfo)) {
+            return false;
         }
+
+
+        return true;
     } catch (const token_verification_exception& e) {
         std::cerr << "Token verification failed: " << e.what() << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error validating token: " << e.what() << std::endl;
     }
     return false;
+}
+
+/**
+ * Creates a JWT verifier for validating the provided token.
+ *
+ * @param loggedinUserInfo The logged-in user information, including the token to be verified.
+ * @return A JWT verifier that can be used to verify the token.
+ */
+jwt::verifier<jwt::default_clock, jwt::traits::kazuho_picojson> TokenManager::createTokenVerifier(const LoggedUserInfo& loggedinUserInfo) const
+{
+    return jwt::verify()
+        .allow_algorithm(jwt::algorithm::hs256{tokenMgrParm.secret})
+        .with_issuer(tokenMgrParm.issuer)
+        .with_type(tokenMgrParm.type)
+        .with_subject(loggedinUserInfo.userName.value())
+        .with_id(std::to_string(loggedinUserInfo.userID.value()))
+        .with_claim("group", jwt::claim(loggedinUserInfo.group.value()))
+        .with_claim("llodt", jwt::claim(loggedinUserInfo.llodt.value_or("first_login")));
+}
+
+/**
+ * Fills the user information in the provided LoggedUserInfo object using the claims from the decoded JWT token.
+ *
+ * @param loggedinUserInfo The LoggedUserInfo object to be filled with user information.
+ * @param token The decoded JWT token containing the user information.
+ * @throws std::runtime_error if the required user information is missing from the token or if the group claim does not match the existing group in the LoggedUserInfo object.
+ */
+void TokenManager::fillUserInfo(LoggedUserInfo& loggedinUserInfo, const jwt::decoded_jwt<jwt::traits::kazuho_picojson>& token) const
+{
+    if (!loggedinUserInfo.group) {
+        loggedinUserInfo.group = token.get_payload_claim("group").as_string();
+    } else if (loggedinUserInfo.group != token.get_payload_claim("group").as_string()) {
+        throw std::runtime_error("Group mismatch in token");
+    }
+
+    loggedinUserInfo.userID = std::stoull(token.get_id());
+    loggedinUserInfo.userName = token.get_subject();
+
+    if (!loggedinUserInfo.group || !loggedinUserInfo.userID || !loggedinUserInfo.userName) {
+        throw std::runtime_error("Missing required user information in token");
+    }
+    // Get last logout time
+    loggedinUserInfo.llodt = sessionManager->getLastLogoutTime(loggedinUserInfo.userID.value(), loggedinUserInfo.group.value());
+}
+
+/**
+ * Validates if the provided user information matches the user in the database.
+ *
+ * @param loggedinUserInfo The logged-in user information to be validated.
+ * @return True if the user information matches the database, false otherwise.
+ */
+bool TokenManager::validateUserInDatabase(const LoggedUserInfo& loggedinUserInfo) const
+{
+    return databaseController->findIfUserID(loggedinUserInfo.userName.value(), loggedinUserInfo.group.value()) == loggedinUserInfo.userID.value();
 }
