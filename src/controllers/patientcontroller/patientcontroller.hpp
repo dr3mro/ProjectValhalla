@@ -73,19 +73,6 @@ private:
         }
         return 0;
     }
-    uint64_t getNextID() {
-        json json_nextval = databaseController->executeQuery("SELECT NEXTVAL('patient_id_seq');");
-
-        if (json_nextval.empty()) {
-            return 0; // Or throw an exception if you prefer
-        }
-
-        for (const auto &obj : json_nextval.array_range()) {
-            if (obj.contains("nextval")) {
-                return obj["nextval"].as<uint64_t>();
-            }
-        }
-        return 0;
-    }
+    // Private members
     const std::string tablename = "patients";
 };
