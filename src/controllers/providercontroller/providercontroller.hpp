@@ -6,6 +6,16 @@
 
 using json = jsoncons::json;
 // The UserController class derives from ClientController<User>
+/**
+ * @class ProviderController
+ * @brief Provides functionality for managing providers in the application.
+ *
+ * The ProviderController class derives from the ClientController<Provider> class and
+ * provides methods for creating, authenticating, reading, updating, deleting, and
+ * searching providers. It also provides a method for logging out users.
+ *
+ * The ProviderController class uses the SessionManager to manage user sessions.
+ */
 class ProviderController : public ClientController<Provider> {
 public:
     ProviderController();

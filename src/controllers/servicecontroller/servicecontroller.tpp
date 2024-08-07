@@ -12,6 +12,21 @@
 using json = jsoncons::json;
 
 template <typename T>
+/**
+ * @brief The ServiceController class is responsible for handling CRUD operations for a service entity.
+ *
+ * This class inherits from both ServiceControllerBase and Controller, allowing it to handle the specific
+ * logic for creating, reading, updating, deleting, and searching service entities.
+ *
+ * The class provides the following methods:
+ * - `CreateService`: Creates a new service entity based on the provided request data.
+ * - `ReadService`: Retrieves a service entity based on the provided criteria.
+ * - `UpdateService`: Updates an existing service entity based on the provided request data.
+ * - `DeleteService`: Deletes a service entity based on the provided criteria.
+ * - `SearchService`: Searches for service entities based on the provided criteria.
+ *
+ * The `getNextID` method is a private helper function that retrieves the next available ID for a new service entity.
+ */
 class ServiceController
     : public ServiceControllerBase
     , public Controller {

@@ -5,6 +5,12 @@
 #include <memory>
 
 // The UserController class derives from ClientController<User>
+/**
+ * @class UserController
+ * @brief Manages user-specific functionality, including creating, authenticating, reading, updating, deleting, searching, and logging out users.
+ *
+ * The UserController class derives from ClientController<User> and provides methods for handling user-related operations.
+ */
 class UserController : public ClientController<User> {
 public:
     UserController();

@@ -4,13 +4,17 @@
 #include "crow.h"
 #include <cstdint>
 #include <jsoncons/json.hpp>
+/**
+ * @brief Base class for service controllers that handle CRUD operations for a service.
+ *
+ * This abstract base class provides the interface for creating, reading, updating, deleting, and searching services.
+ * Derived classes must implement the pure virtual functions to provide the specific implementation for a service.
+ */
 class ServiceControllerBase {
 public:
-    explicit ServiceControllerBase() {
-    }
+    explicit ServiceControllerBase() = default;
 
-    virtual ~ServiceControllerBase() {
-    }
+    virtual ~ServiceControllerBase() = default;
 
     // CRUDS
     virtual void CreateService(const crow::request &req, crow::response &res) = 0;
