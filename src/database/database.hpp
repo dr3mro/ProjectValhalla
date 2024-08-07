@@ -6,6 +6,45 @@
 
 using json = jsoncons::json;
 
+/**
+ * @class Database
+ * @brief Provides an interface for interacting with a PostgreSQL database.
+ *
+ * The `Database` class is responsible for managing the connection to a PostgreSQL
+ * database and executing SQL queries. It provides methods for checking if the
+ * connection is established, checking if a table and column combination exists,
+ * and executing both simple and complex queries.
+ *
+ * The `executeQuery` method allows executing arbitrary SQL queries and returns
+ * the results as a JSON array. The `doSimpleQuery` method is a convenience
+ * function for executing simple queries that return a single value.
+ */
+/**
+ * @class Database
+ * @brief Provides an interface for interacting with a PostgreSQL database.
+ *
+ * The `Database` class is responsible for managing the connection to a PostgreSQL
+ * database and executing SQL queries. It provides methods for checking if the
+ * connection is established, checking if a table and column combination exists,
+ * and executing both simple and complex queries.
+ *
+ * The `executeQuery` method allows executing arbitrary SQL queries and returns
+ * the results as a JSON array. The `doSimpleQuery` method is a convenience
+ * function for executing simple queries that return a single value.
+ */
+/**
+ * @class Database
+ * @brief Provides an interface for interacting with a PostgreSQL database.
+ *
+ * The `Database` class is responsible for managing the connection to a PostgreSQL
+ * database and executing SQL queries. It provides methods for checking if the
+ * connection is established, checking if a table and column combination exists,
+ * and executing both simple and complex queries.
+ *
+ * The `executeQuery` method allows executing arbitrary SQL queries and returns
+ * the results as a JSON array. The `doSimpleQuery` method is a convenience
+ * function for executing simple queries that return a single value.
+ */
 class Database {
 public:
     Database(std::shared_ptr<pqxx::connection> conn);
