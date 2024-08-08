@@ -6,19 +6,16 @@
 #include <thread>
 #include <xxhash.h>
 
-DOSDetector::DOSDetector()
-    : dosDetectorEnvLoader(DOSDetectorEnvLoader(std::cref(ev)))
-{
+DOSDetector::DOSDetector() : dosDetectorEnvLoader(DOSDetectorEnvLoader(std::cref(ev))) {
     try {
         config = dosDetectorEnvLoader.getConfig();
         async_task_clean_ = std::async(std::launch::async, &DOSDetector::cleanUpTask, this);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception during DOSDetector initialization: " << e.what() << std::endl;
     }
 }
 
-DOSDetector::~DOSDetector()
-{
+DOSDetector::~DOSDetector() {
     try {
         running_clean_.store(false);
         if (async_task_clean_.valid()) {
@@ -28,13 +25,12 @@ DOSDetector::~DOSDetector()
         if (async_task_process_.valid()) {
             async_task_process_.wait();
         }
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception during DOSDetector destruction: " << e.what() << std::endl;
     }
 }
 
-DOSDetector::Status DOSDetector::is_dos_attack(const crow::request& req)
-{
+DOSDetector::Status DOSDetector::is_dos_attack(const crow::request &req) {
     try {
         if (isWhitelisted(std::cref(req.remote_ip_address))) {
             return Status::WHITELISTED;
@@ -53,15 +49,14 @@ DOSDetector::Status DOSDetector::is_dos_attack(const crow::request& req)
             return Status::BANNED;
         }
 
-        return processRequest<const crow::request&>(std::cref(req));
-    } catch (const std::exception& e) {
+        return processRequest<const crow::request &>(std::cref(req));
+    } catch (const std::exception &e) {
         std::cerr << "Failure in is_dos_attack: " << e.what() << std::endl;
         return Status::ERROR;
     }
 }
 
-void DOSDetector::cleanUpTask()
-{
+void DOSDetector::cleanUpTask() {
     try {
         while (running_clean_.load()) {
             auto now = std::chrono::steady_clock::now();
@@ -72,11 +67,11 @@ void DOSDetector::cleanUpTask()
             {
                 std::lock_guard<std::mutex> request_lock(request_mutex_);
                 // Cleanup requests
-                for (auto& ot : requests_) {
-                    auto& requests = ot.second;
+                for (auto &ot : requests_) {
+                    auto &requests = ot.second;
 
                     for (auto it = requests.begin(); it != requests.end(); /* no increment here */) {
-                        auto& times = it->second;
+                        auto &times = it->second;
 
                         while (!times.empty() && times.front() < window) {
                             times.pop_front();
@@ -115,18 +110,17 @@ void DOSDetector::cleanUpTask()
 
             std::this_thread::sleep_until(next);
         }
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in cleanUpTask: " << e.what() << std::endl;
     }
 }
 
-std::string DOSDetector::generateRequestFingerprint(const crow::request& req)
-{
+std::string DOSDetector::generateRequestFingerprint(const crow::request &req) {
     try {
         std::string data;
         data.reserve(4096);
 
-        for (const auto& header : req.headers) {
+        for (const auto &header : req.headers) {
             data.append(header.second);
         }
 
@@ -135,75 +129,69 @@ std::string DOSDetector::generateRequestFingerprint(const crow::request& req)
         XXH64_hash_t hashed_key = XXH3_64bits(data.c_str(), data.size());
 
         return fmt::format("{}", hashed_key);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in generateRequestFingerprint: " << e.what() << std::endl;
         return "";
     }
 }
 
-bool DOSDetector::isWhitelisted(const std::string& remote_ip)
-{
+bool DOSDetector::isWhitelisted(const std::string &remote_ip) {
     try {
         return regexFind(remote_ip, whitelist_, whitelist_mutex_);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in isWhitelisted: " << e.what() << std::endl;
         return false;
     }
 }
 
-bool DOSDetector::isBlacklisted(const std::string& remote_ip)
-{
+bool DOSDetector::isBlacklisted(const std::string &remote_ip) {
     try {
         return regexFind(remote_ip, blacklist_, blacklist_mutex_);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in isBlacklisted: " << e.what() << std::endl;
         return false;
     }
 }
 
-bool DOSDetector::regexFind(const std::string& remote_ip, const std::unordered_set<std::string>& list, std::mutex& mtx)
-{
+bool DOSDetector::regexFind(const std::string &remote_ip, const std::unordered_set<std::string> &list, std::mutex &mtx) {
     try {
         std::lock_guard<std::mutex> lock(mtx);
 
-        return std::any_of(list.begin(), list.end(), [&remote_ip](const std::string& pattern) {
+        return std::any_of(list.begin(), list.end(), [&remote_ip](const std::string &pattern) {
             try {
                 std::regex regex_pattern(pattern);
                 return std::regex_search(remote_ip, regex_pattern);
-            } catch (const std::regex_error& e) {
+            } catch (const std::regex_error &e) {
                 std::cerr << "Invalid regex pattern: " << e.what() << std::endl;
                 return false;
             }
         });
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in regexFind: " << e.what() << std::endl;
         return false;
     }
 }
 
-bool DOSDetector::isBanned(const std::string& remote_ip)
-{
+bool DOSDetector::isBanned(const std::string &remote_ip) {
     try {
         return checkStatus(remote_ip, banned_ips_, ban_mutex_);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in isBanned: " << e.what() << std::endl;
         return false;
     }
 }
 
-bool DOSDetector::isRateLimited(const std::string& remote_ip)
-{
+bool DOSDetector::isRateLimited(const std::string &remote_ip) {
     try {
         return checkStatus(remote_ip, ratelimited_ips_, ratelimit_mutex_);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in isRateLimited: " << e.what() << std::endl;
         return false;
     }
 }
 
 template <typename Map, typename Mutex>
-bool DOSDetector::checkStatus(const std::string& remote_ip, Map& ip_map, Mutex& mtx)
-{
+bool DOSDetector::checkStatus(const std::string &remote_ip, Map &ip_map, Mutex &mtx) {
     try {
         auto now = std::chrono::steady_clock::now();
         std::lock_guard<Mutex> lock(mtx);
@@ -217,15 +205,14 @@ bool DOSDetector::checkStatus(const std::string& remote_ip, Map& ip_map, Mutex& 
             }
         }
         return false;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception in checkStatus: " << e.what() << std::endl;
         return false;
     }
 }
 
 template <typename Req>
-DOSDetector::Status DOSDetector::processRequest(Req&& req)
-{
+DOSDetector::Status DOSDetector::processRequest(Req &&req) {
     try {
         auto now = std::chrono::steady_clock::now();
         std::string remote_ip = req.remote_ip_address;
@@ -233,8 +220,8 @@ DOSDetector::Status DOSDetector::processRequest(Req&& req)
 
         {
             std::lock_guard<std::mutex> request_lock(request_mutex_);
-            auto& ip_requests = requests_[remote_ip];
-            auto& fp_requests = ip_requests[request_fingerprint];
+            auto &ip_requests = requests_[remote_ip];
+            auto &fp_requests = ip_requests[request_fingerprint];
 
             // Remove old requests that are outside the time window
             while (!fp_requests.empty() && fp_requests.front() < now - config.period) {
@@ -255,7 +242,7 @@ DOSDetector::Status DOSDetector::processRequest(Req&& req)
                 return Status::BANNED;
             }
         }
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Failure in processRequest: " << e.what() << std::endl;
         return Status::ERROR;
     }

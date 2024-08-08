@@ -8,15 +8,13 @@ struct Authorization : crow::ILocalMiddleware {
     struct context {
         TokenManager::LoggedUserInfo userInfo;
     };
-    Authorization()
-    {
+    Authorization() {
         tokenManager = std::any_cast<std::shared_ptr<TokenManager>>(Store::getObject(Type::TokenManager));
     }
 
     ~Authorization() = default;
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
         try {
             std::optional<std::string> authorization = req.get_header_value("Authorization");
 
@@ -43,7 +41,7 @@ struct Authorization : crow::ILocalMiddleware {
                 return;
             }
             return;
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             res.code = 500; // login denied
             res.end();
             return;
@@ -52,11 +50,10 @@ struct Authorization : crow::ILocalMiddleware {
         res.code = 403; // login denied
         res.end();
     }
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 
 private:

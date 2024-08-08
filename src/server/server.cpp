@@ -5,19 +5,14 @@
 
 #define PORT 8080
 #ifndef GIT_TAG
-#define GIT_TAG "unknown"
+#    define GIT_TAG "unknown"
 #endif
 
 Server::Server(const uint16_t srv_threads, const uint16_t db_connections)
-    : srv_threads(srv_threads)
-    , db_connections(db_connections)
-    , app(std::make_shared<APP>())
-    , routes(std::make_shared<API_V1_Routes>(app))
-{
+    : srv_threads(srv_threads), db_connections(db_connections), app(std::make_shared<APP>()), routes(std::make_shared<API_V1_Routes>(app)) {
 }
 
-int Server::run()
-{
+int Server::run() {
     print_banner();
 
     try {
@@ -30,7 +25,7 @@ int Server::run()
             .server_name("Valhalla")
             .run();
 
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "Exception caught in main: " << e.what() << std::endl;
         return 1; // Exit with error code
     }
@@ -38,8 +33,7 @@ int Server::run()
     return 0;
 }
 
-void Server::print_banner()
-{
+void Server::print_banner() {
     std::srand(std::time(0));
     // Select a random color
     int num_colors = sizeof(colors) / sizeof(colors[0]);

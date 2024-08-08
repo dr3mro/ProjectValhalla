@@ -13,16 +13,14 @@ struct ElapsedTime : crow::ILocalMiddleware {
     ElapsedTime() = default;
     ~ElapsedTime() = default;
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)res;
-        (void)req;
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) res;
+        (void) req;
         ctx.start_time = std::chrono::steady_clock::now();
     }
 
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
         if (res.code == crow::NOT_FOUND || res.code == crow::NO_CONTENT || res.code == crow::INTERNAL_SERVER_ERROR)
             return;
         // Calculate the duration of the request

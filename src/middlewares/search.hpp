@@ -12,19 +12,12 @@ struct Search : crow::ILocalMiddleware {
     Search() = default;
     ~Search() = default;
     template <typename XRequestContext>
-    void before_handle(crow::request& req, crow::response& res, context& ctx, XRequestContext& xrequest_ctx)
-    {
-        (void)req;
+    void before_handle(crow::request &req, crow::response &res, context &ctx, XRequestContext &xrequest_ctx) {
+        (void) req;
         ctx.search_json = xrequest_ctx.template get<XRequest>().criteria;
 
         try {
-            std::vector<std::string> keys = {
-                "keyword",
-                "order_by",
-                "direction",
-                "limit",
-                "offset"
-            };
+            std::vector<std::string> keys = { "keyword", "order_by", "direction", "limit", "offset" };
 
             auto it = keys.begin();
 
@@ -37,7 +30,7 @@ struct Search : crow::ILocalMiddleware {
                 it++;
             }
             return;
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
 
             res.code = 400;
             res.end("Inconsistent search data");
@@ -45,10 +38,9 @@ struct Search : crow::ILocalMiddleware {
         }
     }
 
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 };

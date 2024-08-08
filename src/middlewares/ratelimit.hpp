@@ -7,16 +7,14 @@
 #include <memory>
 struct RateLimit : crow::ILocalMiddleware {
 public:
-    struct context { };
+    struct context {};
 
-    RateLimit()
-    {
+    RateLimit() {
         dos_detector = std::any_cast<std::shared_ptr<DOSDetector>>(Store::getObject(Type::DOSDetector));
     }
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)ctx;
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) ctx;
 
         DOSDetector::Status status = dos_detector->is_dos_attack(std::cref(req));
 
@@ -47,11 +45,10 @@ public:
         }
     }
 
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 
 private:

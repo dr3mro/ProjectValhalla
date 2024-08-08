@@ -10,8 +10,7 @@ struct Authentication : crow::ILocalMiddleware {
     Authentication() = default;
     ~Authentication() = default;
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
         try {
             std::string decoded;
             if (!req.headers.contains("Authentication")) {
@@ -34,17 +33,16 @@ struct Authentication : crow::ILocalMiddleware {
 
             return;
 
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
 
             res.code = 500; // login denied
             res.end("Authentication Denied");
             return;
         }
     }
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 };

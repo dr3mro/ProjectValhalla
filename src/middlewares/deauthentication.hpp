@@ -14,8 +14,7 @@ struct Deauthentication : crow::ILocalMiddleware {
     Deauthentication() = default;
     ~Deauthentication() = default;
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
         try {
             if (!req.headers.contains("Deauthentication")) {
                 res.code = 403;
@@ -41,17 +40,16 @@ struct Deauthentication : crow::ILocalMiddleware {
             }
 
             return;
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
 
             res.code = 500; // login denied
             res.end("Deauthentication Denied");
             return;
         }
     }
-    void after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 };

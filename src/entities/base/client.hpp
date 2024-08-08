@@ -13,7 +13,8 @@
 
 using json = jsoncons::json;
 
-/// Represents a client entity in the application. The `Client` class inherits from the `Entity` class and provides functionality for managing client-related data, including authentication, validation, and database operations.
+/// Represents a client entity in the application. The `Client` class inherits from the `Entity` class and provides functionality for managing client-related
+/// data, including authentication, validation, and database operations.
 ///
 /// The `Client` class has the following key features:
 /// - Retrieves the `DatabaseController` and `PasswordCrypt` instances from the `Store` to handle database operations and password encryption/decryption.
@@ -21,7 +22,8 @@ using json = jsoncons::json;
 /// - Implements an `exists()` method to check if a client with a given username already exists in the database.
 /// - Provides an `authenticate()` method to authenticate a client using their username and password.
 /// - Implements a `validate()` method to validate the client's data, including username, password, and email.
-/// Represents a client entity in the application. The `Client` class inherits from the `Entity` class and provides functionality for managing client-related data, including authentication, validation, and database operations.
+/// Represents a client entity in the application. The `Client` class inherits from the `Entity` class and provides functionality for managing client-related
+/// data, including authentication, validation, and database operations.
 ///
 /// The `Client` class has the following key features:
 /// - Retrieves the `DatabaseController` and `PasswordCrypt` instances from the `Store` to handle database operations and password encryption/decryption.

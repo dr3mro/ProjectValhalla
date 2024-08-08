@@ -13,9 +13,11 @@ using json = jsoncons::json;
 /**
  * @brief The Entity class represents a base entity in the application, providing functionality for CRUD operations and search.
  *
- * The Entity class serves as a base class for various entities in the application, such as users, providers and services, etc. It provides a set of nested structs to handle different types of data related to the entity, including creation, reading, updating, deleting, and searching.
+ * The Entity class serves as a base class for various entities in the application, such as users, providers and services, etc. It provides a set of nested structs
+ * to handle different types of data related to the entity, including creation, reading, updating, deleting, and searching.
  *
- * The `UserData` struct represents the user-specific data, including username, password, email, role, and other optional fields. It also provides validation methods for the username, password, and email.
+ * The `UserData` struct represents the user-specific data, including username, password, email, role, and other optional fields. It also provides validation methods
+ * for the username, password, and email.
  *
  * The `Credentials` struct represents the user's login credentials, including the username and password.
  *
@@ -26,11 +28,14 @@ using json = jsoncons::json;
 class Entity : public Base {
 public:
     /**
-     * @brief The UserData struct represents the user-specific data, including username, password, email, role, and other optional fields. It provides validation methods for the username, password, and email.
+     * @brief The UserData struct represents the user-specific data, including username, password, email, role, and other optional fields. It provides
+     * validation methods for the username, password, and email.
      *
-     * The `username`, `password`, `password_hash`, `email`, `role`, `basic_data`, and `service_data` fields are stored in the `db_data` vector, which can be used to interact with the database.
+     * The `username`, `password`, `password_hash`, `email`, `role`, `basic_data`, and `service_data` fields are stored in the `db_data` vector, which can be
+     * used to interact with the database.
      *
-     * The `validateUsername()`, `validatePassowrd()`, and `validateEmail()` methods provide validation for the corresponding fields, ensuring they meet the specified patterns.
+     * The `validateUsername()`, `validatePassowrd()`, and `validateEmail()` methods provide validation for the corresponding fields, ensuring they meet the
+     * specified patterns.
      *
      * The `UserData` struct is constructed from a JSON object, which is used to populate the fields and generate the `db_data` vector.
      */
@@ -139,8 +144,8 @@ public:
      * This struct contains the payload data and the next ID to be used for the new entity.
      */
     struct CreateData {
-        json payload;        ///< The payload data for the new entity.
-        uint64_t next_id;    ///< The next ID to be used for the new entity.
+        json payload;     ///< The payload data for the new entity.
+        uint64_t next_id; ///< The next ID to be used for the new entity.
 
         /**
          * @brief Constructs a new CreateData instance.
@@ -148,8 +153,8 @@ public:
          * @param _payload The payload data for the new entity.
          * @param nid The next ID to be used for the new entity.
          */
-        CreateData(const json &_payload, const uint64_t nid)
-            : payload(_payload), next_id(nid) {}
+        CreateData(const json &_payload, const uint64_t nid) : payload(_payload), next_id(nid) {
+        }
 
         /**
          * @brief Default constructor for CreateData.
@@ -164,7 +169,7 @@ public:
      */
     struct ReadData {
         std::vector<std::string> schema; ///< The schema of the entity.
-        uint64_t id;                    ///< The ID of the entity to be read.
+        uint64_t id;                     ///< The ID of the entity to be read.
 
         /**
          * @brief Constructs a new ReadData instance.
@@ -172,8 +177,8 @@ public:
          * @param _schema The schema of the entity.
          * @param _id The ID of the entity to be read.
          */
-        ReadData(const std::vector<std::string> &_schema, const uint64_t _id)
-            : schema(_schema), id(_id) {}
+        ReadData(const std::vector<std::string> &_schema, const uint64_t _id) : schema(_schema), id(_id) {
+        }
 
         /**
          * @brief Default constructor for ReadData.
@@ -187,8 +192,8 @@ public:
      * This struct contains the payload data and the user ID associated with the update operation.
      */
     struct UpdateData {
-        json payload;        ///< The payload data for the update.
-        uint64_t user_id;    ///< The user ID associated with the update.
+        json payload;     ///< The payload data for the update.
+        uint64_t user_id; ///< The user ID associated with the update.
 
         /**
          * @brief Constructs a new UpdateData instance.
@@ -196,8 +201,8 @@ public:
          * @param _data The payload data for the update.
          * @param id The user ID associated with the update.
          */
-        UpdateData(const json &_data, const uint64_t id)
-            : payload(_data), user_id(id) {}
+        UpdateData(const json &_data, const uint64_t id) : payload(_data), user_id(id) {
+        }
 
         /**
          * @brief Default constructor for UpdateData.
@@ -215,8 +220,8 @@ public:
      * @param user_id The user ID associated with the delete operation.
      */
     struct DeleteData {
-        json payload;        ///< The payload data for the delete operation.
-        uint64_t user_id;    ///< The user ID associated with the delete operation.
+        json payload;     ///< The payload data for the delete operation.
+        uint64_t user_id; ///< The user ID associated with the delete operation.
 
         /**
          * @brief Constructs a new DeleteData instance.
@@ -224,8 +229,8 @@ public:
          * @param _data The payload data for the delete operation.
          * @param id The user ID associated with the delete operation.
          */
-        DeleteData(const json &_data, const uint64_t id)
-            : payload(_data), user_id(id) {}
+        DeleteData(const json &_data, const uint64_t id) : payload(_data), user_id(id) {
+        }
 
         /**
          * @brief Default constructor for DeleteData.

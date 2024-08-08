@@ -11,7 +11,8 @@ using json = jsoncons::json;
  * @class PatientController
  * @brief Handles CRUD operations for patient data.
  *
- * The PatientController class provides methods for creating, reading, updating, deleting, and searching patient data. It inherits from the base Controller class and utilizes the RestHelper utility for interacting with the database.
+ * The PatientController class provides methods for creating, reading, updating, deleting, and searching patient data. It inherits from the base Controller
+ * class and utilizes the RestHelper utility for interacting with the database.
  *
  * @method CreatePatient
  * @brief Creates a new patient record.

@@ -9,16 +9,19 @@ using json = jsoncons::json;
  * @class DatabaseController
  * @brief Provides an interface for executing database queries and performing common database operations.
  *
- * The DatabaseController class is responsible for managing database connections and executing various types of database queries. It provides methods for executing read and write queries, checking if an item exists in a table, and retrieving password hashes and user IDs.
+ * The DatabaseController class is responsible for managing database connections and executing various types of database queries. It provides methods for
+ * executing read and write queries, checking if an item exists in a table, and retrieving password hashes and user IDs.
  *
- * The class uses a DatabaseConnectionPool to manage database connections, ensuring efficient use of resources and avoiding the overhead of repeatedly opening and closing connections.
+ * The class uses a DatabaseConnectionPool to manage database connections, ensuring efficient use of resources and avoiding the overhead of repeatedly opening
+ * and closing connections.
  *
  * The executer() template method is a utility function that handles the execution of database queries, including error handling and connection management.
  */
 /**
  * A utility function that handles the execution of database queries, including error handling and connection management.
  *
- * The `executer()` function is a template method that takes a callable `f` and its arguments `args`, and executes the query using a database connection from the `DatabaseConnectionPool`. It returns an `std::optional<R>` containing the result of the query, or `std::nullopt` if an exception occurs during execution.
+ * The `executer()` function is a template method that takes a callable `f` and its arguments `args`, and executes the query using a database connection from
+ * the `DatabaseConnectionPool`. It returns an `std::optional<R>` containing the result of the query, or `std::nullopt` if an exception occurs during execution.
  *
  * @tparam R The return type of the callable `f`.
  * @tparam F The type of the callable `f`.
@@ -49,7 +52,8 @@ private:
     /**
      * @brief A utility function that handles the execution of database queries, including error handling and connection management.
      *
-     * The `executer()` function is a template method that takes a callable `f` and its arguments `args`, and executes the query using a database connection from the `DatabaseConnectionPool`. It returns an `std::optional<R>` containing the result of the query, or `std::nullopt` if an exception occurs during execution.
+     * The `executer()` function is a template method that takes a callable `f` and its arguments `args`, and executes the query using a database connection from
+     * the `DatabaseConnectionPool`. It returns an `std::optional<R>` containing the result of the query, or `std::nullopt` if an exception occurs during execution.
      *
      * @tparam R The return type of the callable `f`.
      * @tparam F The type of the callable `f`.

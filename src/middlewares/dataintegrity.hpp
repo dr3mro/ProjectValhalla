@@ -6,14 +6,12 @@
 
 struct DataIntegrity : crow::ILocalMiddleware {
 
-    struct context {
-    };
+    struct context {};
     DataIntegrity() = default;
     ~DataIntegrity() = default;
 
-    void before_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)ctx;
+    void before_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) ctx;
 
         if (!(req.headers.contains("Enable-data-integrity-check") && req.get_header_value("Enable-data-integrity-check") == "true"))
             return;
@@ -37,18 +35,16 @@ struct DataIntegrity : crow::ILocalMiddleware {
                 res.end("hash mismatch, aborting.");
                 return;
             }
-        } catch (const std::exception& e) {
+        } catch (const std::exception &e) {
             res.code = 500;
             res.end(fmt::format("Failure, {}", e.what()));
             return;
         }
     }
 
-    void
-    after_handle(crow::request& req, crow::response& res, context& ctx)
-    {
-        (void)req;
-        (void)res;
-        (void)ctx;
+    void after_handle(crow::request &req, crow::response &res, context &ctx) {
+        (void) req;
+        (void) res;
+        (void) ctx;
     }
 };

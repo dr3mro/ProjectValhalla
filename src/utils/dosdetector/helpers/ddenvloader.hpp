@@ -17,15 +17,12 @@ const std::unordered_set<std::string> BLACKLIST_;
 
 class DOSDetectorEnvLoader : public EnvLoader {
 public:
-    DOSDetectorEnvLoader(const EnvVars& env)
-        : EnvLoader(env)
-    {
+    DOSDetectorEnvLoader(const EnvVars &env) : EnvLoader(env) {
         initialize();
     }
     ~DOSDetectorEnvLoader() = default;
 
-    void printValues() const override
-    {
+    void printValues() const override {
         fmt::print("Max Requests: {}\n", config_.max_requests);
         fmt::print("Period: {} seconds\n", config_.period.count());
         fmt::print("Max FPS: {}\n", config_.max_fingerprints);
@@ -45,21 +42,18 @@ public:
         std::unordered_set<std::string> blacklist;
     };
 
-    const Config& getConfig() const
-    {
+    const Config &getConfig() const {
         return config_;
     }
 
-    void setConfig(const Config& config)
-    {
+    void setConfig(const Config &config) {
         config_ = config;
     }
 
 private:
     Config config_;
 
-    void initialize() override
-    {
+    void initialize() override {
         config_.max_requests = getIntEnv("MAX_REQUESTS", MAX_REQUESTS_);
         config_.period = getDurationEnv("PERIOD", std::chrono::seconds(PERIOD_));
         config_.max_fingerprints = getIntEnv("MAX_FPS", MAX_FPS_);
