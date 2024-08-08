@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fmt/format.h"
 #include <crow.h>
 #include <jsoncons/json.hpp>
 #include <xxhash.h>

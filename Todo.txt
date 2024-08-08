@@ -3,7 +3,14 @@
 * Implement changepassword, lostpassword.
 * json schema validation for all jsons.
 * "providers": {"Doctors","nurses","paramedics","assistants","admin_id","owner_id"}
-
+* use env variables for db connection.
+* use env variables for port.
+* use env variables for jwt secret.
+* use env variables for jwt expiration.
+* use env variables for jwt algorithm.
+* use env variables for jwt issuer.
+* use env variables for jwt audience.
+* use CTRACK
 ps aux  | awk '{print $6/1024 " MB\t\t" $11}'  | sort -n
 
 #define PRINT_LINE_INFO() \
