@@ -4,7 +4,6 @@
 #include "controllers/servicecontroller/servicecontrollerbase.hpp"
 #include "entities/base/entity.hpp"
 #include "utils/resthelper/resthelper.hpp"
-#include <crow.h>
 #include <fmt/format.h>
 #include <functional>
 #include <jsoncons/json.hpp>
