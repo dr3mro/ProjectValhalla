@@ -40,10 +40,14 @@
 #include <fmt/core.h>
 #include <jsoncons/json.hpp>
 #include <memory>
+#include <type_traits>
 
 using json = jsoncons::json;
 
-template <typename T>
+template<typename T>
+concept Client_t = std::is_base_of_v<Client, T>;
+
+template <Client_t T>
 /**
  * @brief The ClientController class is responsible for handling client-related operations, such as creating, authenticating, reading, updating, deleting, and
  * searching clients.
@@ -85,7 +89,7 @@ protected:
     std::shared_ptr<SessionManager> sessionManager;
 };
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Creates a new client user.
  *
@@ -115,7 +119,7 @@ void ClientController<T>::CreateUser(const crow::request &req, crow::response &r
     }
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Authenticates a user and generates a token.
  *
@@ -166,7 +170,7 @@ std::optional<uint64_t> ClientController<T>::AuthenticateUser(crow::response &re
     return std::nullopt;
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Reads a client entity based on the provided criteria.
  *
@@ -190,7 +194,7 @@ void ClientController<T>::ReadClient(crow::response &res, const json &criteria) 
     }
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Updates a client entity based on the provided data.
  *
@@ -216,7 +220,7 @@ void ClientController<T>::UpdateClient(const crow::request &req, crow::response 
     }
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Deletes a client entity based on the provided data.
  *
@@ -242,7 +246,7 @@ void ClientController<T>::DeleteClient(const crow::request &req, crow::response 
     }
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Searches for a client entity based on the provided data.
  *
@@ -265,7 +269,7 @@ void ClientController<T>::SearchClient(const crow::request &req, crow::response 
     }
 }
 
-template <typename T>
+template <Client_t T>
 /**
  * @brief Logs out a client by invalidating the provided token.
  *

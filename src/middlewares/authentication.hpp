@@ -12,7 +12,7 @@ struct Authentication : crow::ILocalMiddleware {
 
     void before_handle(crow::request &req, crow::response &res, context &ctx) {
         try {
-            std::string decoded;
+
             if (!req.headers.contains("Authentication")) {
                 res.code = 403;
                 res.end("Authentication Header not provided");
@@ -27,6 +27,7 @@ struct Authentication : crow::ILocalMiddleware {
                 return;
             }
 
+            std::string decoded;
             jsoncons::decode_base64(encoded.value().begin(), encoded.value().end(), decoded);
 
             ctx.credentials = jsoncons::json::parse(decoded);

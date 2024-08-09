@@ -97,7 +97,6 @@ public:
         }
 
         UserData(const json &_data) {
-            json response;
             try {
                 // Extract the username from the JSON
                 payload = _data["payload"];
